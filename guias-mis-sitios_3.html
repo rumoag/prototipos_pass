@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passporter — Guías · Mis Sitios</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{
+  --pr:#007a51;--n50:#eef0f1;--n100:#e6e8ea;--n200:#dde0e3;
+  --n400:#bcc1c8;--n500:#abb2ba;--n700:#72777d;--n800:#55595f;
+  --tp:#2a2d31;--ts:#55595f;--tt:#72777d;
+  --bgs:#f8f9fa;--bgm:#eef0f1;--bgi:#1b352c;
+  --bs:#e6e8ea;--bd:#dde0e3;
+  --sh:0 1px 3px rgba(16,24,40,.10),0 1px 2px rgba(16,24,40,.06);
+  --shm:0 4px 8px -2px rgba(16,24,40,.10),0 2px 4px -2px rgba(16,24,40,.06);
+  --rmd:8px;--rlg:12px;--rfull:9999px;
+  --f:"Cerebri Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:var(--f);background:#fff;display:flex;}
+
+/* ─── SIDEBAR ─── */
+.snav{width:64px;flex-shrink:0;background:var(--bgs);display:flex;flex-direction:column;align-items:center;height:100vh;}
+.szone{width:64px;border-top:1px solid var(--n50);border-left:1px solid var(--n50);border-right:1px solid var(--n50);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;flex-shrink:0;}
+.szone.grow{flex:1;}
+.szone.slim{padding:6px 14px;}
+.slogo-wrap{display:flex;align-items:center;gap:2px;padding:4px;}
+.slogo-wrap img{width:16px;height:16px;}
+.scaret svg{width:10px;height:10px;fill:none;stroke:var(--n500);stroke-width:2;stroke-linecap:round;}
+.snav-inner{display:flex;flex-direction:column;gap:14px;width:36px;}
+.snav-group{display:flex;flex-direction:column;gap:2px;}
+.sdiv{width:36px;height:1px;background:var(--n200);border-radius:80px;}
+.si{width:36px;height:34px;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tt);transition:background .15s;flex-shrink:0;}
+.si:hover{background:var(--n100);}
+.si.active{background:var(--n100);color:var(--tp);}
+.si svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ─── APP ─── */
+.app{display:flex;flex:1;height:100vh;overflow:hidden;}
+
+/* ─── LEFT PANEL (posición relativa para que el detalle se superponga) ─── */
+.lp{width:447px;flex-shrink:0;border-right:1px solid var(--bs);display:flex;flex-direction:column;overflow:hidden;background:#fff;position:relative;}
+.lph{padding:20px 16px 0;flex-shrink:0;}
+.ptitle{font-size:24px;font-weight:700;color:#021f15;line-height:40px;}
+
+/* ─── TABS ─── */
+.tabs{display:flex;border-bottom:1px solid var(--bd);padding:0 16px;flex-shrink:0;}
+.tab{display:flex;align-items:center;gap:6px;padding:7px 12px;font-size:14px;color:var(--tp);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s;font-family:var(--f);}
+.tab.active{border-bottom-color:var(--tp);font-weight:600;}
+.tab svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ─── FILTERS ─── */
+.filters{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+.filters::-webkit-scrollbar{display:none;}
+.fp{display:flex;align-items:center;gap:5px;padding:6px 13px;border:1px solid var(--bd);border-radius:var(--rfull);font-size:13px;white-space:nowrap;cursor:pointer;background:#fff;color:var(--tp);transition:all .15s;flex-shrink:0;font-family:var(--f);}
+.fp.active{background:var(--pr);color:#fff;border-color:var(--pr);}
+.fp:hover:not(.active){border-color:var(--n500);}
+.fp svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* ─── GUIDES LIST ─── */
+.gl{flex:1;overflow-y:auto;padding:4px 16px 16px;display:flex;flex-direction:column;gap:12px;}
+.gl::-webkit-scrollbar{width:4px;}
+.gl::-webkit-scrollbar-thumb{background:var(--n200);border-radius:4px;}
+
+/* ─── GUIDE CARD ─── */
+.gc{background:#fff;border-radius:var(--rmd);border:1px solid var(--bs);cursor:pointer;display:flex;align-items:stretch;overflow:hidden;transition:all .15s;flex-shrink:0;}
+.gc:hover{border-color:var(--bd);box-shadow:var(--sh);}
+.gc.active{border-color:var(--pr);box-shadow:0 0 0 1px var(--pr);}
+.gcimg{width:130px;min-width:130px;height:120px;flex-shrink:0;overflow:hidden;}
+.gcimg img{width:130px;height:120px;object-fit:cover;display:block;}
+.gcb{flex:1;padding:10px 6px 10px 12px;display:flex;flex-direction:column;justify-content:space-between;min-width:0;}
+.gctop{display:flex;flex-direction:column;gap:3px;}
+.gcbadge{display:inline-flex;align-items:center;background:var(--bgm);color:var(--tp);font-size:11px;font-weight:600;padding:1px 10px;border-radius:var(--rfull);width:fit-content;white-space:nowrap;}
+.gctitle{font-size:14px;font-weight:600;color:var(--tp);line-height:20px;}
+.gcdesc{font-size:13px;color:var(--ts);line-height:19px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.gcmeta{font-size:12px;font-weight:600;color:var(--ts);}
+.gcarr{display:flex;align-items:center;padding-right:8px;color:var(--n500);flex-shrink:0;}
+.gcarr svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ─── DETAIL PANEL (superpuesto encima del left panel) ─── */
+/* Posición absoluta, ocupa todo el .lp */
+.dp{
+  position:absolute;
+  inset:0;
+  background:var(--bgs);
+  display:none;
+  flex-direction:column;
+  overflow:hidden;
+  z-index:10;
+  border-right:1px solid var(--bs);
+}
+.dp.open{display:flex;}
+
+/* scroll del detalle — padding 12px 16px, gap 12px entre secciones */
+.dscroll{
+  flex:1;overflow-y:auto;
+  padding:12px 16px;
+  display:flex;flex-direction:column;gap:12px;
+  scrollbar-width:thin;scrollbar-color:var(--n200) transparent;
+}
+.dscroll::-webkit-scrollbar{width:4px;}
+.dscroll::-webkit-scrollbar-thumb{background:var(--n200);border-radius:4px;}
+
+/* back row — sticky header del panel detalle */
+.dbk{
+  display:flex;align-items:center;gap:6px;
+  cursor:pointer;font-size:14px;font-weight:600;
+  color:var(--ts);letter-spacing:.01em;
+  transition:color .15s;
+  flex-shrink:0;
+  padding:12px 16px;
+  background:var(--bgs);
+  border-bottom:1px solid var(--bs);
+  position:sticky;top:0;z-index:2;
+}
+.dbk:hover{color:var(--pr);}
+.dbk svg{width:20px;height:20px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* hero image */
+.dhero{border-radius:var(--rlg);overflow:hidden;height:137px;flex-shrink:0;}
+.dhero img{width:100%;height:137px;object-fit:cover;display:block;}
+
+/* info block */
+.dinfo{display:flex;flex-direction:column;gap:6px;}
+.dbadge{display:inline-flex;background:var(--bgm);color:var(--tp);font-size:11px;font-weight:600;padding:1px 10px;border-radius:var(--rfull);width:fit-content;}
+.dtitle{font-size:18px;font-weight:700;color:var(--tp);line-height:29px;letter-spacing:-.02em;}
+.ddesc{font-size:14px;color:var(--ts);line-height:22px;}
+.dmeta{font-size:12px;font-weight:600;color:var(--ts);letter-spacing:.01em;}
+
+/* CTA guardar */
+.dcta{display:inline-flex;align-items:center;justify-content:center;gap:4px;background:#fff;color:#1b352c;border:1px solid #dce1df;border-radius:var(--rmd);padding:0 16px;height:40px;font-size:14px;font-weight:700;font-family:var(--f);cursor:pointer;letter-spacing:-.017em;width:fit-content;transition:background .15s;}
+.dcta:hover{background:#f0f5f3;}
+.dcta.saved{background:#e6f3ef;border-color:var(--pr);color:var(--pr);}
+
+/* section title */
+.slabel{font-size:16px;font-weight:500;color:#000;line-height:26px;}
+
+/* ─── SPOT ITEMS (fiel al Figma: imagen con bm superpuesto, nombre, cat, SIN tag) ─── */
+.spots-list{display:flex;flex-direction:column;gap:12px;}
+
+.sitem{
+  background:#fff;border:1px solid var(--n200);border-radius:var(--rmd);
+  display:flex;align-items:center;gap:6px;padding:12px;cursor:pointer;
+  transition:box-shadow .12s;
+}
+.sitem:hover{box-shadow:var(--sh);}
+
+/* Imagen 90×90 con bookmark 30×30 superpuesto arriba-izquierda (padding 6px) */
+.sthumb{
+  width:90px;height:90px;border-radius:6px;overflow:hidden;
+  flex-shrink:0;position:relative;
+}
+.sthumb img{width:90px;height:90px;object-fit:cover;display:block;}
+.sthumb-bm{
+  position:absolute;top:6px;left:6px;
+  width:30px;height:30px;border-radius:var(--rmd);
+  background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .12s;
+  z-index:2;
+}
+.sthumb-bm:hover{background:#f0f5f3;}
+.sthumb-bm svg{width:20px;height:20px;fill:none;stroke:var(--tp);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.sthumb-bm.saved svg{fill:var(--pr);stroke:var(--pr);}
+
+/* Body: nombre + fila cat. Sin tag. */
+.sbody{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;justify-content:center;}
+.sname{font-size:14px;font-weight:600;color:#2a2d31;line-height:22px;letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.scat{display:flex;align-items:center;gap:4px;font-size:14px;color:var(--ts);line-height:22px;}
+.scat svg{width:16px;height:16px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ─── EMPTY ─── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;gap:12px;text-align:center;color:var(--tt);flex:1;}
+.empty svg{width:40px;height:40px;stroke:#cdd1d6;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;}
+.empty p{font-size:14px;line-height:20px;}
+
+/* ─── RIGHT PANEL ─── */
+.rp{flex:1;display:flex;overflow:hidden;}
+
+/* ─── MAP ─── */
+.mp{flex:1;position:relative;overflow:hidden;}
+#map{width:100%;height:100%;}
+.mfab{position:absolute;z-index:1000;top:16px;right:16px;width:40px;height:40px;background:#fff;border-radius:var(--rmd);display:flex;align-items:center;justify-content:center;box-shadow:var(--sh);cursor:pointer;border:none;transition:background .15s;color:var(--tp);}
+.mfab:hover{background:var(--bgs);}
+.mfab svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.leaflet-popup-content-wrapper{border-radius:10px!important;box-shadow:var(--shm)!important;padding:0!important;}
+.leaflet-popup-content{margin:0!important;width:auto!important;}
+.leaflet-popup-tip-container{display:none!important;}
+.mpop{padding:10px 14px;min-width:140px;font-family:var(--f);}
+.mpop-n{font-size:13px;font-weight:600;color:var(--tp);}
+.mpop-c{font-size:12px;color:var(--ts);margin-top:2px;}
+
+/* ─── SPOT DETAIL PANEL (Aside, 419px, sobre el área del mapa) ─── */
+.spot-aside{
+  width:419px;flex-shrink:0;
+  background:#fff;
+  border-right:1px solid var(--n200);
+  box-shadow:4px 0 24px rgba(0,0,0,0.04);
+  display:none;flex-direction:column;
+  overflow-y:auto;height:100%;
+  scrollbar-width:thin;scrollbar-color:var(--n200) transparent;
+  z-index:20;
+}
+.spot-aside.open{display:flex;}
+.spot-aside::-webkit-scrollbar{width:4px;}
+.spot-aside::-webkit-scrollbar-thumb{background:var(--n200);border-radius:4px;}
+
+/* Cover: 242px, imagen con gradiente */
+.sp-cover{
+  height:242px;flex-shrink:0;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:12px;
+}
+.sp-cover img.sp-img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+}
+.sp-cover-gradient{
+  position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 65%);
+}
+.sp-cover-top{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  position:relative;z-index:2;
+}
+.sp-cover-btn{
+  width:32px;height:32px;background:#fff;border-radius:var(--rmd);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border:none;transition:background .15s;flex-shrink:0;
+}
+.sp-cover-btn:hover{background:#f0f5f3;}
+.sp-cover-btn.saved svg{fill:var(--pr);stroke:var(--pr);}
+.sp-cover-btn svg{width:20px;height:20px;fill:none;stroke:var(--tp);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.sp-dots{
+  display:flex;gap:7px;align-items:center;justify-content:center;
+  position:relative;z-index:2;padding:3.5px;
+}
+.sp-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.45);}
+.sp-dot.active{background:#fff;}
+
+/* Body */
+.sp-body{
+  background:#fff;
+  padding:16px;
+  display:flex;flex-direction:column;gap:14px;
+  flex:1;
+}
+.sp-title{font-size:20px;font-weight:700;color:#2a2d31;line-height:32px;letter-spacing:-.02em;}
+.sp-meta{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.sp-stars{display:flex;gap:1.5px;align-items:center;}
+.sp-star{width:18px;height:18px;color:#fdd032;}
+.sp-star svg{width:18px;height:18px;fill:currentColor;}
+.sp-rating{font-size:14px;color:#1b352c;line-height:22px;margin-left:6px;}
+.sp-dot-sep{color:#1b352c;font-weight:700;font-size:18px;line-height:12px;margin:0 2px;}
+.sp-cat-row{display:flex;align-items:center;gap:4px;font-size:14px;color:var(--ts);}
+.sp-cat-row svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+/* CTA "Como llegar" — full width, borde n200 */
+.sp-cta{
+  width:100%;height:40px;
+  background:#fff;color:#2a2d31;
+  border:1px solid var(--n200);border-radius:var(--rmd);
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  font-size:14px;font-weight:700;font-family:var(--f);
+  cursor:pointer;letter-spacing:-.017em;
+  transition:background .15s;
+}
+.sp-cta:hover{background:var(--bgs);}
+.sp-cta svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Descripción */
+.sp-desc{font-size:14px;color:#2a2d31;line-height:22px;}
+.sp-desc a{font-size:14px;font-weight:600;color:#2a2d31;text-decoration:underline;letter-spacing:.01em;display:block;margin-top:6px;}
+.sp-desc a:hover{color:var(--pr);}
+
+/* Info rows — icono 24×24 en fondo #f8f9fa */
+.sp-info{display:flex;flex-direction:column;}
+.sp-info-row{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:12px 0 13px;
+  border-bottom:1px solid var(--n50);
+}
+.sp-info-row:last-child{border-bottom:none;}
+.sp-info-icon{
+  width:24px;height:24px;border-radius:6px;background:var(--bgs);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.sp-info-icon svg{width:16px;height:16px;fill:none;stroke:var(--ts);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.sp-info-content{flex:1;display:flex;flex-direction:column;gap:4px;}
+.sp-info-label{font-size:14px;font-weight:600;color:var(--ts);line-height:22px;letter-spacing:.01em;}
+.sp-info-value{font-size:14px;color:#2a2d31;line-height:22px;}
+.sp-info-link{font-size:14px;font-weight:600;color:#0060b2;text-decoration:underline;letter-spacing:.01em;}
+.sp-schedule{display:flex;flex-direction:column;gap:4px;}
+.sp-sched-row{display:flex;gap:4px;font-size:14px;line-height:22px;}
+.sp-sched-day{font-weight:600;color:#2a2d31;width:80px;flex-shrink:0;letter-spacing:.01em;}
+.sp-sched-time{color:#2a2d31;}
+
+/* ─── TOAST ─── */
+.toast-container{
+  position:fixed;
+  bottom:28px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  pointer-events:none;
+}
+.toast{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 16px;
+  background:#fff;
+  border-radius:8px;
+  box-shadow:0 8px 24px -4px rgba(0,0,0,.12),0 2px 6px -2px rgba(16,24,40,.06);
+  min-width:260px;
+  max-width:400px;
+  pointer-events:auto;
+  opacity:0;
+  transform:translateY(12px);
+  transition:opacity 220ms cubic-bezier(0.2,0,0,1), transform 220ms cubic-bezier(0.2,0,0,1);
+  will-change:opacity,transform;
+}
+.toast.toast-show{
+  opacity:1;
+  transform:translateY(0);
+}
+.toast.toast-hide{
+  opacity:0;
+  transform:translateY(8px);
+}
+.toast-icon{
+  width:24px;height:24px;border-radius:999px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.toast-icon.success{background:#59C09C;}
+.toast-icon.error{background:#FF789A;}
+.toast-msg{
+  font-size:14px;color:#021F15;
+  letter-spacing:-0.24px;
+  flex:1;
+  font-family:var(--f);
+  line-height:20px;
+}
+.toast-close{
+  color:#808F8A;cursor:pointer;
+  font-size:18px;line-height:1;
+  flex-shrink:0;background:none;border:none;
+  padding:0 2px;
+  font-family:sans-serif;
+}
+.toast-close:hover{color:var(--tp);}
+
+</style>
+</head>
+<body>
+
+<nav class="snav">
+  <div class="szone">
+    <div class="slogo-wrap">
+      <img src="https://www.figma.com/api/mcp/asset/1b9e6223-17da-4910-864b-e7236e76bf70" alt="Passporter"/>
+      <div class="scaret"><svg viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1"/></svg></div>
+    </div>
+  </div>
+  <div class="szone grow">
+    <div class="snav-inner">
+      <div class="snav-group">
+        <div class="si"><svg viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx=".8"/><rect x="9" y="1.5" width="5.5" height="5.5" rx=".8"/><rect x="9" y="9" width="5.5" height="5.5" rx=".8"/><rect x="1.5" y="9" width="5.5" height="5.5" rx=".8"/></svg></div>
+        <div class="si active"><svg viewBox="0 0 16 16"><path d="M12.5 14L8 10.5 3.5 14V3a1 1 0 011-1h7a1 1 0 011 1z"/></svg></div>
+        <div class="si"><svg viewBox="0 0 16 16"><polygon points="1 4 1 14.5 5.5 12 10.5 14.5 15 12 15 1.5 10.5 4 5.5 1.5"/><line x1="5.5" y1="1.5" x2="5.5" y2="12"/><line x1="10.5" y1="4" x2="10.5" y2="14.5"/></svg></div>
+        <div class="si"><svg viewBox="0 0 16 16"><rect x="2.5" y="1" width="11" height="14" rx="1"/><path d="M5.5 1.5v1a.5.5 0 00.5.5h4a.5.5 0 00.5-.5v-1"/><line x1="5" y1="7.5" x2="11" y2="7.5"/><line x1="5" y1="10" x2="11" y2="10"/></svg></div>
+        <div class="si"><svg viewBox="0 0 16 16"><path d="M9.5 1.5H4a1 1 0 00-1 1v11a1 1 0 001 1h8a1 1 0 001-1V6z"/><polyline points="9.5 1.5 9.5 6 14 6"/></svg></div>
+        <div class="si"><svg viewBox="0 0 16 16"><rect x="1" y="5" width="14" height="9" rx="1.2"/><path d="M5.5 5V3.5a1 1 0 011-1h3a1 1 0 011 1V5"/></svg></div>
+      </div>
+      <div class="sdiv"></div>
+      <div class="snav-group">
+        <div class="si"><svg viewBox="0 0 16 16"><path d="M1.5 5.5a2 2 0 000 5V13a.5.5 0 00.5.5h12a.5.5 0 00.5-.5v-2.5a2 2 0 000-5V3a.5.5 0 00-.5-.5H2a.5.5 0 00-.5.5z"/><line x1="10" y1="3" x2="10" y2="13" stroke-dasharray="1.5 1.5"/></svg></div>
+        <div class="si"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M8 1.5C6.5 3.5 5.5 5.5 5.5 8s1 4.5 2.5 6.5M8 1.5C9.5 3.5 10.5 5.5 10.5 8s-1 4.5-2.5 6.5"/><line x1="1.5" y1="8" x2="14.5" y2="8"/><path d="M2.5 5h11M2.5 11h11"/></svg></div>
+      </div>
+    </div>
+  </div>
+  <div class="szone slim">
+    <div class="snav-group">
+      <div class="si"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M6.2 6a2 2 0 013.8.8c0 1.3-2 2-2 3"/><circle cx="8" cy="11.5" r=".5" fill="currentColor"/></svg></div>
+      <div class="si"><svg viewBox="0 0 16 16"><path d="M10.5 14v-1.5a3 3 0 00-3-3h-5a3 3 0 00-3 3V14"/><circle cx="5" cy="5.5" r="2.5"/><line x1="13" y1="4" x2="13" y2="8"/><line x1="11" y1="6" x2="15" y2="6"/></svg></div>
+      <div class="si"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2"/><path d="M13.3 9.9l.5.9a.6.6 0 01-.2.8l-1.1.6a.6.6 0 01-.8-.2l-.5-.9a5 5 0 01-1.4.6l-.2 1a.6.6 0 01-.6.5H7.9a.6.6 0 01-.6-.5l-.2-1a5 5 0 01-1.4-.6l-.9.5a.6.6 0 01-.8-.2l-.6-1.1a.6.6 0 01.2-.8l.9-.5a5 5 0 010-1.6l-.9-.5a.6.6 0 01-.2-.8l.6-1.1a.6.6 0 01.8-.2l.9.5a5 5 0 011.4-.6l.2-1A.6.6 0 017.9 2h1.2a.6.6 0 01.6.5l.2 1a5 5 0 011.4.6l.9-.5a.6.6 0 01.8.2l.6 1.1a.6.6 0 01-.2.8l-.9.5a5 5 0 010 1.6z"/></svg></div>
+    </div>
+  </div>
+</nav>
+
+<div class="app">
+  <!-- Left panel (posición relative para que el detalle se superponga) -->
+  <div class="lp">
+    <!-- Lista de guías -->
+    <div id="listView" style="display:flex;flex-direction:column;overflow:hidden;flex:1;">
+      <div class="lph"><div class="ptitle">Mis sitios</div></div>
+      <div class="tabs">
+        <div class="tab active" data-tab="parati"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Para ti</div>
+        <div class="tab" data-tab="explorar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>Explorar</div>
+        <div class="tab" data-tab="guardados"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>Guardados</div>
+      </div>
+      <div class="filters" id="filtersBar">
+        <button class="fp active" data-filter="todos"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Todos</button>
+        <button class="fp" data-filter="recomendados"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Recomendados</button>
+        <button class="fp" data-filter="cultura"><svg viewBox="0 0 24 24"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>Cultura e Historia</button>
+        <button class="fp" data-filter="gastronomia"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><line x1="7" y1="2" x2="7" y2="11"/><path d="M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>Gastronomía</button>
+        <button class="fp" data-filter="quehacer"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Qué hacer</button>
+        <button class="fp" data-filter="alojamientos"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Alojamientos</button>
+        <button class="fp" data-filter="naturaleza"><svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-8 2s0-3-3-3a5 5 0 00-5 5 6.5 6.5 0 001 3.5"/></svg>Naturaleza</button>
+      </div>
+      <div class="gl" id="guidesList"></div>
+    </div>
+
+    <!-- Detalle — superpuesto, fondo #f8f9fa, ocupa todo el .lp via position:absolute -->
+    <div class="dp" id="detailPanel">
+      <div class="dbk" id="btnBack">
+        <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Volver a guias
+      </div>
+      <div class="dscroll" id="detailScroll">
+        <div class="dhero" id="dHero"></div>
+        <div class="dinfo" id="dInfo"></div>
+        <div class="slabel" id="dSection"></div>
+        <div class="spots-list" id="dSpots"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: map -->
+  <div class="rp">
+
+    <!-- Spot detail aside (se abre sobre el área de mapa, desde la izquierda) -->
+    <div class="spot-aside" id="spotAside">
+      <div class="sp-cover">
+        <img class="sp-img" id="spImg" src="" alt=""/>
+        <div class="sp-cover-gradient"></div>
+        <div class="sp-cover-top">
+          <button class="sp-cover-btn" id="spBmBtn" title="Guardar">
+            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17L10 13.5 5 17V4a1.5 1.5 0 011.5-1.5h7A1.5 1.5 0 0115 4z"/></svg>
+          </button>
+          <button class="sp-cover-btn" id="spCloseBtn" title="Cerrar">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/></svg>
+          </button>
+        </div>
+        <div class="sp-dots">
+          <div class="sp-dot active"></div>
+          <div class="sp-dot"></div>
+          <div class="sp-dot"></div>
+          <div class="sp-dot"></div>
+        </div>
+      </div>
+      <div class="sp-body">
+        <div>
+          <div class="sp-title" id="spTitle"></div>
+          <div class="sp-meta" id="spMeta"></div>
+        </div>
+        <button class="sp-cta">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h-3a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1v-3"/><polyline points="9.5 2.5 13.5 2.5 13.5 6.5"/><line x1="7.5" y1="8.5" x2="13.5" y2="2.5"/></svg>
+          Como llegar
+        </button>
+        <div class="sp-desc">
+          <p id="spDesc"></p>
+          <a href="#">Más información</a>
+        </div>
+        <div class="sp-info" id="spInfo"></div>
+      </div>
+    </div>
+    <div class="mp">
+      <div id="map"></div>
+      <button class="mfab" id="btnLocate"><svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></button>
+    </div>
+</div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ── TOAST ── */
+function showToast(msg, type) {
+  type = type || 'success';
+  var container = document.getElementById('toastContainer');
+  var t = document.createElement('div');
+  t.className = 'toast';
+
+  var iconSvg = type === 'success'
+    ? '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="m3 7 3 3 5-6" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    : '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 4l6 6M10 4l-6 6" stroke="#FFF" stroke-width="2" stroke-linecap="round"/></svg>';
+
+  t.innerHTML =
+    '<div class="toast-icon ' + type + '">' + iconSvg + '</div>' +
+    '<div class="toast-msg">' + msg + '</div>' +
+    '<button class="toast-close" aria-label="Cerrar">×</button>';
+
+  container.appendChild(t);
+
+  // Force reflow then animate in
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { t.classList.add('toast-show'); });
+  });
+
+  var tid;
+  function dismiss() {
+    clearTimeout(tid);
+    t.classList.remove('toast-show');
+    t.classList.add('toast-hide');
+    setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 260);
+  }
+
+  t.querySelector('.toast-close').addEventListener('click', dismiss);
+  tid = setTimeout(dismiss, 3500);
+}
+
+var PH="data:image/png;base64,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";
+
+var ICO_BM='<svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 17.5L10 13.5 4.5 17.5V4a1.5 1.5 0 011.5-1.5h8A1.5 1.5 0 0115.5 4z"/></svg>';
+var ICO_BMF='<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 17.5L10 13.5 4.5 17.5V4a1.5 1.5 0 011.5-1.5h8A1.5 1.5 0 0115.5 4z"/></svg>';
+var ICO_CAR='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+var ICO_SCH='<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#cdd1d6" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+
+function catIcon(t){
+  var icons={
+    "Monumento":'<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="14" x2="14" y2="14"/><line x1="4.5" y1="11" x2="4.5" y2="7"/><line x1="7" y1="11" x2="7" y2="7"/><line x1="9.5" y1="11" x2="9.5" y2="7"/><line x1="12" y1="11" x2="12" y2="7"/><polygon points="8 2 14 6 2 6"/></svg>',
+    "Parque":'<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 14V9m0 0C3 9 1.5 7.5 1.5 5.5S3 2 5 2s3.5 1.5 3.5 3.5S7 9 5 9zm6-1V3"/><path d="M11 8c-1.5 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.5 3-3 3z"/><line x1="11" y1="8" x2="11" y2="14"/></svg>',
+    "Playa":'<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13c2-2 4-2 6 0s4 2 6 0"/><path d="M8 10V5"/><circle cx="8" cy="3.5" r="1.5"/></svg>',
+    "Mercado":'<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h12l-1.5 5H3.5z"/><rect x="3" y="8" width="10" height="5" rx="1"/></svg>',
+    "Arquitectura":'<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="12" height="7" rx="1"/><path d="M5 7V5a1 1 0 011-1h4a1 1 0 011 1v2"/><line x1="8" y1="10" x2="8" y2="10" stroke-width="2.5" stroke-linecap="round"/></svg>',
+    "Basílica":'<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="14" x2="14" y2="14"/><line x1="4.5" y1="11" x2="4.5" y2="7"/><line x1="7" y1="11" x2="7" y2="7"/><line x1="9.5" y1="11" x2="9.5" y2="7"/><line x1="12" y1="11" x2="12" y2="7"/><polygon points="8 2 14 6 2 6"/></svg>',
+    "Bar histórico":'<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v4a3 3 0 003 3h.5m5-7V2"/><path d="M10 2v3.5c0 1 .7 2.5 2 2.5h.5"/><line x1="6.5" y1="9" x2="6.5" y2="14"/><line x1="4" y1="14" x2="9" y2="14"/></svg>',
+    "Mirador":'<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6" r="2.5"/><circle cx="8" cy="6" r="1"/><path d="M5.5 12.5l.5-3h4l.5 3"/><line x1="2" y1="12.5" x2="14" y2="12.5"/></svg>',
+    "Hotel de lujo":'<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7l6-5 6 5v7a1 1 0 01-1 1H3a1 1 0 01-1-1z"/><polyline points="6 14 6 8 10 8 10 14"/></svg>'
+  };
+  return icons[t]||'<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6.5" r="2.5"/><path d="M8 1a7 7 0 017 7c0 4.5-7 8-7 8s-7-3.5-7-8a7 7 0 017-7z"/></svg>';
+}
+
+/* Solo tab "parati" tiene guías; explorar y guardados vacíos */
+var GUIDES=[
+  {id:1,tab:"parati",cat:"recomendados",badge:"Recomendado",title:"Pack completo Barcelona",desc:"Guía completa para que no te pierdas nada de Barcelona.",count:"10 lugares",col:"#007a51",c:[41.3851,2.1734],z:13,
+   spots:[{n:"Sagrada Família",t:"Monumento",la:41.4036,lo:2.1744},{n:"Park Güell",t:"Parque",la:41.4145,lo:2.1527},{n:"La Barceloneta",t:"Playa",la:41.3792,lo:2.1929},{n:"Mercat de la Boqueria",t:"Mercado",la:41.3817,lo:2.1717},{n:"Casa Batlló",t:"Arquitectura",la:41.3916,lo:2.1650},{n:"Palau de la Música",t:"Monumento",la:41.3876,lo:2.1752}]},
+  {id:2,tab:"parati",cat:"cultura",badge:"Cultura e Historia",title:"Obras maestras de Antoni Gaudí",desc:"Sumérgete en el genio del modernismo catalán.",count:"8 lugares",col:"#3b5bdb",c:[41.3990,2.1550],z:14,
+   spots:[{n:"Sagrada Família",t:"Basílica",la:41.4036,lo:2.1744},{n:"Park Güell",t:"Parque",la:41.4145,lo:2.1527},{n:"Casa Batlló",t:"Arquitectura",la:41.3916,lo:2.1650},{n:"Casa Milà · La Pedrera",t:"Arquitectura",la:41.3954,lo:2.1620},{n:"Palau Güell",t:"Monumento",la:41.3787,lo:2.1743}]},
+  {id:3,tab:"parati",cat:"gastronomia",badge:"Gastronomía",title:"Los bares más icónicos de Barcelona",desc:"Donde la diversión nunca se detiene.",count:"4 lugares",col:"#c05621",c:[41.3870,2.1720],z:14,
+   spots:[{n:"Bar Marsella",t:"Bar histórico",la:41.3788,lo:2.1732},{n:"El Xampanyet",t:"Bar histórico",la:41.3843,lo:2.1823},{n:"Bodega Sepúlveda",t:"Bar histórico",la:41.3836,lo:2.1608},{n:"Bar Calders",t:"Bar histórico",la:41.3762,lo:2.1613}]},
+  {id:4,tab:"parati",cat:"naturaleza",badge:"Naturaleza",title:"Parques imprescindibles de la ciudad",desc:"Escapa del bullicio y disfruta de la tranquilidad.",count:"3 oasis urbanos",col:"#16a34a",c:[41.4050,2.1650],z:13,
+   spots:[{n:"Park Güell",t:"Parque",la:41.4145,lo:2.1527},{n:"Parc de la Ciutadella",t:"Parque",la:41.3863,lo:2.1860},{n:"Jardins de Laribal",t:"Parque",la:41.3707,lo:2.1518}]},
+  {id:5,tab:"parati",cat:"quehacer",badge:"Qué hacer",title:"Miradores con las mejores vistas",desc:"Barcelona desde las alturas: vistas 360° que no olvidarás.",count:"5 miradores",col:"#d97706",c:[41.3980,2.1600],z:12,
+   spots:[{n:"Bunkers del Carmel",t:"Mirador",la:41.4259,lo:2.1701},{n:"Tibidabo",t:"Mirador",la:41.4218,lo:2.1190},{n:"Montjuïc",t:"Mirador",la:41.3640,lo:2.1600},{n:"Torre de Collserola",t:"Mirador",la:41.4185,lo:2.1139},{n:"MNAC · Palau Nacional",t:"Mirador",la:41.3683,lo:2.1536}]},
+  {id:6,tab:"parati",cat:"alojamientos",badge:"Alojamientos",title:"Hoteles con encanto en Barcelona",desc:"Desde boutique a gran lujo: donde dormir bien importa.",count:"6 hoteles",col:"#9333ea",c:[41.3900,2.1700],z:14,
+   spots:[{n:"Hotel Arts Barcelona",t:"Hotel de lujo",la:41.3840,lo:2.1956},{n:"Mandarin Oriental",t:"Hotel de lujo",la:41.3921,lo:2.1649},{n:"Hotel Neri",t:"Hotel de lujo",la:41.3835,lo:2.1745},{n:"W Barcelona",t:"Hotel de lujo",la:41.3715,lo:2.1924}]}
+];
+
+var mapObj=null,markers=[],ag=null,activeTab="parati";
+
+/* ── MAP ── */
+function initMap(){
+  mapObj=L.map("map",{center:[41.3851,2.1734],zoom:13,zoomControl:false});
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:'© <a href="https://www.openstreetmap.org/copyright">OSM</a>',maxZoom:19}).addTo(mapObj);
+  L.control.zoom({position:"bottomright"}).addTo(mapObj);
+  showAllPins();
+}
+function mkIco(c){return L.divIcon({html:"<div style='background:"+c+";width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.28);'></div>",className:"",iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-28]});}
+function clearM(){markers.forEach(function(m){m.remove();});markers=[];}
+function visibleGuides(){
+  var f=(document.querySelector(".fp.active")||{dataset:{filter:"todos"}}).dataset.filter;
+  return GUIDES.filter(function(g){return g.tab===activeTab&&(f==="todos"||g.cat===f);});
+}
+function showAllPins(){
+  clearM();
+  visibleGuides().forEach(function(g){
+    var m=L.marker(g.c,{icon:mkIco(g.col)}).addTo(mapObj)
+      .bindPopup("<div class='mpop'><div class='mpop-n'>"+g.title+"</div><div class='mpop-c'>"+g.count+"</div></div>",{closeButton:false});
+    m.on("click",function(){openGuide(g.id);});
+    markers.push(m);
+  });
+}
+function showSpotPins(g){
+  clearM();
+  var bounds=[];
+  g.spots.forEach(function(s){
+    var m=L.marker([s.la,s.lo],{icon:mkIco(g.col)}).addTo(mapObj)
+      .bindPopup("<div class='mpop'><div class='mpop-n'>"+s.n+"</div><div class='mpop-c'>"+s.t+"</div></div>",{closeButton:false});
+    markers.push(m);bounds.push([s.la,s.lo]);
+  });
+  if(bounds.length) mapObj.fitBounds(bounds,{padding:[40,40],maxZoom:15});
+}
+
+/* ── LIST ── */
+function renderList(){
+  var list=document.getElementById("guidesList"),gs=visibleGuides();
+  if(!gs.length){
+    list.innerHTML="<div class='empty'>"+ICO_SCH+"<p>No hay guías para<br>esta categoría.</p></div>";
+    return;
+  }
+  list.innerHTML=gs.map(function(g){
+    return "<div class='gc"+(ag&&ag.id===g.id?" active":"")+"' data-id='"+g.id+"'>"+
+      "<div class='gcimg'><img src='"+PH+"' alt=''/></div>"+
+      "<div class='gcb'><div class='gctop'><span class='gcbadge'>"+g.badge+"</span><div class='gctitle'>"+g.title+"</div><div class='gcdesc'>"+g.desc+"</div></div><div class='gcmeta'>"+g.count+"</div></div>"+
+      "<div class='gcarr'>"+ICO_CAR+"</div></div>";
+  }).join("");
+  list.querySelectorAll(".gc").forEach(function(c){c.addEventListener("click",function(){openGuide(parseInt(c.dataset.id));});});
+}
+
+/* ── DETAIL: se abre encima del left panel ── */
+function openGuide(id){
+  var g=GUIDES.filter(function(x){return x.id===id;})[0];if(!g)return;
+  ag=g;
+  document.querySelectorAll(".gc").forEach(function(c){c.classList.toggle("active",parseInt(c.dataset.id)===id);});
+
+  /* Mostrar el panel de detalle (position:absolute sobre el left panel) */
+  document.getElementById("detailPanel").classList.add("open");
+
+  document.getElementById("dHero").innerHTML="<img src='"+PH+"' alt=''/>";
+
+  document.getElementById("dInfo").innerHTML=
+    "<span class='dbadge'>"+g.badge+"</span>"+
+    "<div class='dtitle'>"+g.title+"</div>"+
+    "<div class='ddesc'>"+g.desc+"</div>"+
+    "<div class='dmeta'>"+g.count+"</div>"+
+    "<button class='dcta' id='btnSave' data-saved='false'>Guardar los "+g.count+"</button>";
+
+  document.getElementById("btnSave").addEventListener("click",function(){
+    var saved=this.dataset.saved==="true";
+    this.dataset.saved=String(!saved);
+    this.classList.toggle("saved",!saved);
+    this.textContent=!saved?"✓ Guardados":"Guardar los "+g.count;
+    if(!saved){
+      showToast("Sitios guardados en Mis lugares","success");
+    }
+  });
+
+  document.getElementById("dSection").textContent="Selección";
+
+  /* Spots: imagen con bm superpuesto + nombre + cat. SIN tag. */
+  document.getElementById("dSpots").innerHTML=g.spots.map(function(s){
+    var isSaved = savedSpots[s.n] === true;
+    return "<div class='sitem' data-name='"+s.n+"' data-cat='"+s.t+"'>"+
+      "<div class='sthumb'>"+
+        "<img src='"+PH+"' alt=''/>"+
+        "<div class='sthumb-bm"+(isSaved?" saved":"")+"' data-saved='"+(isSaved?"true":"false")+"' data-spot='"+s.n+"'>"+(isSaved?ICO_BMF:ICO_BM)+"</div>"+
+      "</div>"+
+      "<div class='sbody'>"+
+        "<div class='sname'>"+s.n+"</div>"+
+        "<div class='scat'>"+catIcon(s.t)+" "+s.t+"</div>"+
+      "</div>"+
+    "</div>";
+  }).join("");
+
+  /* Toggle bookmark en imagen */
+  /* Click en el spot item abre la ficha */
+  document.getElementById("dSpots").querySelectorAll(".sitem").forEach(function(item){
+    item.addEventListener("click",function(e){
+      if(e.target.closest(".sthumb-bm")) return;
+      var name=item.dataset.name, cat=item.dataset.cat;
+      openSpot(name,cat);
+    });
+  });
+  document.getElementById("dSpots").querySelectorAll(".sthumb-bm").forEach(function(btn){
+    btn.addEventListener("click",function(e){
+      e.stopPropagation();
+      var name = btn.dataset.spot;
+      var saved = btn.dataset.saved === "true";
+      setSpotSaved(name, !saved);
+      if(!saved){
+        showToast("Sitio guardado en Mis lugares","success");
+      }
+    });
+  });
+
+  document.getElementById("detailScroll").scrollTop=0;
+  showSpotPins(g);
+}
+
+/* ── BACK ── */
+document.getElementById("btnBack").addEventListener("click",function(){
+  document.getElementById("detailPanel").classList.remove("open");
+  document.getElementById("spotAside").classList.remove("open");
+  ag=null;
+  document.querySelectorAll(".gc").forEach(function(c){c.classList.remove("active");});
+  showAllPins();
+  mapObj.setView([41.3851,2.1734],13);
+});
+
+/* ── FILTERS ── */
+document.querySelectorAll(".fp").forEach(function(p){
+  p.addEventListener("click",function(){
+    document.querySelectorAll(".fp").forEach(function(x){x.classList.remove("active");});
+    p.classList.add("active");
+    if(ag){document.getElementById("detailPanel").classList.remove("open");ag=null;}
+    renderList();showAllPins();
+  });
+});
+
+/* ── TABS ── */
+document.querySelectorAll(".tab").forEach(function(t){
+  t.addEventListener("click",function(){
+    document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("active");});
+    t.classList.add("active");
+    activeTab=t.dataset.tab;
+    document.querySelectorAll(".fp").forEach(function(x){x.classList.remove("active");});
+    document.querySelector("[data-filter='todos']").classList.add("active");
+    if(ag){document.getElementById("detailPanel").classList.remove("open");ag=null;}
+    renderList();showAllPins();
+  });
+});
+
+document.getElementById("btnLocate").addEventListener("click",function(){
+  if(ag)showSpotPins(ag);else mapObj.setView([41.3851,2.1734],13);
+});
+
+
+/* ── SPOT DATA (fake enriched data per spot name) ── */
+var SPOT_DATA = {
+  "Sagrada Família": {desc:"Obra maestra inacabada de Antoni Gaudí, declarada Patrimonio de la Humanidad por la UNESCO. Un símbolo irrenunciable de Barcelona.",dir:"Carrer de Mallorca, 401, 08013 Barcelona",tel:"+34 932 08 04 14",web:"www.sagradafamilia.org",h:{"Lunes":"09:00–18:00","Martes":"09:00–18:00","Miércoles":"09:00–18:00","Jueves":"09:00–18:00","Viernes":"09:00–18:00","Sábado":"09:00–18:00","Domingo":"10:30–18:00"},cat:"Monumento",rating:4.8},
+  "Park Güell": {desc:"Parque público con jardines y obras arquitectónicas de Antoni Gaudí, declarado Patrimonio de la Humanidad. Vistas panorámicas únicas de Barcelona.",dir:"Carrer d'Olot, s/n, 08024 Barcelona",tel:"+34 934 09 18 31",web:"www.parkguell.barcelona",h:{"Lunes":"08:00–18:30","Martes":"08:00–18:30","Miércoles":"08:00–18:30","Jueves":"08:00–18:30","Viernes":"08:00–18:30","Sábado":"08:00–18:30","Domingo":"08:00–18:30"},cat:"Parque",rating:4.7},
+  "La Barceloneta": {desc:"El barrio marinero y la playa urbana más famosa de Barcelona. Ideal para disfrutar del sol, el mar y la gastronomía local.",dir:"Barceloneta, 08003 Barcelona",tel:"—",web:"—",h:{"Lunes":"Todo el día","Martes":"Todo el día","Miércoles":"Todo el día","Jueves":"Todo el día","Viernes":"Todo el día","Sábado":"Todo el día","Domingo":"Todo el día"},cat:"Playa",rating:4.3},
+  "Mercat de la Boqueria": {desc:"El mercado más famoso de Barcelona, lleno de colores y sabores. Un lugar imprescindible para los amantes de la gastronomía.",dir:"La Rambla, 91, 08001 Barcelona",tel:"+34 933 18 25 84",web:"www.boqueria.barcelona",h:{"Lunes":"08:00–20:30","Martes":"08:00–20:30","Miércoles":"08:00–20:30","Jueves":"08:00–20:30","Viernes":"08:00–20:30","Sábado":"08:00–20:30","Domingo":"Cerrado"},cat:"Mercado",rating:4.4},
+  "Casa Batlló": {desc:"Uno de los edificios más emblemáticos de Gaudí en el Passeig de Gràcia. Su fachada ondulante y sus interiores son pura magia modernista.",dir:"Passeig de Gràcia, 43, 08007 Barcelona",tel:"+34 932 16 03 06",web:"www.casabatllo.es",h:{"Lunes":"09:00–21:00","Martes":"09:00–21:00","Miércoles":"09:00–21:00","Jueves":"09:00–21:00","Viernes":"09:00–21:00","Sábado":"09:00–21:00","Domingo":"09:00–21:00"},cat:"Arquitectura",rating:4.8},
+  "Palau de la Música": {desc:"Joya del modernismo catalán diseñada por Lluís Domènech i Montaner. Declarada Patrimonio de la Humanidad, ofrece conciertos de primer nivel.",dir:"Carrer del Palau de la Música, 4-6, 08003 Barcelona",tel:"+34 902 44 28 82",web:"www.palaumusica.cat",h:{"Lunes":"09:30–15:30","Martes":"09:30–15:30","Miércoles":"09:30–15:30","Jueves":"09:30–15:30","Viernes":"09:30–15:30","Sábado":"09:30–15:30","Domingo":"09:30–15:30"},cat:"Monumento",rating:4.7},
+  "Casa Milà · La Pedrera": {desc:"Última gran obra civil de Gaudí, con su famosa azotea de guerreros y chimeneas esculturales. Un icono del Passeig de Gràcia.",dir:"Passeig de Gràcia, 92, 08008 Barcelona",tel:"+34 902 40 09 73",web:"www.lapedrera.com",h:{"Lunes":"09:00–20:30","Martes":"09:00–20:30","Miércoles":"09:00–20:30","Jueves":"09:00–20:30","Viernes":"09:00–20:30","Sábado":"09:00–20:30","Domingo":"09:00–20:30"},cat:"Arquitectura",rating:4.7},
+  "Palau Güell": {desc:"Palacio construido por Gaudí para la familia Güell entre 1886 y 1890. Primera gran obra maestra del arquitecto, llena de detalles únicos.",dir:"Carrer Nou de la Rambla, 3-5, 08001 Barcelona",tel:"+34 934 72 57 75",web:"www.palauguell.cat",h:{"Lunes":"Cerrado","Martes":"10:00–17:30","Miércoles":"10:00–17:30","Jueves":"10:00–17:30","Viernes":"10:00–17:30","Sábado":"10:00–17:30","Domingo":"10:00–17:30"},cat:"Monumento",rating:4.6},
+  "Bar Marsella": {desc:"El bar más antiguo de Barcelona, abierto desde 1820. Famoso por su absenta y su ambiente sin tiempo, frecuentado por Picasso y Hemingway.",dir:"Carrer de Sant Pau, 65, 08001 Barcelona",tel:"—",web:"—",h:{"Lunes":"Cerrado","Martes":"22:00–02:30","Miércoles":"22:00–02:30","Jueves":"22:00–02:30","Viernes":"22:00–03:00","Sábado":"22:00–03:00","Domingo":"Cerrado"},cat:"Bar histórico",rating:4.5},
+  "El Xampanyet": {desc:"Tasca tradicional del barrio del Born, especializada en cava y tapas. Un clásico imprescindible con mucho ambiente.",dir:"Carrer de Montcada, 22, 08003 Barcelona",tel:"+34 933 19 70 03",web:"—",h:{"Lunes":"Cerrado","Martes":"12:00–15:30","Miércoles":"12:00–15:30","Jueves":"12:00–15:30","Viernes":"12:00–15:30","Sábado":"12:00–15:30","Domingo":"12:00–15:30"},cat:"Bar histórico",rating:4.4},
+  "Bunkers del Carmel": {desc:"Antiguas baterías antiaéreas de la Guerra Civil. Hoy son el mirador más popular de Barcelona, con vistas 360° de la ciudad.",dir:"Turó de la Rovira, s/n, 08032 Barcelona",tel:"—",web:"—",h:{"Lunes":"Todo el día","Martes":"Todo el día","Miércoles":"Todo el día","Jueves":"Todo el día","Viernes":"Todo el día","Sábado":"Todo el día","Domingo":"Todo el día"},cat:"Mirador",rating:4.8},
+  "Parc de la Ciutadella": {desc:"El pulmón verde más grande del centro de Barcelona. Alberga el zoo, el lago artificial, la cascada de Gaudí y el Parlament de Catalunya.",dir:"Passeig de Picasso, s/n, 08003 Barcelona",tel:"—",web:"—",h:{"Lunes":"10:00–22:30","Martes":"10:00–22:30","Miércoles":"10:00–22:30","Jueves":"10:00–22:30","Viernes":"10:00–22:30","Sábado":"10:00–22:30","Domingo":"10:00–22:30"},cat:"Parque",rating:4.7}
+};
+
+function getSpotData(name) {
+  return SPOT_DATA[name] || {
+    desc:"Un lugar emblemático de Barcelona que no te puedes perder.",
+    dir:"Barcelona, España",tel:"—",web:"—",
+    h:{"Lunes":"10:00–20:00","Martes":"10:00–20:00","Miércoles":"10:00–20:00","Jueves":"10:00–20:00","Viernes":"10:00–20:00","Sábado":"10:00–20:00","Domingo":"10:00–20:00"},
+    cat:"Punto de interés",rating:4.5
+  };
+}
+
+/* ── SAVED SPOTS STATE (fuente de verdad compartida) ── */
+var savedSpots = {};
+
+function setSpotSaved(name, saved) {
+  savedSpots[name] = saved;
+
+  // Sincronizar el botón de la lista (sthumb-bm)
+  var listBtn = document.querySelector('.sthumb-bm[data-spot="' + name + '"]');
+  if (listBtn) {
+    listBtn.dataset.saved = String(saved);
+    listBtn.classList.toggle('saved', saved);
+    listBtn.innerHTML = saved ? ICO_BMF : ICO_BM;
+  }
+
+  // Sincronizar el botón del aside si es el mismo spot abierto
+  var aside = document.getElementById('spotAside');
+  if (aside.classList.contains('open') && aside.dataset.spot === name) {
+    var bmBtn = document.getElementById('spBmBtn');
+    bmBtn.classList.toggle('saved', saved);
+    bmBtn.innerHTML = saved
+      ? '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17L10 13.5 5 17V4a1.5 1.5 0 011.5-1.5h7A1.5 1.5 0 0115 4z"/></svg>'
+      : '<svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17L10 13.5 5 17V4a1.5 1.5 0 011.5-1.5h7A1.5 1.5 0 0115 4z"/></svg>';
+  }
+}
+
+function renderStars(r) {
+  var full = Math.floor(r), half = r % 1 >= 0.5;
+  var html = '';
+  for (var i=0;i<5;i++) {
+    var fill = (i<full) ? '#fdd032' : (i===full&&half) ? 'url(#halfGrad)' : '#d9d9d9';
+    html += '<svg viewBox="0 0 18 18" width="18" height="18"><defs><linearGradient id="halfGrad"><stop offset="50%" stop-color="#fdd032"/><stop offset="50%" stop-color="#d9d9d9"/></linearGradient></defs><path d="M9 1.5l2.06 4.17 4.6.67-3.33 3.24.79 4.58L9 11.77l-4.12 2.19.79-4.58L2.34 6.34l4.6-.67z" fill="'+fill+'"/></svg>';
+  }
+  return html;
+}
+
+function openSpot(spot, catType) {
+  var d = getSpotData(spot);
+  var aside = document.getElementById('spotAside');
+
+  // image
+  document.getElementById('spImg').src = PH;
+
+  // bookmark state — se sincroniza desde savedSpots más abajo
+  var bmBtn = document.getElementById('spBmBtn');
+
+  // title
+  document.getElementById('spTitle').textContent = spot;
+
+  // meta: stars + rating + cat
+  var catIcon = '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7" r="3"/><path d="M8 1a7 7 0 017 7c0 4.5-7 8-7 8s-7-3.5-7-8a7 7 0 017-7z"/></svg>';
+  document.getElementById('spMeta').innerHTML =
+    '<div style="display:flex;align-items:center;gap:1.5px">'+renderStars(d.rating)+'</div>'+
+    '<span class="sp-rating">'+d.rating+'</span>'+
+    '<span class="sp-dot-sep">·</span>'+
+    '<div class="sp-cat-row">'+catIcon+' '+(d.cat||catType)+'</div>';
+
+  // desc
+  document.getElementById('spDesc').textContent = d.desc;
+
+  // info rows
+  var rows = '';
+  // Dirección
+  rows += '<div class="sp-info-row">'+
+    '<div class="sp-info-icon"><svg viewBox="0 0 16 16"><path d="M8 1a6 6 0 016 6c0 4-6 8-6 8S2 11 2 7a6 6 0 016-6z"/><circle cx="8" cy="7" r="2"/></svg></div>'+
+    '<div class="sp-info-content"><div class="sp-info-label">Dirección</div><div class="sp-info-value">'+d.dir+'</div></div>'+
+  '</div>';
+  // Contacto
+  if (d.tel !== '—') rows += '<div class="sp-info-row">'+
+    '<div class="sp-info-icon"><svg viewBox="0 0 16 16"><path d="M14 11v2a1 1 0 01-1 1 12 12 0 01-11-11 1 1 0 011-1h2a1 1 0 011 .9l.4 2a1 1 0 01-.3.9l-.8.8a9 9 0 004.1 4.1l.8-.8a1 1 0 01.9-.3l2 .4a1 1 0 01.9 1z"/></svg></div>'+
+    '<div class="sp-info-content"><div class="sp-info-label">Contacto</div><a class="sp-info-link" href="tel:'+d.tel+'">'+d.tel+'</a></div>'+
+  '</div>';
+  // Web
+  if (d.web !== '—') rows += '<div class="sp-info-row">'+
+    '<div class="sp-info-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 2C6.5 4 5.5 6 5.5 8s1 4 2.5 6M8 2c1.5 2 2.5 4 2.5 6s-1 4-2.5 6"/><line x1="2" y1="8" x2="14" y2="8"/></svg></div>'+
+    '<div class="sp-info-content"><div class="sp-info-label">Página web</div><a class="sp-info-link" href="https://'+d.web+'" target="_blank">'+d.web+'</a></div>'+
+  '</div>';
+  // Horario
+  var sched = '<div class="sp-schedule">';
+  Object.keys(d.h).forEach(function(day){
+    sched += '<div class="sp-sched-row"><span class="sp-sched-day">'+day+':</span><span class="sp-sched-time">'+d.h[day]+'</span></div>';
+  });
+  sched += '</div>';
+  rows += '<div class="sp-info-row">'+
+    '<div class="sp-info-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><polyline points="8 5 8 8 10.5 10"/></svg></div>'+
+    '<div class="sp-info-content"><div class="sp-info-label">Horario</div>'+sched+'</div>'+
+  '</div>';
+
+  document.getElementById('spInfo').innerHTML = rows;
+
+  // show aside
+  aside.dataset.spot = spot;
+  aside.classList.add('open');
+
+  // bookmark: leer estado desde savedSpots
+  var isSaved = savedSpots[spot] === true;
+  bmBtn.classList.toggle('saved', isSaved);
+  bmBtn.innerHTML = isSaved
+    ? '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17L10 13.5 5 17V4a1.5 1.5 0 011.5-1.5h7A1.5 1.5 0 0115 4z"/></svg>'
+    : '<svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17L10 13.5 5 17V4a1.5 1.5 0 011.5-1.5h7A1.5 1.5 0 0115 4z"/></svg>';
+
+  // bookmark toggle on cover
+  bmBtn.onclick = function() {
+    var nowSaved = !( savedSpots[spot] === true );
+    setSpotSaved(spot, nowSaved);
+    if(nowSaved){
+      showToast("Sitio guardado en Mis lugares","success");
+    }
+  };
+}
+
+document.getElementById('spCloseBtn').addEventListener('click', function(){
+  document.getElementById('spotAside').classList.remove('open');
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderList();
+  initMap();
+});
+</script>
+</body>
+</html>

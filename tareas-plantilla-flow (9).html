@@ -1,0 +1,2249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passporter — Tareas · Usar plantilla</title>
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  <style>
+    @font-face { font-family:"Cerebri Sans"; src:url("/mnt/skills/user/ux-prototyper/references/fonts/CerebriSans-Regular.ttf") format("truetype"); font-weight:400; }
+    @font-face { font-family:"Cerebri Sans"; src:url("/mnt/skills/user/ux-prototyper/references/fonts/CerebriSans-Medium.ttf") format("truetype"); font-weight:500; }
+    @font-face { font-family:"Cerebri Sans"; src:url("/mnt/skills/user/ux-prototyper/references/fonts/CerebriSans-SemiBold.ttf") format("truetype"); font-weight:600; }
+    @font-face { font-family:"Cerebri Sans"; src:url("/mnt/skills/user/ux-prototyper/references/fonts/CerebriSans-Bold.ttf") format("truetype"); font-weight:700; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary-500: #007a51;
+      --neutral-25:  #f8f9fa;
+      --neutral-50:  #eef0f1;
+      --neutral-100: #e6e8ea;
+      --neutral-200: #dde0e3;
+      --neutral-300: #cdd1d6;
+      --neutral-500: #abb2ba;
+      --neutral-700: #72777d;
+      --neutral-800: #55595f;
+      --neutral-900: #393c40;
+      --neutral-950: #2a2d31;
+      --text-primary: #2a2d31;
+      --text-secondary: #55595f;
+      --text-tertiary: #72777d;
+      --bg-default: #ffffff;
+      --bg-subtle: #f8f9fa;
+      --bg-muted: #eef0f1;
+      --bg-inverse: #1b352c;
+      --bg-overlay: rgba(2, 31, 21, 0.45);
+      --border-subtle: #e6e8ea;
+      --border-default: #dde0e3;
+      --shadow-sm: 0 1px 3px rgba(16,24,40,0.10), 0 1px 2px rgba(16,24,40,0.06);
+      --shadow-md: 0 4px 8px -2px rgba(16,24,40,0.10), 0 2px 4px -2px rgba(16,24,40,0.06);
+      --shadow-lg: 0 12px 16px -4px rgba(16,24,40,0.08), 0 4px 6px -2px rgba(16,24,40,0.03);
+      --shadow-xl: 0 20px 24px -4px rgba(16,24,40,0.08), 0 8px 8px -4px rgba(16,24,40,0.03);
+      --radius-xs: 4px;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --dur-fast: 120ms;
+      --dur-base: 200ms;
+      --dur-slow: 300ms;
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      --font-sans: "Cerebri Sans", system-ui, sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-sans);
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── STEP INDICATORS ── */
+    .step-nav {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 1px solid var(--border-default);
+      border-radius: 100px;
+      padding: 6px 12px;
+      box-shadow: var(--shadow-md);
+    }
+    .step-nav span {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+    .step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--neutral-200);
+      cursor: pointer;
+      transition: background var(--dur-fast), transform var(--dur-fast);
+    }
+    .step-dot.active { background: var(--bg-inverse); transform: scale(1.25); }
+    .step-dot:hover:not(.active) { background: var(--neutral-500); }
+
+    /* ── APP SHELL ── */
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      height: 52px;
+      background: var(--bg-default);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .topbar-logo {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--bg-inverse);
+      text-decoration: none;
+    }
+    .topbar-logo svg { width: 20px; height: 20px; }
+    .topbar-trip {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .topbar-caret {
+      color: var(--neutral-500);
+    }
+
+    /* ── BODY (sidebar + content) ── */
+    .body-wrap {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 64px;
+      background: var(--bg-subtle);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .sb-item {
+      width: 36px; height: 34px;
+      border-radius: var(--radius-xs);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      transition: background var(--dur-fast), color var(--dur-fast);
+    }
+    .sb-item:hover { background: var(--neutral-100); color: var(--text-primary); }
+    .sb-item.active { background: var(--neutral-100); color: var(--text-primary); }
+    .sb-divider { width: 36px; height: 1px; background: var(--border-default); margin: 10px 0; border-radius: 2px; }
+    .sb-bottom { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    iconify-icon { display: inline-block; font-size: 20px; line-height: 1; width: 1em; height: 1em; vertical-align: -3px; flex-shrink: 0; }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+    .btn-usar-plantilla {
+      display: flex; align-items: center; gap: 6px;
+      height: 32px;
+      padding: 0 12px 0 10px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: white;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-fast);
+    }
+    .btn-usar-plantilla:hover { background: var(--bg-subtle); box-shadow: var(--shadow-sm); }
+    .btn-usar-plantilla iconify-icon { font-size: 14px; color: var(--text-secondary); }
+
+    /* ── KANBAN COLUMNS ── */
+    .kanban {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .kanban-col {
+      width: 272px;
+      background: var(--bg-muted);
+      border-radius: var(--radius-xl);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .col-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+    .col-empty {
+      border: 1px dashed var(--neutral-300);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      background: white;
+      opacity: 0.4;
+    }
+    .col-empty p {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+    }
+    .btn-add-task {
+      width: 100%;
+      height: 40px;
+      background: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--bg-inverse);
+      cursor: pointer;
+      transition: background var(--dur-fast);
+      letter-spacing: -0.01em;
+    }
+    .btn-add-task:hover { background: var(--neutral-100); }
+
+    /* Task cards (populated state) */
+    .task-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+      box-shadow: var(--shadow-sm);
+      cursor: grab;
+      transition: box-shadow var(--dur-fast), transform var(--dur-fast), opacity var(--dur-fast);
+      user-select: none;
+    }
+    .task-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .task-card.dragging { opacity: 0.35; cursor: grabbing; transform: none !important; box-shadow: none !important; }
+
+    /* ── EMPTY STATE / DROP ZONE (son el mismo elemento) ── */
+    .col-empty {
+      border: 1.5px dashed var(--neutral-300);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      background: white;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-tertiary);
+      letter-spacing: -0.01em;
+      transition: border-color var(--dur-fast), background var(--dur-fast), color var(--dur-fast);
+      user-select: none;
+    }
+    .col-empty.drag-over {
+      border-color: var(--primary-500);
+      background: #e6f3ef;
+      color: var(--primary-500);
+    }
+    /* Se oculta cuando la columna ya tiene task-cards */
+    .col-empty.hidden { display: none; }
+
+    /* ── DRAG GHOST ── */
+    #dragGhost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 80ms;
+      transform-origin: center center;
+    }
+    #dragGhost.visible { opacity: 1; }
+    .ghost-task {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+      box-shadow: var(--shadow-xl);
+      width: 240px;
+      transform: rotate(2deg);
+    }
+    .ghost-template {
+      background: white;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 160px;
+      box-shadow: var(--shadow-xl);
+      transform: rotate(2deg);
+    }
+
+    /* ── DROP INDICATOR LINE ── */
+    .drop-indicator {
+      height: 2px;
+      background: var(--primary-500);
+      border-radius: 2px;
+      margin: 0 2px;
+      display: none;
+    }
+    .drop-indicator.visible { display: block; }
+
+    /* ── OVERLAY ── */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--dur-slow) var(--ease-standard);
+    }
+    .overlay.visible { opacity: 1; pointer-events: none; } /* pointer-events:none — no bloquea el drag */
+
+    /* ── DRAWER (panel lateral) ── */
+    .drawer {
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 360px;
+      background: white;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateX(100%);
+      transition: transform var(--dur-slow) var(--ease-standard);
+    }
+    .drawer.open { transform: translateX(0); }
+
+    /* Drawer: vista lista de plantillas (paso 2) */
+    .drawer-list { display: flex; flex-direction: column; height: 100%; }
+    .drawer-header {
+      padding: 16px 16px 0;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .drawer-close-row {
+      display: flex; justify-content: flex-end; margin-bottom: 0;
+    }
+    .btn-close {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      border: none; background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background var(--dur-fast);
+    }
+    .btn-close:hover { background: var(--neutral-100); }
+    .btn-close iconify-icon { font-size: 20px; }
+
+    .drawer-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      padding: 8px 0 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .drawer-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    /* Grid 2-col de cards de plantillas */
+    .templates-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .template-card {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 89px;
+      transition: border-color var(--dur-fast), box-shadow var(--dur-fast), background var(--dur-fast);
+      background: white;
+    }
+    .template-card:hover {
+      border-color: var(--neutral-300);
+      box-shadow: var(--shadow-sm);
+    }
+    .template-card.featured {
+      grid-column: 1 / -1;
+      min-height: 111px;
+    }
+    .tc-icon { font-size: 16px; line-height: 1; }
+    .tc-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+    .tc-tasks {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-tertiary);
+    }
+
+    /* ── DRAWER detalle de plantilla (paso 3) ── */
+    .drawer-detail { display: flex; flex-direction: column; height: 100%; }
+    .detail-header {
+      padding: 16px;
+    }
+    .detail-top-row {
+      display: flex; justify-content: flex-end;
+    }
+    .detail-back-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 16px;
+      cursor: pointer;
+      width: fit-content;
+    }
+    .detail-back-row:hover .back-label { color: var(--text-primary); }
+    .back-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: -0.01em;
+      transition: color var(--dur-fast);
+    }
+    .detail-info {
+      margin-top: 16px;
+    }
+    .detail-emoji { font-size: 32px; line-height: 1; display: block; margin-bottom: 12px; }
+    .detail-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .detail-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+    .detail-count {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-tertiary);
+    }
+    .detail-cta {
+      margin-top: 20px;
+    }
+    .btn-use-template {
+      height: 40px;
+      padding: 0 20px;
+      background: var(--bg-inverse);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: background var(--dur-fast);
+    }
+    .btn-use-template:hover { background: #0a1f17; }
+
+    .detail-divider { height: 1px; background: var(--border-subtle); margin: 0 16px; }
+
+    /* Preview tasks en detalle */
+    .detail-preview {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      align-content: start;
+    }
+    .preview-card {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      min-height: 64px;
+      display: flex;
+      align-items: flex-start;
+      cursor: grab;
+      user-select: none;
+      transition: box-shadow var(--dur-fast), border-color var(--dur-fast);
+    }
+    .preview-card:hover { box-shadow: var(--shadow-sm); border-color: var(--neutral-300); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg-inverse);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 500;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.35s var(--ease-standard), opacity 0.35s;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+    .toast iconify-icon { font-size: 16px; color: #5EA07C; }
+
+
+
+    /* ── MODAL OVERLAY ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 31, 21, 0.45);
+      z-index: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--dur-slow) var(--ease-standard);
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ── TASK DETAIL MODAL ── */
+    .task-modal {
+      background: white;
+      border-radius: var(--radius-xl);
+      width: 780px;
+      max-width: calc(100vw - 48px);
+      box-shadow: var(--shadow-xl);
+      display: flex;
+      flex-direction: column;
+      overflow: visible;
+      transform: scale(0.97) translateY(8px);
+      transition: transform var(--dur-slow) var(--ease-standard);
+    }
+    .modal-overlay.open .task-modal {
+      transform: scale(1) translateY(0);
+    }
+
+    /* Modal header */
+    .tm-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .tm-title {
+      flex: 1;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      outline: none;
+      border: none;
+      background: transparent;
+      font-family: var(--font-sans);
+      padding: 0;
+    }
+    .tm-title:focus { color: var(--text-primary); }
+
+    /* Tres puntos (more) button + dropdown */
+    .tm-more-wrap { position: relative; }
+    .btn-more {
+      width: 32px; height: 32px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      transition: background var(--dur-fast);
+    }
+    .btn-more:hover { background: var(--neutral-100); }
+    .more-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      min-width: 160px;
+      z-index: 900;
+      overflow: hidden;
+      display: none;
+    }
+    .more-dropdown.open { display: block; }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: background var(--dur-fast);
+      white-space: nowrap;
+      font-family: var(--font-sans);
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .dropdown-item:hover { background: var(--neutral-50); }
+    .dropdown-item.danger { color: var(--negative-500); }
+    .dropdown-item.danger:hover { background: #fdf3f1; }
+    .dropdown-item iconify-icon { font-size: 16px; }
+
+    /* Status badge (Por hacer / En progreso / Hechas) */
+    .tm-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 32px;
+      padding: 0 10px 0 12px;
+      border: 1.5px solid var(--secondary-300, #d39b8a);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--secondary-600, #b1624a);
+      background: var(--secondary-50, #f7ede9);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: background var(--dur-fast);
+      position: relative;
+      white-space: nowrap;
+    }
+    .tm-status.progress {
+      border-color: var(--warning-300, #ddb148);
+      color: var(--warning-600, #9d6e02);
+      background: var(--warning-25, #fdf8eb);
+    }
+    .tm-status.done {
+      border-color: var(--positive-300, #83b69a);
+      color: var(--positive-600, #2e6e4b);
+      background: var(--positive-25, #f2f9f5);
+    }
+    .tm-status iconify-icon { font-size: 14px; }
+
+    /* Status dropdown */
+    .status-dd {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: white;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      min-width: 160px;
+      z-index: 900;
+      overflow: hidden;
+      display: none;
+    }
+    .status-dd.open { display: block; }
+    .status-opt {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      font-size: 14px; font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: background var(--dur-fast);
+      font-family: var(--font-sans);
+    }
+    .status-opt:hover { background: var(--neutral-50); }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Close button */
+    .btn-modal-close {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--neutral-800);
+      background: transparent;
+      color: var(--neutral-800);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      transition: background var(--dur-fast);
+      flex-shrink: 0;
+    }
+    .btn-modal-close:hover { background: var(--neutral-100); }
+
+    /* Modal body */
+    .tm-body {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px 24px;
+    }
+    .tm-field { display: flex; flex-direction: column; gap: 8px; }
+    .tm-field.full { grid-column: 1 / -1; }
+    .tm-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+    .tm-label iconify-icon { font-size: 18px; color: var(--text-secondary); }
+    .tm-input {
+      height: 44px;
+      padding: 0 14px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: var(--neutral-25);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      outline: none;
+      transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+      width: 100%;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+    }
+    .tm-input::placeholder { color: var(--text-tertiary); }
+    .tm-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(0,96,178,0.12); background: white; }
+    .tm-textarea {
+      padding: 12px 14px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: var(--neutral-25);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      outline: none;
+      resize: none;
+      height: 96px;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+      line-height: 1.5;
+    }
+    .tm-textarea::placeholder { color: var(--text-tertiary); }
+    .tm-textarea:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(0,96,178,0.12); background: white; }
+
+    /* Modal footer */
+    .tm-footer {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .btn-save {
+      height: 40px;
+      padding: 0 20px;
+      background: var(--bg-inverse);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: background var(--dur-fast);
+    }
+    .btn-save:hover { background: #0a1f17; }
+
+    /* Task card clickable (no cursor grab when modal available) */
+    .task-card { cursor: default; }
+
+
+    /* Scroll elegante */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--neutral-200); border-radius: 2px; }
+
+
+    /* ═══════════════════════════════════════════
+       ONBOARDING — FIRST TIME FLOW
+    ═══════════════════════════════════════════ */
+
+    /* Base overlay shared by both onboarding modals */
+    .ob-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--dur-slow) var(--ease-standard);
+    }
+    .ob-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ── Modal 1: What's New ── */
+    .ob-whats-new {
+      background: white;
+      border-radius: var(--radius-xl);
+      width: 500px;
+      max-width: calc(100vw - 48px);
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+      transform: scale(0.96) translateY(10px);
+      transition: transform var(--dur-slow) var(--ease-standard);
+    }
+    .ob-overlay.open .ob-whats-new {
+      transform: scale(1) translateY(0);
+    }
+    .ob-wn-body {
+      padding: 20px 16px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .ob-wn-close-row {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .ob-wn-hero {
+      width: 100%;
+      height: 211px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, #cce7df 0%, #83b69a 55%, #398a5e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .ob-wn-hero svg { opacity: 0.35; }
+    .ob-wn-content { display: flex; flex-direction: column; gap: 8px; }
+    .ob-badge-nuevo {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 6px;
+      border-radius: var(--radius-xs);
+      background: #dfeee6;
+      font-size: 12px;
+      font-weight: 600;
+      color: #2e6e4b;
+      line-height: 19px;
+      width: fit-content;
+    }
+    .ob-wn-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 29px;
+    }
+    .ob-wn-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 22px;
+    }
+    .ob-wn-desc ul {
+      margin-top: 4px;
+      padding-left: 20px;
+    }
+    .ob-wn-desc li { margin-bottom: 2px; }
+    .ob-wn-footer {
+      padding: 12px 16px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .btn-ob-primary {
+      height: 48px;
+      padding: 0 24px;
+      background: var(--primary-500);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: background var(--dur-fast);
+    }
+    .btn-ob-primary:hover { background: #006d48; }
+
+    /* ── Modal 2: Selector de plantilla ── */
+    .ob-selector {
+      background: white;
+      border-radius: var(--radius-xl);
+      width: 906px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+      transform: scale(0.96) translateY(10px);
+      transition: transform var(--dur-slow) var(--ease-standard);
+    }
+    .ob-overlay.open .ob-selector {
+      transform: scale(1) translateY(0);
+    }
+    .ob-sel-header {
+      padding: 20px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .ob-sel-top-row {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .ob-sel-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 29px;
+    }
+    .ob-sel-subtitle {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 26px;
+    }
+    .ob-sel-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 0 16px 16px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* ── Modal 3 (inside ob-selector): Template detail ── */
+    .ob-detail {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+    }
+    .ob-detail.active { display: flex; }
+    .ob-sel-grid-view { display: flex; flex-direction: column; height: 100%; }
+    .ob-sel-grid-view.hidden { display: none; }
+
+    .ob-det-header {
+      padding: 20px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .ob-det-top-row {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .ob-det-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      width: fit-content;
+    }
+    .ob-det-back:hover .ob-det-back-label { color: var(--text-primary); }
+    .ob-det-back-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.01em;
+      transition: color var(--dur-fast);
+    }
+    .ob-det-body {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+      min-height: 0;
+      padding: 0 16px 16px;
+    }
+    .ob-det-left {
+      width: 371px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .ob-det-info { display: flex; flex-direction: column; gap: 6px; }
+    .ob-det-icon { font-size: 32px; line-height: 32px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+    .ob-det-icon iconify-icon { font-size: 32px; color: var(--primary-500); }
+    .ob-det-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 29px;
+    }
+    .ob-det-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 22px;
+    }
+    .ob-det-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      line-height: 19px;
+      letter-spacing: 0.01em;
+    }
+    .btn-ob-customize {
+      height: 48px;
+      padding: 0 24px;
+      background: var(--primary-500);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: background var(--dur-fast);
+      width: fit-content;
+    }
+    .btn-ob-customize:hover { background: #006d48; }
+
+    .ob-det-right {
+      flex: 1;
+      background: var(--neutral-50);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-content: flex-start;
+      overflow-y: auto;
+    }
+    .ob-det-task-card {
+      background: white;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 18px;
+      letter-spacing: -0.01em;
+      width: calc(50% - 8px);
+    }
+
+    /* Template option card */
+    .ob-tmpl-card {
+      border-radius: var(--radius-md);
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--neutral-25);
+      border: 2px solid transparent;
+      transition: border-color var(--dur-fast), box-shadow var(--dur-fast), background var(--dur-fast);
+    }
+    .ob-tmpl-card:hover { box-shadow: var(--shadow-md); background: white; }
+    .ob-tmpl-card.selected {
+      border-color: var(--primary-500);
+      background: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* "En blanco" card - centered */
+    .ob-blank-card {
+      border-radius: var(--radius-md);
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 163px;
+      background: white;
+      border: 1.5px solid var(--border-default);
+      transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+    }
+    .ob-blank-card:hover { box-shadow: var(--shadow-md); border-color: var(--neutral-300); }
+
+    .ob-tmpl-icon {
+      font-size: 24px;
+      line-height: 32px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ob-tmpl-icon iconify-icon { font-size: 24px; color: var(--primary-500); }
+    .ob-tmpl-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.01em;
+      line-height: 22px;
+    }
+    .ob-tmpl-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 22px;
+    }
+    .ob-tmpl-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      line-height: 19px;
+      letter-spacing: 0.01em;
+    }
+    .ob-blank-name {
+      font-size: 14px; font-weight: 600; color: var(--text-primary); text-align: center; letter-spacing: 0.01em;
+    }
+    .ob-blank-desc {
+      font-size: 14px; font-weight: 400; color: var(--text-secondary); text-align: center; line-height: 22px;
+    }
+
+    /* Close button (shared) */
+    .btn-ob-close {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--dur-fast);
+    }
+    .btn-ob-close:hover { background: var(--neutral-100); }
+    .btn-ob-close iconify-icon { font-size: 20px; }
+
+  </style>
+</head>
+<body>
+
+<!-- Step indicator -->
+<nav class="step-nav">
+  <span>Paso</span>
+  <div class="step-dot active" onclick="goStep(1)" title="Tablero vacío"></div>
+  <div class="step-dot" onclick="goStep(2)" title="Lista de plantillas"></div>
+  <div class="step-dot" onclick="goStep(3)" title="Detalle de plantilla"></div>
+  <div class="step-dot" onclick="goStep(4)" title="Tablero con tareas"></div>
+</nav>
+
+<!-- App shell -->
+<div class="app">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32.001 32.414" fill="currentColor">
+        <path d="M 30.45 21.954 C 30.602 21.954 30.869 21.997 30.948 22.275 C 30.991 22.43 30.969 22.675 30.896 22.826 C 30.575 23.547 30.186 24.269 29.74 24.965 C 28.114 27.518 25.835 29.552 23.14 30.852 C 22.296 31.279 21.439 31.622 20.593 31.869 C 19.361 32.231 18.01 32.414 16.581 32.414 L 16.153 32.414 C 14.363 32.399 12.593 32.08 10.894 31.461 C 9.355 30.944 7.932 30.248 6.657 29.388 C 6.648 29.382 6.636 29.375 6.627 29.365 C 6.524 29.288 6.451 29.183 6.418 29.06 C 6.375 28.908 6.393 28.75 6.469 28.61 C 6.557 28.449 6.709 28.37 6.824 28.326 C 6.888 28.308 6.964 28.298 7.055 28.298 C 7.124 28.298 7.189 28.305 7.243 28.308 C 7.282 28.311 7.316 28.313 7.346 28.313 C 7.898 28.329 8.448 28.335 8.978 28.335 C 11.934 28.335 14.581 28.122 16.852 27.704 C 17.756 27.503 18.585 27.289 19.383 27.057 C 23.279 25.918 26.96 24.2 30.025 22.096 L 30.034 22.09 L 30.041 22.084 C 30.078 22.056 30.196 21.981 30.299 21.966 C 30.35 21.957 30.402 21.954 30.45 21.954 Z M 30.293 10.652 C 30.533 10.652 30.718 10.726 30.83 10.791 C 31.185 10.992 31.394 11.623 31.521 12.078 C 31.819 13.254 31.953 14.712 31.986 15.13 C 32.014 15.48 32.105 17.281 31.088 18.179 C 28.46 20.487 23.081 22.95 19.403 23.999 C 15.704 25.054 11.583 25.661 8.096 25.661 C 6.202 25.661 4.636 25.47 3.802 25.139 C 2.524 24.628 1.744 24.182 0.569 20.948 C 0.405 20.246 0.445 19.71 0.685 19.4 C 0.867 19.165 1.186 19.045 1.629 19.045 C 1.823 19.045 2.042 19.067 2.278 19.113 L 2.296 19.116 L 2.314 19.116 C 2.363 19.119 2.5 19.129 2.53 19.132 C 3.598 19.249 4.715 19.311 5.856 19.311 C 8.339 19.311 10.906 19.032 13.482 18.481 L 13.492 18.479 L 13.501 18.476 L 13.516 18.473 C 17.045 17.844 24.502 15.056 29.337 11.048 C 29.655 10.785 29.977 10.652 30.293 10.652 Z M 24.869 3.395 C 26.135 3.395 27.689 4.847 28.123 5.453 C 28.615 6.14 29.178 7.48 28.593 8.157 C 27.725 9.163 23.015 12.555 15.516 14.592 C 12.208 15.492 8.181 16.049 5.007 16.049 C 3.344 16.049 1.996 15.895 1.106 15.601 C 0.369 15.359 -0.031 14.814 0.002 14.108 C 0.035 13.39 0.382 11.964 0.697 11.002 L 0.7 10.989 L 0.703 10.974 C 0.721 10.89 0.757 10.785 0.8 10.698 C 1.076 10.132 1.596 9.841 2.33 9.841 C 2.621 9.85 2.919 9.854 3.213 9.854 C 6.603 9.854 10.241 9.312 13.737 8.291 C 17.522 7.183 20.533 5.825 24.129 3.6 C 24.35 3.46 24.593 3.395 24.869 3.395 Z M 16.254 0 C 17.926 0 19.583 0.266 21.167 0.795 L 21.2 0.808 C 21.373 0.882 21.494 1.018 21.543 1.194 C 21.619 1.457 21.501 1.746 21.255 1.882 C 18.8 3.342 16.072 4.515 13.149 5.369 C 10.23 6.223 7.31 6.7 4.473 6.79 L 4.412 6.79 C 4.154 6.79 3.923 6.613 3.851 6.359 C 3.799 6.183 3.835 5.995 3.936 5.855 L 3.983 5.797 C 6.041 3.321 8.748 1.535 11.819 0.638 C 13.267 0.214 14.761 0 16.254 0 Z" fill-rule="evenodd"/>
+      </svg>
+    </div>
+    <iconify-icon icon="ph:caret-right" style="font-size:14px;color:var(--neutral-500)"></iconify-icon>
+    <span class="topbar-trip" style="font-size:13px;font-weight:600;color:var(--text-primary)">Japón 2025</span>
+  </header>
+
+  <!-- Body -->
+  <div class="body-wrap">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sb-item"><iconify-icon icon="ph:squares-four"></iconify-icon></div>
+      <div class="sb-item"><iconify-icon icon="ph:bookmark-simple"></iconify-icon></div>
+      <div class="sb-item"><iconify-icon icon="ph:map-trifold"></iconify-icon></div>
+      <div class="sb-item active"><iconify-icon icon="ph:clipboard-text-fill"></iconify-icon></div>
+      <div class="sb-item"><iconify-icon icon="ph:note-blank"></iconify-icon></div>
+      <div class="sb-item"><iconify-icon icon="ph:file-text"></iconify-icon></div>
+      <div class="sb-divider"></div>
+      <div class="sb-item"><iconify-icon icon="ph:suitcase"></iconify-icon></div>
+      <div class="sb-item"><iconify-icon icon="ph:ticket"></iconify-icon></div>
+      <div class="sb-item"><iconify-icon icon="ph:globe"></iconify-icon></div>
+      <div class="sb-bottom">
+        <div class="sb-item"><iconify-icon icon="ph:question"></iconify-icon></div>
+        <div class="sb-item"><iconify-icon icon="ph:user-plus"></iconify-icon></div>
+        <div class="sb-item"><iconify-icon icon="ph:gear"></iconify-icon></div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main" id="mainContent">
+      <!-- Page header -->
+      <div class="page-header">
+        <h1 class="page-title">Tareas</h1>
+        <button class="btn-usar-plantilla" onclick="openDrawerList()" id="btnUsarPlantilla">
+          <iconify-icon icon="ph:layout"></iconify-icon>
+          Usar plantilla
+        </button>
+      </div>
+
+
+      <!-- Kanban board -->
+      <div class="kanban" id="kanbanBoard">
+
+        <!-- Por hacer -->
+        <div class="kanban-col" id="colPorHacer" data-col="todo">
+          <div class="col-title">Por hacer</div>
+          <div class="col-empty" id="emptyTodo">Ej: María está buscando opciones de tours</div>
+          <button class="btn-add-task">Añadir tarea</button>
+        </div>
+
+        <!-- En progreso -->
+        <div class="kanban-col" id="colProgress" data-col="progress">
+          <div class="col-title">En progreso</div>
+          <div class="col-empty" id="emptyProgress">Ej: María está buscando opciones de tours</div>
+          <button class="btn-add-task">Añadir tarea</button>
+        </div>
+
+        <!-- Hechas -->
+        <div class="kanban-col" id="colDone" data-col="done">
+          <div class="col-title">Hechas</div>
+          <div class="col-empty" id="emptyDone">Ej: Reservar los Vuelos</div>
+          <button class="btn-add-task">Añadir tarea</button>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+
+    <!-- DRAWER: Lista de plantillas (Paso 2) -->
+    <aside class="drawer" id="drawerList">
+      <div class="drawer-list">
+        <div class="drawer-header">
+          <div class="drawer-close-row">
+            <button class="btn-close" onclick="closeDrawer()">
+              <iconify-icon icon="ph:x"></iconify-icon>
+            </button>
+          </div>
+          <div class="drawer-title">Usar plantilla</div>
+        </div>
+        <div class="drawer-scroll">
+          <div class="templates-grid">
+
+            <!-- Pack completo Japón (featured) -->
+            <div class="template-card featured" data-template="japan" onclick="openDrawerDetail('japan')">
+              <div class="tc-icon">🍙</div>
+              <div class="tc-name">Pack completo Japón</div>
+              <div class="tc-tasks">10 tareas</div>
+            </div>
+
+            <!-- Visa y documentos -->
+            <div class="template-card" data-template="visa" onclick="openDrawerDetail('visa')">
+              <div class="tc-icon">🪪</div>
+              <div class="tc-name">Visa y documentos</div>
+              <div class="tc-tasks">6 tareas</div>
+            </div>
+
+            <!-- Alojamiento -->
+            <div class="template-card" data-template="alojamiento" onclick="openDrawerDetail('alojamiento')">
+              <div class="tc-icon">🛏️</div>
+              <div class="tc-name">Alojamiento</div>
+              <div class="tc-tasks">4 tareas</div>
+            </div>
+
+            <!-- Cómo moverte -->
+            <div class="template-card" data-template="transporte" onclick="openDrawerDetail('transporte')">
+              <div class="tc-icon">🚌</div>
+              <div class="tc-name">Cómo moverte</div>
+              <div class="tc-tasks">6 tareas</div>
+            </div>
+
+            <!-- Comida -->
+            <div class="template-card" data-template="comida" onclick="openDrawerDetail('comida')">
+              <div class="tc-icon">👨‍🍳</div>
+              <div class="tc-name">Comida y restaurantes</div>
+              <div class="tc-tasks">2 tareas</div>
+            </div>
+
+            <!-- Dinero -->
+            <div class="template-card" data-template="dinero" onclick="openDrawerDetail('dinero')">
+              <div class="tc-icon">🧾</div>
+              <div class="tc-name">Dinero y presupuesto</div>
+              <div class="tc-tasks">3 tareas</div>
+            </div>
+
+            <!-- Cultura -->
+            <div class="template-card" data-template="cultura" onclick="openDrawerDetail('cultura')">
+              <div class="tc-icon">🫶</div>
+              <div class="tc-name">Cultura y etiqueta</div>
+              <div class="tc-tasks">3 tareas</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- DRAWER: Detalle de plantilla (Paso 3) -->
+    <aside class="drawer" id="drawerDetail">
+      <div class="drawer-detail">
+        <div class="detail-header">
+          <div class="detail-top-row">
+            <button class="btn-close" onclick="closeDrawer()">
+              <iconify-icon icon="ph:x"></iconify-icon>
+            </button>
+          </div>
+          <div class="detail-back-row" onclick="goBackToList()">
+            <iconify-icon icon="ph:arrow-left" style="font-size:16px;color:var(--text-secondary)"></iconify-icon>
+            <span class="back-label">Volver a plantillas</span>
+          </div>
+          <div class="detail-info">
+            <span class="detail-emoji" id="detailEmoji">🍙</span>
+            <div class="detail-name" id="detailName">Pack completo Japón</div>
+            <div class="detail-desc" id="detailDesc">Desde comprobar si necesitas visado hasta registrarte en Visit Japan Web.</div>
+            <div class="detail-count" id="detailCount">10 tareas</div>
+          </div>
+          <div class="detail-cta">
+            <button class="btn-use-template" onclick="applyTemplate()">Usar esta plantilla</button>
+          </div>
+        </div>
+        <div class="detail-divider"></div>
+        <div class="detail-preview" id="detailPreview">
+          <!-- se rellena dinámicamente -->
+        </div>
+      </div>
+    </aside>
+
+  </div><!-- /body-wrap -->
+</div><!-- /app -->
+
+<!-- ── TASK DETAIL MODAL ── -->
+<div class="modal-overlay" id="taskModal" onclick="onModalOverlayClick(event)">
+  <div class="task-modal" onclick="event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="tm-header">
+      <input class="tm-title" id="tmTitle" type="text" value="" spellcheck="false">
+
+      <!-- Tres puntos -->
+      <div class="tm-more-wrap">
+        <button class="btn-more" onclick="toggleMoreDropdown(event)" title="Más opciones">
+          <iconify-icon icon="ph:dots-three-bold"></iconify-icon>
+        </button>
+        <div class="more-dropdown" id="moreDropdown">
+          <button class="dropdown-item danger" onclick="deleteCurrentTask()">
+            <iconify-icon icon="ph:trash"></iconify-icon>
+            Eliminar tarea
+          </button>
+        </div>
+      </div>
+
+      <!-- Status badge con dropdown -->
+      <div style="position:relative">
+        <button class="tm-status" id="tmStatusBtn" onclick="toggleStatusDropdown(event)">
+          <span id="tmStatusLabel">Por hacer</span>
+          <iconify-icon icon="ph:caret-down" style="font-size:12px"></iconify-icon>
+        </button>
+        <div class="status-dd" id="statusDropdown">
+          <div class="status-opt" onclick="setStatus('todo')">
+            <span class="status-dot" style="background:#c3735a"></span> Por hacer
+          </div>
+          <div class="status-opt" onclick="setStatus('progress')">
+            <span class="status-dot" style="background:#c48a02"></span> En progreso
+          </div>
+          <div class="status-opt" onclick="setStatus('done')">
+            <span class="status-dot" style="background:#398a5e"></span> Hecha
+          </div>
+        </div>
+      </div>
+
+      <!-- Close -->
+      <button class="btn-modal-close" onclick="closeTaskModal()">
+        <iconify-icon icon="ph:x" style="font-size:14px"></iconify-icon>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="tm-body">
+      <div class="tm-field">
+        <div class="tm-label">
+          <iconify-icon icon="ph:user-circle"></iconify-icon>
+          Encargado
+        </div>
+        <select class="tm-input" id="tmAssignee">
+          <option value="" disabled selected>Selecciona un viajero</option>
+          <option>María García</option>
+          <option>Carlos López</option>
+          <option>Ana Martínez</option>
+          <option>Pau Sánchez</option>
+        </select>
+      </div>
+
+      <div class="tm-field">
+        <div class="tm-label">
+          <iconify-icon icon="ph:calendar-blank"></iconify-icon>
+          Fecha
+        </div>
+        <input class="tm-input" id="tmDate" type="date" placeholder="Añade una fecha">
+      </div>
+
+      <div class="tm-field full">
+        <div class="tm-label">
+          <iconify-icon icon="ph:list"></iconify-icon>
+          Descripción
+        </div>
+        <textarea class="tm-textarea" id="tmDesc" placeholder="Añade una descripción..."></textarea>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="tm-footer">
+      <button class="btn-save" onclick="saveTaskModal()">Guardar</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ONBOARDING: MODAL 1 — What's New
+════════════════════════════════════════════ -->
+<div class="ob-overlay" id="obWnOverlay">
+  <div class="ob-whats-new">
+    <div class="ob-wn-body">
+      <!-- Close -->
+      <div class="ob-wn-close-row">
+        <button class="btn-ob-close" onclick="closeWnModal()">
+          <iconify-icon icon="ph:x"></iconify-icon>
+        </button>
+      </div>
+      <!-- Hero illustration -->
+      <div class="ob-wn-hero">
+        <svg width="260" height="140" viewBox="0 0 260 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="130" cy="110" rx="110" ry="30" fill="white" fill-opacity="0.15"/>
+          <path d="M20 100 Q65 40 130 55 Q195 70 240 30" stroke="white" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6"/>
+          <circle cx="130" cy="55" r="22" fill="white" fill-opacity="0.25"/>
+          <path d="M40 110 Q80 75 130 80 Q180 85 220 60" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.4"/>
+          <rect x="55" y="72" width="150" height="48" rx="8" fill="white" fill-opacity="0.12"/>
+        </svg>
+      </div>
+      <!-- Content -->
+      <div class="ob-wn-content">
+        <span class="ob-badge-nuevo">Nuevo</span>
+        <div class="ob-wn-title">Plantillas de tareas listas para tu viaje</div>
+        <div class="ob-wn-desc">
+          Olvídate de empezar desde cero: elige una plantilla, ajusta lo que necesites y ten todo bajo control desde el primer minuto.
+          <ul>
+            <li>Empieza sin configurar nada</li>
+            <li>Tareas ya organizadas por tipo de viaje</li>
+            <li>Ahorra tiempo en la planificación</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="ob-wn-footer">
+      <button class="btn-ob-primary" onclick="openSelectorModal()">Ver plantillas</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ONBOARDING: MODAL 2 — Selector de plantilla
+════════════════════════════════════════════ -->
+<div class="ob-overlay" id="obSelOverlay">
+  <div class="ob-selector">
+
+    <!-- ── VIEW A: Grid de plantillas ── -->
+    <div class="ob-sel-grid-view" id="obSelGridView">
+      <div class="ob-sel-header">
+        <div class="ob-sel-top-row">
+          <button class="btn-ob-close" onclick="closeSelectorModal()">
+            <iconify-icon icon="ph:x"></iconify-icon>
+          </button>
+        </div>
+        <div class="ob-sel-title">Elige una plantilla para empezar</div>
+        <div class="ob-sel-subtitle">Elige una o varias plantillas y tendrás todo organizado en segundos.</div>
+      </div>
+
+      <div class="ob-sel-grid">
+        <!-- En blanco -->
+        <div class="ob-blank-card" onclick="obSelectBlank()">
+          <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center">
+            <iconify-icon icon="ph:plus" style="font-size:28px;color:var(--text-secondary)"></iconify-icon>
+          </div>
+          <div class="ob-blank-name">En blanco</div>
+          <div class="ob-blank-desc">Empieza con el tablero en blanco</div>
+        </div>
+
+        <div class="ob-tmpl-card" onclick="obOpenDetail('japan')">
+          <div class="ob-tmpl-icon"><iconify-icon icon="ph:fork-knife"></iconify-icon></div>
+          <div class="ob-tmpl-name">Pack completo Japón</div>
+          <div class="ob-tmpl-desc">Desde comprobar si necesitas visado hasta registrarte en Visit Japan Web.</div>
+          <div class="ob-tmpl-count">10 tareas</div>
+        </div>
+
+        <div class="ob-tmpl-card" onclick="obOpenDetail('visa')">
+          <div class="ob-tmpl-icon"><iconify-icon icon="ph:identification-badge"></iconify-icon></div>
+          <div class="ob-tmpl-name">Visa y documentos</div>
+          <div class="ob-tmpl-desc">Todo lo que necesitas gestionar antes de salir con tus documentos en orden.</div>
+          <div class="ob-tmpl-count">6 tareas</div>
+        </div>
+
+        <div class="ob-tmpl-card" onclick="obOpenDetail('alojamiento')">
+          <div class="ob-tmpl-icon"><iconify-icon icon="ph:bed"></iconify-icon></div>
+          <div class="ob-tmpl-name">Alojamiento</div>
+          <div class="ob-tmpl-desc">Desde ryokans hasta cápsulas: investiga, compara y reserva.</div>
+          <div class="ob-tmpl-count">4 tareas</div>
+        </div>
+
+        <div class="ob-tmpl-card" onclick="obOpenDetail('transporte')">
+          <div class="ob-tmpl-icon"><iconify-icon icon="ph:bus"></iconify-icon></div>
+          <div class="ob-tmpl-name">Cómo moverte</div>
+          <div class="ob-tmpl-desc">Planifica los desplazamientos entre ciudades y dentro de ellas.</div>
+          <div class="ob-tmpl-count">6 tareas</div>
+        </div>
+
+        <div class="ob-tmpl-card" onclick="obOpenDetail('comida')">
+          <div class="ob-tmpl-icon"><iconify-icon icon="ph:chef-hat"></iconify-icon></div>
+          <div class="ob-tmpl-name">Comida y restaurantes</div>
+          <div class="ob-tmpl-desc">Mostradores de sushi, ramen, izakayas y restaurantes que requieren reserva.</div>
+          <div class="ob-tmpl-count">2 tareas</div>
+        </div>
+
+        <div class="ob-tmpl-card" onclick="obOpenDetail('dinero')">
+          <div class="ob-tmpl-icon"><iconify-icon icon="ph:receipt"></iconify-icon></div>
+          <div class="ob-tmpl-name">Dinero y presupuesto</div>
+          <div class="ob-tmpl-desc">Prepara tu billetera y presupuesto diario antes de ir.</div>
+          <div class="ob-tmpl-count">3 tareas</div>
+        </div>
+
+        <div class="ob-tmpl-card" onclick="obOpenDetail('cultura')">
+          <div class="ob-tmpl-icon"><iconify-icon icon="ph:hand-heart"></iconify-icon></div>
+          <div class="ob-tmpl-name">Cultura y etiqueta</div>
+          <div class="ob-tmpl-desc">Costumbres esenciales, frases y códigos culturales.</div>
+          <div class="ob-tmpl-count">3 tareas</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── VIEW B: Detalle de plantilla ── -->
+    <div class="ob-detail" id="obDetailView">
+      <div class="ob-det-header">
+        <div class="ob-det-top-row">
+          <button class="btn-ob-close" onclick="closeSelectorModal()">
+            <iconify-icon icon="ph:x"></iconify-icon>
+          </button>
+        </div>
+        <div class="ob-det-back" onclick="obBackToGrid()">
+          <iconify-icon icon="ph:arrow-left" style="font-size:16px;color:var(--text-secondary)"></iconify-icon>
+          <span class="ob-det-back-label">Volver a plantillas</span>
+        </div>
+      </div>
+
+      <div class="ob-det-body">
+        <!-- Left: info + CTA -->
+        <div class="ob-det-left">
+          <div class="ob-det-info">
+            <div class="ob-det-icon" id="obDetIcon">
+              <iconify-icon icon="ph:fork-knife"></iconify-icon>
+            </div>
+            <div class="ob-det-name" id="obDetName">Pack completo Japón</div>
+            <div class="ob-det-desc" id="obDetDesc">Desde comprobar si necesitas visado hasta registrarte en Visit Japan Web.</div>
+            <div class="ob-det-count" id="obDetCount">10 tareas</div>
+          </div>
+          <button class="btn-ob-customize" onclick="obApplyAndClose()">
+            Personalizar esta plantilla
+          </button>
+        </div>
+
+        <!-- Right: task cards preview -->
+        <div class="ob-det-right" id="obDetTaskGrid">
+          <!-- filled dynamically -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Drag ghost -->
+<div id="dragGhost"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <iconify-icon icon="ph:check-circle-fill"></iconify-icon>
+  Plantilla aplicada correctamente
+</div>
+
+
+
+<script>
+  // ── DATA ─────────────────────────────────────────────────────
+  const TEMPLATES = {
+    japan:      { emoji:'🍙', name:'Pack completo Japón',    desc:'Desde comprobar si necesitas visado hasta registrarte en Visit Japan Web.', count:'10 tareas', tasks:['Comprobar vigencia del pasaporte','Solicitar visado si es necesario','Contratar seguro de viaje','Hacer copia de documentos en el móvil','Reservar vuelos de ida y vuelta','Comprar JR Pass antes de salir','Reservar alojamientos en Tokio y Kioto','Registrarse en Visit Japan Web','Cambiar divisas o conseguir tarjeta sin comisiones','Descargar Google Maps offline'] },
+    visa:       { emoji:'🪪', name:'Visa y documentos',       desc:'Todo lo que necesitas gestionar antes de salir con tus documentos en orden.', count:'6 tareas',  tasks:['Comprobar vigencia del pasaporte','Solicitar visado si es necesario','Hacer copia de documentos en el móvil','Contratar seguro de viaje','Registrarse en Visit Japan Web','Guardar copia en la nube'] },
+    alojamiento:{ emoji:'🛏️',name:'Alojamiento',              desc:'Encuentra y reserva los mejores sitios para dormir en tu destino.',          count:'4 tareas',  tasks:['Reservar hotel en Tokio','Buscar ryokan en Kioto','Confirmar políticas de cancelación','Guardar confirmaciones en el móvil'] },
+    transporte: { emoji:'🚌', name:'Cómo moverte',            desc:'Planifica los desplazamientos entre ciudades y dentro de ellas.',             count:'6 tareas',  tasks:['Comprar JR Pass antes de salir','Descargar app Navitime o Hyperdia','Estudiar líneas de metro de Tokio','Reservar Shinkansen a Kioto','Contratar SIM o eSIM local','Revisar horarios de aeropuerto'] },
+    comida:     { emoji:'👨‍🍳',name:'Comida y restaurantes',   desc:'No te pierdas los mejores sabores del destino.',                             count:'2 tareas',  tasks:['Reservar omakase o restaurante estrella','Guardar lista de izakayas en Maps'] },
+    dinero:     { emoji:'🧾', name:'Dinero y presupuesto',    desc:'Organiza tus finanzas para el viaje sin sorpresas.',                          count:'3 tareas',  tasks:['Cambiar divisas o conseguir tarjeta sin comisiones','Calcular presupuesto diario estimado','Avisar al banco del viaje'] },
+    cultura:    { emoji:'🫶', name:'Cultura y etiqueta',      desc:'Aprende las normas básicas para moverte con respeto.',                        count:'3 tareas',  tasks:['Leer sobre normas de etiqueta en templos','Aprender frases básicas en japonés','Entender el sistema de propinas (no se da)'] }
+  };
+
+  let activeTemplate = null;
+
+  // ── STEP DOTS ────────────────────────────────────────────────
+  function updateDots(step) {
+    document.querySelectorAll('.step-dot').forEach((d, i) => d.classList.toggle('active', i + 1 === step));
+  }
+  function goStep(n) {
+    if (n === 1) closeDrawer();
+    if (n === 2) openDrawerList();
+    if (n === 3) openDrawerDetail(activeTemplate || 'japan');
+    if (n === 4) applyTemplate();
+  }
+
+  // ── DRAWER ───────────────────────────────────────────────────
+  function openDrawerList() {
+    closeAllDrawers(false);
+    document.getElementById('drawerList').classList.add('open');
+    updateDots(2);
+    // Init template drag after a tick so DOM is ready
+    setTimeout(initTemplateDrag, 50);
+  }
+
+  function openDrawerDetail(templateId) {
+    activeTemplate = templateId;
+    const t = TEMPLATES[templateId];
+    document.getElementById('detailEmoji').textContent = t.emoji;
+    document.getElementById('detailName').textContent  = t.name;
+    document.getElementById('detailDesc').textContent  = t.desc;
+    document.getElementById('detailCount').textContent = t.count;
+
+    // Render preview cards as draggable single-task units
+    const preview = document.getElementById('detailPreview');
+    preview.innerHTML = t.tasks.map(task =>
+      `<div class="preview-card" data-task="${encodeURIComponent(task)}">${task}</div>`
+    ).join('');
+
+    document.getElementById('drawerList').classList.remove('open');
+    setTimeout(() => {
+      document.getElementById('drawerDetail').classList.add('open');
+      initPreviewCardDrag();
+    }, 50);
+    updateDots(3);
+  }
+
+  function goBackToList() {
+    document.getElementById('drawerDetail').classList.remove('open');
+    setTimeout(() => {
+      document.getElementById('drawerList').classList.add('open');
+      initTemplateDrag();
+    }, 50);
+    updateDots(2);
+  }
+
+  function closeDrawer() {
+    closeAllDrawers();
+    updateDots(1);
+  }
+
+  function closeAllDrawers(hideOverlay = true) {
+    document.getElementById('drawerList').classList.remove('open');
+    document.getElementById('drawerDetail').classList.remove('open');
+    // overlay kept but transparent now — nothing to hide
+  }
+
+  // ── APPLY FULL TEMPLATE ──────────────────────────────────────
+  function applyTemplate(templateId, targetCol) {
+    const id  = templateId || activeTemplate || 'japan';
+    const col = targetCol  || document.getElementById('colPorHacer');
+    closeAllDrawers();
+    populateBoard(id, col);
+    showToast();
+    updateDots(4);
+  }
+
+  function populateBoard(templateId, col) {
+    col = col || document.getElementById('colPorHacer');
+    TEMPLATES[templateId].tasks.forEach(task => addTaskCard(task, col));
+  }
+
+  // ── COLUMN STATE HELPERS ─────────────────────────────────────
+  function updateColEmpty(col) {
+    const empty  = col.querySelector('.col-empty');
+    const hasCards = col.querySelectorAll('.task-card').length > 0;
+    if (empty) empty.classList.toggle('hidden', hasCards);
+  }
+
+  function addTaskCard(text, col) {
+    const card = createTaskCard(text);
+    const btn  = col.querySelector('.btn-add-task');
+    col.insertBefore(card, btn);
+    updateColEmpty(col);
+  }
+
+  // ── TASK CARD FACTORY ────────────────────────────────────────
+  function createTaskCard(text) {
+    const card = document.createElement('div');
+    card.className = 'task-card';
+    card.dataset.title = text;
+    card.dataset.status = 'todo';
+
+    // Inner structure: text + drag handle hint
+    card.innerHTML = `<span class="tc-text">${text}</span>`;
+
+    // Click → open modal (only if not dragged)
+    card.addEventListener('click', (e) => {
+      if (card.dataset.wasDragged === '1') { card.dataset.wasDragged = ''; return; }
+      openTaskModal(card);
+    });
+
+    // Drag via mousedown
+    card.addEventListener('mousedown', onTaskMouseDown);
+    return card;
+  }
+
+  // ── TOAST ────────────────────────────────────────────────────
+  function showToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  DRAG & DROP  (mousedown/mousemove/mouseup)
+  // ═══════════════════════════════════════════════════════════════
+  const ghost = document.getElementById('dragGhost');
+  let dragState = null;
+  let lastHoveredCol = null;
+
+  // ── Ghost ────────────────────────────────────────────────────
+  function positionGhost(x, y) {
+    ghost.style.left = (x - dragState.offsetX) + 'px';
+    ghost.style.top  = (y - dragState.offsetY) + 'px';
+  }
+  function hideGhost() {
+    ghost.classList.remove('visible');
+    ghost.innerHTML = '';
+  }
+
+  // ── Column under cursor (ignores ghost and drawer) ───────────
+  function getColAt(x, y) {
+    ghost.style.display = 'none';
+    const els = document.elementsFromPoint(x, y);
+    ghost.style.display = '';
+    // Walk up from each element to find a kanban-col that's NOT inside a drawer
+    for (const el of els) {
+      const col = el.closest('.kanban-col');
+      if (col && !el.closest('.drawer')) return col;
+    }
+    return null;
+  }
+
+  // ── Highlight drop targets ────────────────────────────────────
+  function setColHighlight(col) {
+    document.querySelectorAll('.kanban-col').forEach(c => {
+      const empty = c.querySelector('.col-empty');
+      if (!empty) return;
+      if (c === col) {
+        empty.classList.add('drag-over');
+        // If empty was hidden (col has cards), show a slim highlight strip
+        if (empty.classList.contains('hidden')) {
+          empty.classList.remove('hidden');
+          empty.dataset.wasHidden = '1';
+          empty.textContent = 'Suelta aquí';
+        }
+      } else {
+        empty.classList.remove('drag-over');
+        // Restore hidden state if we unhid it just for highlight
+        if (empty.dataset.wasHidden) {
+          empty.classList.add('hidden');
+          delete empty.dataset.wasHidden;
+        }
+      }
+    });
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll('.col-empty').forEach(e => {
+      e.classList.remove('drag-over');
+      if (e.dataset.wasHidden) {
+        e.classList.add('hidden');
+        delete e.dataset.wasHidden;
+      }
+    });
+  }
+
+  // ── DROP ─────────────────────────────────────────────────────
+  function dropOnCol(col) {
+    if (!col) return;
+
+    if (dragState.type === 'template') {
+      // Full template → target col
+      closeAllDrawers();
+      populateBoard(dragState.payload, col);
+      showToast();
+      updateDots(4);
+
+    } else if (dragState.type === 'task') {
+      // Move single task card
+      const card = dragState.originEl;
+      const originCol = dragState.originCol;
+      const btn = col.querySelector('.btn-add-task');
+      const insertBefore = getInsertBefore(col, dragState.lastY);
+      col.insertBefore(card, insertBefore || btn);
+      updateColEmpty(col);
+      if (originCol && originCol !== col) updateColEmpty(originCol);
+
+    } else if (dragState.type === 'preview-task') {
+      // Single task from detail preview → target col
+      addTaskCard(dragState.payload, col);
+      // Close drawer only if all tasks were dragged? No — keep drawer open for UX
+    }
+  }
+
+  function getInsertBefore(col, y) {
+    const cards = [...col.querySelectorAll('.task-card:not(.dragging)')];
+    for (const c of cards) {
+      const r = c.getBoundingClientRect();
+      if (y < r.top + r.height / 2) return c;
+    }
+    return null;
+  }
+
+  // ── Shared move / up ─────────────────────────────────────────
+  function onDragMove(e) {
+    if (!dragState) return;
+    dragState.lastY = e.clientY;
+
+    // Threshold for all drag types
+    if (!dragState.started) {
+      const dx = Math.abs(e.clientX - dragState.startX);
+      const dy = Math.abs(e.clientY - dragState.startY);
+      if (dx < 5 && dy < 5) return;
+      dragState.started = true;
+      if (dragState.type === 'task') dragState.originEl.classList.add('dragging');
+      ghost.classList.add('visible');
+    }
+
+    positionGhost(e.clientX, e.clientY);
+
+    const col = getColAt(e.clientX, e.clientY);
+    if (col !== lastHoveredCol) {
+      lastHoveredCol = col;
+      setColHighlight(col);
+    }
+  }
+
+  function onDragUp(e) {
+    document.removeEventListener('mousemove', onDragMove);
+    document.removeEventListener('mouseup',   onDragUp);
+
+    if (!dragState) return;
+
+    const wasDragged = dragState.started;
+
+    // Restore dragging card visibility immediately
+    if (dragState.type === 'task') {
+      dragState.originEl.classList.remove('dragging');
+      if (wasDragged) dragState.originEl.dataset.wasDragged = '1';
+    }
+
+    hideGhost();
+    clearHighlights();
+
+    const col = getColAt(e.clientX, e.clientY);
+    if (wasDragged && col) {
+      dropOnCol(col);
+    }
+
+    dragState      = null;
+    lastHoveredCol = null;
+  }
+
+  // ── TASK card drag ───────────────────────────────────────────
+  function onTaskMouseDown(e) {
+    if (e.button !== 0) return;
+    // Don't start drag if clicking inside an input/select in the modal
+    if (e.target.closest('.task-modal')) return;
+    e.preventDefault();
+    const card  = e.currentTarget;
+    const rect  = card.getBoundingClientRect();
+    const text  = card.dataset.title || card.querySelector('.tc-text')?.textContent || '';
+
+    ghost.innerHTML = `<div class="ghost-task">${card.dataset.title || card.querySelector('.tc-text')?.textContent || text}</div>`;
+
+    dragState = {
+      type: 'task',
+      payload: text,
+      originEl: card,
+      originCol: card.closest('.kanban-col'),
+      offsetX: e.clientX - rect.left,
+      offsetY: e.clientY - rect.top,
+      started: false,   // start on threshold
+      startX: e.clientX,
+      startY: e.clientY,
+      lastY: e.clientY
+    };
+
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup',   onDragUp);
+  }
+
+  // ── TEMPLATE card drag (from drawer list) ────────────────────
+  function initTemplateDrag() {
+    document.querySelectorAll('.template-card[data-template]').forEach(card => {
+      card.removeEventListener('mousedown', onTemplateMouseDown);
+      card.addEventListener('mousedown', onTemplateMouseDown);
+    });
+  }
+
+  function onTemplateMouseDown(e) {
+    if (e.button !== 0) return;
+    const card = e.currentTarget;
+    const rect  = card.getBoundingClientRect();
+    const templateId = card.dataset.template;
+    const t = TEMPLATES[templateId];
+
+    ghost.innerHTML = `
+      <div class="ghost-template">
+        <div class="tc-icon">${t.emoji}</div>
+        <div class="tc-name">${t.name}</div>
+        <div class="tc-tasks">${t.count}</div>
+      </div>`;
+
+    dragState = {
+      type: 'template',
+      payload: templateId,
+      originEl: card,
+      offsetX: e.clientX - rect.left,
+      offsetY: e.clientY - rect.top,
+      started: false,
+      startX: e.clientX,
+      startY: e.clientY,
+      lastY: e.clientY
+    };
+
+    // Suppress click if drag started
+    card.addEventListener('click', e => { if (dragState === null) return; /* drag ended, was a real click */ }, { once: true });
+
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup',   onDragUp);
+  }
+
+  // ── PREVIEW CARD drag (single task from detail view) ─────────
+  function initPreviewCardDrag() {
+    document.querySelectorAll('#detailPreview .preview-card').forEach(card => {
+      card.removeEventListener('mousedown', onPreviewCardMouseDown);
+      card.addEventListener('mousedown', onPreviewCardMouseDown);
+    });
+  }
+
+  function onPreviewCardMouseDown(e) {
+    if (e.button !== 0) return;
+    const card = e.currentTarget;
+    const rect  = card.getBoundingClientRect();
+    const taskText = decodeURIComponent(card.dataset.task);
+
+    ghost.innerHTML = `<div class="ghost-task">${taskText}</div>`;
+
+    dragState = {
+      type: 'preview-task',
+      payload: taskText,
+      originEl: card,
+      offsetX: e.clientX - rect.left,
+      offsetY: e.clientY - rect.top,
+      started: false,
+      startX: e.clientX,
+      startY: e.clientY,
+      lastY: e.clientY
+    };
+
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup',   onDragUp);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  TASK DETAIL MODAL
+  // ═══════════════════════════════════════════════════════════════
+  let currentTaskCard = null; // reference to the DOM card being edited
+
+  function openTaskModal(card) {
+    currentTaskCard = card;
+
+    // Populate fields
+    document.getElementById('tmTitle').value   = card.dataset.title    || card.textContent;
+    document.getElementById('tmDesc').value    = card.dataset.desc     || '';
+    document.getElementById('tmAssignee').value = card.dataset.assignee || '';
+    document.getElementById('tmDate').value    = card.dataset.date     || '';
+
+    // Status
+    const status = card.dataset.status || 'todo';
+    applyStatusUI(status);
+
+    // Open
+    document.getElementById('taskModal').classList.add('open');
+    document.getElementById('tmTitle').focus();
+    // Close any open dropdowns
+    closeAllDropdowns();
+  }
+
+  function closeTaskModal() {
+    document.getElementById('taskModal').classList.remove('open');
+    closeAllDropdowns();
+    currentTaskCard = null;
+  }
+
+  function onModalOverlayClick(e) {
+    if (e.target === document.getElementById('taskModal')) closeTaskModal();
+  }
+
+  function saveTaskModal() {
+    if (!currentTaskCard) return;
+    const title    = document.getElementById('tmTitle').value.trim();
+    const desc     = document.getElementById('tmDesc').value.trim();
+    const assignee = document.getElementById('tmAssignee').value;
+    const date     = document.getElementById('tmDate').value;
+    const status   = currentTaskCard.dataset.status || 'todo';
+
+    if (title) {
+      currentTaskCard.dataset.title    = title;
+      currentTaskCard.dataset.desc     = desc;
+      currentTaskCard.dataset.assignee = assignee;
+      currentTaskCard.dataset.date     = date;
+      // Update visible text
+      currentTaskCard.querySelector('.tc-text').textContent = title;
+    }
+    closeTaskModal();
+  }
+
+  function deleteCurrentTask() {
+    if (!currentTaskCard) return;
+    const col = currentTaskCard.closest('.kanban-col');
+    currentTaskCard.remove();
+    if (col) updateColEmpty(col);
+    closeTaskModal();
+  }
+
+  // ── Status ──────────────────────────────────────────────────
+  const STATUS_LABELS = { todo: 'Por hacer', progress: 'En progreso', done: 'Hecha' };
+
+  function applyStatusUI(status) {
+    const btn = document.getElementById('tmStatusBtn');
+    btn.className = 'tm-status';
+    if (status === 'progress') btn.classList.add('progress');
+    if (status === 'done')     btn.classList.add('done');
+    document.getElementById('tmStatusLabel').textContent = STATUS_LABELS[status] || 'Por hacer';
+    if (currentTaskCard) currentTaskCard.dataset.status = status;
+  }
+
+  function setStatus(status) {
+    applyStatusUI(status);
+    document.getElementById('statusDropdown').classList.remove('open');
+  }
+
+  function toggleStatusDropdown(e) {
+    e.stopPropagation();
+    const dd = document.getElementById('statusDropdown');
+    const mdd = document.getElementById('moreDropdown');
+    mdd.classList.remove('open');
+    dd.classList.toggle('open');
+  }
+
+  // ── More (···) dropdown ─────────────────────────────────────
+  function toggleMoreDropdown(e) {
+    e.stopPropagation();
+    const dd = document.getElementById('moreDropdown');
+    const sdd = document.getElementById('statusDropdown');
+    sdd.classList.remove('open');
+    dd.classList.toggle('open');
+  }
+
+  function closeAllDropdowns() {
+    document.getElementById('moreDropdown')?.classList.remove('open');
+    document.getElementById('statusDropdown')?.classList.remove('open');
+  }
+
+  // Close dropdowns on outside click
+  document.addEventListener('click', () => closeAllDropdowns());
+
+  // ── ESC to close modal ───────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeTaskModal();
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  //  ONBOARDING — FIRST TIME FLOW
+  // ═══════════════════════════════════════════════════════════════
+
+  const OB_ICONS = {
+    japan:       'ph:fork-knife',
+    visa:        'ph:identification-badge',
+    alojamiento: 'ph:bed',
+    transporte:  'ph:bus',
+    comida:      'ph:chef-hat',
+    dinero:      'ph:receipt',
+    cultura:     'ph:hand-heart'
+  };
+
+  let obCurrentTemplate = null;
+
+  function obOpenOverlay(id)  { document.getElementById(id).classList.add('open'); }
+  function obCloseOverlay(id) { document.getElementById(id).classList.remove('open'); }
+
+  // Step 1 → close What's New (via ✕ or "Ver plantillas")
+  function closeWnModal() { obCloseOverlay('obWnOverlay'); }
+
+  // Step 1 → Step 2
+  function openSelectorModal() {
+    obCloseOverlay('obWnOverlay');
+    setTimeout(() => {
+      obShowGridView();
+      obOpenOverlay('obSelOverlay');
+    }, 150);
+  }
+
+  // Step 2 → close selector
+  function closeSelectorModal() {
+    obCloseOverlay('obSelOverlay');
+    setTimeout(obShowGridView, 300); // reset for next open
+  }
+
+  // Step 2 → "En blanco"
+  function obSelectBlank() { obCloseOverlay('obSelOverlay'); }
+
+  // Step 2 → click on a template card → show detail view inside the same modal
+  function obOpenDetail(templateId) {
+    obCurrentTemplate = templateId;
+    const t = TEMPLATES[templateId];
+
+    // Populate detail
+    const iconEl = document.getElementById('obDetIcon');
+    iconEl.innerHTML = `<iconify-icon icon="${OB_ICONS[templateId]}" style="font-size:32px;color:var(--primary-500)"></iconify-icon>`;
+    document.getElementById('obDetName').textContent  = t.name;
+    document.getElementById('obDetDesc').textContent  = t.desc;
+    document.getElementById('obDetCount').textContent = t.count;
+
+    // Task cards
+    const grid = document.getElementById('obDetTaskGrid');
+    grid.innerHTML = t.tasks.map(task =>
+      `<div class="ob-det-task-card">${task}</div>`
+    ).join('');
+
+    // Swap views
+    document.getElementById('obSelGridView').classList.add('hidden');
+    document.getElementById('obDetailView').classList.add('active');
+  }
+
+  // Step 3 → back to grid
+  function obBackToGrid() {
+    document.getElementById('obDetailView').classList.remove('active');
+    document.getElementById('obSelGridView').classList.remove('hidden');
+    obCurrentTemplate = null;
+  }
+
+  function obShowGridView() {
+    document.getElementById('obDetailView').classList.remove('active');
+    document.getElementById('obSelGridView').classList.remove('hidden');
+    obCurrentTemplate = null;
+  }
+
+  // Step 3 → "Personalizar esta plantilla" → apply + close
+  function obApplyAndClose() {
+    if (!obCurrentTemplate) return;
+    obCloseOverlay('obSelOverlay');
+    const col = document.getElementById('colPorHacer');
+    populateBoard(obCurrentTemplate, col);
+    showToast();
+    setTimeout(obShowGridView, 300);
+  }
+
+  // ── Boot ─────────────────────────────────────────────────────
+  (function bootOnboarding() {
+    setTimeout(() => obOpenOverlay('obWnOverlay'), 400);
+  })();
+
+  // ── INIT ─────────────────────────────────────────────────────
+  updateDots(1);
+</script>
+</body>
+</html>

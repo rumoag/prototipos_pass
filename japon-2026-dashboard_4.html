@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passporter — Japón 2026</title>
+<style>
+/* ── Cerebri Sans (Atlas DS) ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ── Atlas Tokens ── */
+:root {
+  --primary-500: #007a51;
+  --primary-25:  #e6f3ef;
+  --primary-800: #065036;
+  --bg-inverse:  #1b352c;
+
+  --neutral-25:  #f8f9fa;
+  --neutral-50:  #eef0f1;
+  --neutral-100: #e6e8ea;
+  --neutral-200: #dde0e3;
+  --neutral-300: #cdd1d6;
+  --neutral-500: #abb2ba;
+  --neutral-700: #72777d;
+  --neutral-800: #55595f;
+  --neutral-900: #393c40;
+  --neutral-950: #2a2d31;
+
+  --text-primary:   #2a2d31;
+  --text-secondary: #55595f;
+  --text-tertiary:  #72777d;
+
+  --bg-default:  #ffffff;
+  --bg-subtle:   #f8f9fa;
+  --bg-muted:    #f2f4f3;
+
+  --border-subtle:  #e6e8ea;
+  --border-default: #dde0e3;
+
+  --shadow-xs: 0 1px 2px rgba(16,24,40,0.05);
+  --shadow-sm: 0 1px 3px rgba(16,24,40,0.10), 0 1px 2px rgba(16,24,40,0.06);
+  --shadow-md: 0 4px 8px -2px rgba(16,24,40,0.10), 0 2px 4px -2px rgba(16,24,40,0.06);
+
+  --radius-xs:   4px;
+  --radius-sm:   6px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-full: 9999px;
+
+  --dur-base: 200ms;
+  --ease-standard: cubic-bezier(0.2,0,0,1);
+
+  --sidebar-w: 64px;
+  --sidebar-expanded: 220px;
+  --header-h: 48px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Browser Chrome ── */
+.browser-bar {
+  height: var(--header-h);
+  background: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  flex-shrink: 0;
+}
+.browser-dots { display: flex; gap: 6px; }
+.browser-dots span {
+  width: 12px; height: 12px; border-radius: 50%;
+}
+.dot-r { background: #ff5f57; }
+.dot-y { background: #febc2e; }
+.dot-g { background: #28c840; }
+.browser-url {
+  flex: 1; background: #fff; border-radius: 6px;
+  height: 28px; display: flex; align-items: center;
+  padding: 0 12px; font-size: 12px; color: #666;
+  border: 1px solid #d0d0d0; margin: 0 8px;
+}
+.browser-url i { margin-right: 6px; font-size: 12px; color: #28c840; }
+
+/* ── App Shell ── */
+.app {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-subtle);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--dur-base) var(--ease-standard);
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+.sidebar:hover { width: var(--sidebar-expanded); }
+.sidebar:hover .nav-label { opacity: 1; }
+.sidebar:hover .nav-section-label { opacity: 1; }
+
+.sidebar-top {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  flex-shrink: 0;
+}
+.logo-symbol {
+  width: 36px; height: 36px;
+  background: var(--bg-inverse);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.logo-symbol svg { width: 20px; height: 20px; }
+.logo-text {
+  font-size: 14px; font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-standard);
+}
+.sidebar:hover .logo-text { opacity: 1; }
+
+.nav-section {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.nav-section:last-of-type { border-bottom: none; }
+
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 8px 2px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-standard);
+  overflow: hidden;
+  height: 20px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-standard);
+  height: 34px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.nav-item:hover { background: var(--neutral-100); color: var(--text-primary); }
+.nav-item.active {
+  background: var(--neutral-100);
+  color: var(--text-primary);
+}
+.nav-item i {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+.nav-label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-standard);
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Main Content ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Trip Header ── */
+.trip-header {
+  padding: 24px 24px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.trip-title-block {}
+.trip-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+.trip-dates {
+  font-size: 14px;
+  color: var(--primary-500);
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── Dashboard Grid ── */
+.dashboard {
+  padding: 0 24px 0;
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Cover — sticky, full height disponible */
+.trip-cover {
+  width: 220px;
+  flex-shrink: 0;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  position: relative;
+  background: #1a3a2a;
+  /* Alto = 100% del espacio disponible en .dashboard */
+  align-self: stretch;
+  margin-bottom: 24px;
+}
+.trip-cover img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cover-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%);
+}
+.cover-footer {
+  position: absolute;
+  bottom: 20px; left: 20px; right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cover-photo-credit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+}
+.passporter-logo-pill {
+  background: rgba(255,255,255,0.2);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  backdrop-filter: blur(4px);
+}
+.btn-add-cover {
+  background: var(--bg-inverse);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background var(--dur-base);
+}
+.btn-add-cover:hover { background: #244a38; }
+
+/* Cards wrapper — solo este hace scroll */
+.cards-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 24px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--neutral-200) transparent;
+}
+.cards-scroll::-webkit-scrollbar { width: 4px; }
+.cards-scroll::-webkit-scrollbar-track { background: transparent; }
+.cards-scroll::-webkit-scrollbar-thumb { background: var(--neutral-200); border-radius: 4px; }
+
+/* Grid de cards: 2 filas visibles + hint de 3ª */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: calc((100vh - var(--header-h) - 80px - 16px - 48px) / 2);
+  gap: 16px;
+}
+
+/* ── Card Base ── */
+.card {
+  background: var(--bg-muted);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: box-shadow var(--dur-base) var(--ease-standard), transform var(--dur-base) var(--ease-standard);
+  overflow: hidden;
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.card-stat {
+  text-align: center;
+}
+.card-stat .number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.card-stat .label {
+  font-size: 13px;
+  font-weight: 400;
+  color: #4e625b;
+  margin-top: 4px;
+}
+
+/* ── Itinerario ── */
+.itinerary-dates {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+}
+.itin-date {
+  text-align: center;
+}
+.itin-date .month {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.itin-date .day {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--bg-inverse);
+  line-height: 1.1;
+}
+.itin-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.plane-pill {
+  width: 56px; height: 56px;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid #fff;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.plane-pill img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.plane-icon {
+  font-size: 22px;
+  color: var(--primary-500);
+}
+.itin-line {
+  width: 56px; height: 1.5px;
+  background: var(--neutral-300);
+}
+
+/* ── Mis Sitios: fanned photos ── */
+.fanned-photos {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 90px;
+  position: relative;
+  width: 140px;
+}
+.photo-card {
+  width: 52px; height: 68px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid #f2f4f3;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+}
+.photo-card img { width: 100%; height: 100%; object-fit: cover; }
+.photo-card:nth-child(1) { left: 0; transform: rotate(-11deg); z-index: 1; }
+.photo-card:nth-child(2) { left: 44px; transform: rotate(13deg); z-index: 2; }
+.photo-card:nth-child(3) { left: 88px; transform: rotate(-12deg); z-index: 3; }
+.photo-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, var(--neutral-100), var(--neutral-200));
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Viajeros: avatars ── */
+.traveler-avatars {
+  display: flex;
+  position: relative;
+  height: 72px;
+  width: 80px;
+}
+.avatar-ring {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  border: 2.5px solid #f2f4f3;
+  overflow: hidden;
+  position: absolute;
+  top: 4px; left: 8px;
+}
+.avatar-ring img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #c8eade, #9fd8c0);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--bg-inverse);
+}
+.avatar-add {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px dashed var(--neutral-300);
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  position: absolute;
+  bottom: 0; right: 0;
+  cursor: pointer;
+  transition: border-color var(--dur-base);
+}
+.avatar-add:hover { border-color: var(--primary-500); }
+.avatar-add i { font-size: 14px; color: var(--text-tertiary); }
+
+/* ── Tareas: bar chart ── */
+.task-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 80px;
+  width: 100%;
+  justify-content: center;
+}
+.task-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.task-bar-track {
+  width: 34px;
+  height: 72px;
+  background: var(--neutral-100);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+}
+.task-bar-fill {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  border-radius: var(--radius-md);
+  transition: height 0.4s var(--ease-standard);
+}
+.fill-blue  { background: linear-gradient(to top, #c3effd, transparent); }
+.fill-amber { background: linear-gradient(to top, #fef08a, transparent); }
+.fill-green { background: linear-gradient(to top, #bbf7d0, transparent); }
+.bar-num {
+  font-size: 16px; font-weight: 700; color: var(--text-primary);
+  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+}
+
+/* ── Reservas: folder ── */
+.folder-icon {
+  width: 72px; height: 72px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px;
+  color: var(--neutral-300);
+  position: relative;
+}
+.folder-badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  width: 24px; height: 24px;
+  background: var(--primary-500);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+  border: 2px solid #f2f4f3;
+}
+
+/* ── Travel Store ── */
+.store-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.store-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: var(--text-primary);
+  background: #fff;
+  border: 1px solid var(--border-subtle);
+  transition: box-shadow var(--dur-base), transform var(--dur-base), border-color var(--dur-base);
+  cursor: pointer;
+}
+.store-link:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateX(3px);
+  border-color: var(--border-default);
+}
+.store-thumb {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 17px;
+}
+.store-link-text { flex: 1; }
+.store-item-name {
+  font-size: 13px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
+}
+.store-item-sub {
+  font-size: 11px; color: var(--text-tertiary); margin-top: 1px;
+}
+.store-link-arrow {
+  font-size: 13px; color: var(--neutral-300);
+  transition: color var(--dur-base), transform var(--dur-base);
+}
+.store-link:hover .store-link-arrow {
+  color: var(--text-secondary);
+  transform: translateX(2px);
+}
+
+/* ── Información card ── */
+.info-card {}
+.info-header { font-size: 22px; font-weight: 700; color: var(--text-primary); }
+.info-sub { font-size: 22px; font-weight: 400; color: var(--text-primary); }
+.info-icons {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;
+}
+.info-icon-btn {
+  width: 42px; height: 38px;
+  background: #fff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: box-shadow var(--dur-base);
+  box-shadow: var(--shadow-xs);
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+.info-icon-btn:hover { box-shadow: var(--shadow-sm); color: var(--text-primary); }
+
+/* ── Tablero corkboard ── */
+.corkboard {
+  width: 160px; height: 120px;
+  background: #d6d9d8;
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+.corkboard-inner {
+  position: absolute; inset: 6px;
+  background: #c8cccb;
+  border-radius: 10px;
+}
+.note {
+  position: absolute;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 1px 2px 5px rgba(0,0,0,0.18);
+  padding: 8px 7px 7px;
+  width: 52px;
+}
+.note-lines {
+  display: flex; flex-direction: column; gap: 3px; margin-top: 6px;
+}
+.note-line {
+  height: 2px; border-radius: 2px; background: #dde0e3;
+}
+.note-line.short { width: 60%; }
+.pin {
+  width: 8px; height: 8px;
+  background: #e53935;
+  border-radius: 50%;
+  position: absolute;
+  top: -3px; left: 50%; transform: translateX(-50%);
+  box-shadow: 0 1px 3px rgba(229,57,53,0.4);
+}
+.note-1 { top: 8px; left: 10px; transform: rotate(-4deg); }
+.note-2 { top: 6px; right: 10px; transform: rotate(3deg); }
+.note-3 { bottom: 8px; left: 50%; transform: translateX(-50%) rotate(-1deg); }
+.board-dot {
+  position: absolute; bottom: 8px; left: 8px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--primary-500);
+  opacity: 0.7;
+}
+
+/* Phosphor icons fallback using Unicode / CSS */
+</style>
+<!-- Tabler icons for sidebar -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+</head>
+<body>
+
+<!-- Browser Chrome -->
+<div class="browser-bar">
+  <div class="browser-dots">
+    <span class="dot-r"></span>
+    <span class="dot-y"></span>
+    <span class="dot-g"></span>
+  </div>
+  <div class="browser-url">
+    <i class="ti ti-lock"></i>
+    app.passporter.com/viaje/japon-2026
+  </div>
+</div>
+
+<!-- App Shell -->
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <!-- Logo -->
+    <div class="sidebar-top">
+      <div class="logo-symbol">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="#4caf82"/>
+          <path d="M12 2C8 2 4.5 5 4 9h16C19.5 5 16 2 12 2z" fill="#6fcfa0"/>
+        </svg>
+      </div>
+      <span class="logo-text">Passporter</span>
+    </div>
+
+    <!-- Trip nav (viaje actual) -->
+    <div class="nav-section">
+      <div class="nav-section-label">Viaje</div>
+
+      <a class="nav-item active" href="#" title="Inicio">
+        <i class="ti ti-layout-dashboard"></i>
+        <span class="nav-label">Inicio</span>
+      </a>
+      <a class="nav-item" href="#" title="Itinerario">
+        <i class="ti ti-calendar-event"></i>
+        <span class="nav-label">Itinerario</span>
+      </a>
+      <a class="nav-item" href="#" title="Mis sitios">
+        <i class="ti ti-map-pin"></i>
+        <span class="nav-label">Mis sitios</span>
+      </a>
+      <a class="nav-item" href="#" title="Reservas">
+        <i class="ti ti-ticket"></i>
+        <span class="nav-label">Reservas</span>
+      </a>
+      <a class="nav-item" href="#" title="Tareas">
+        <i class="ti ti-clipboard-list"></i>
+        <span class="nav-label">Tareas</span>
+      </a>
+      <a class="nav-item" href="#" title="Tablero">
+        <i class="ti ti-columns"></i>
+        <span class="nav-label">Tablero</span>
+      </a>
+    </div>
+
+    <!-- Global -->
+    <div class="nav-section">
+      <div class="nav-section-label">General</div>
+      <a class="nav-item" href="#" title="Travel Store">
+        <i class="ti ti-shopping-bag"></i>
+        <span class="nav-label">Travel Store</span>
+      </a>
+      <a class="nav-item" href="#" title="Información">
+        <i class="ti ti-world"></i>
+        <span class="nav-label">Información</span>
+      </a>
+    </div>
+
+    <!-- Bottom -->
+    <div class="sidebar-bottom">
+      <a class="nav-item" href="#" title="Viajeros">
+        <i class="ti ti-users"></i>
+        <span class="nav-label">Viajeros</span>
+      </a>
+      <a class="nav-item" href="#" title="Mi perfil">
+        <i class="ti ti-user-circle"></i>
+        <span class="nav-label">Mi perfil</span>
+      </a>
+      <a class="nav-item" href="#" title="Ajustes">
+        <i class="ti ti-settings"></i>
+        <span class="nav-label">Ajustes</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Trip header -->
+    <div class="trip-header">
+      <div class="trip-title-block">
+        <div class="trip-title">Japón 2026 🎌👹</div>
+        <div class="trip-dates">20 oct. – 03 nov.</div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+
+      <!-- Cover -->
+      <div class="trip-cover">
+        <img
+          src="https://www.figma.com/api/mcp/asset/8a5c50ec-8702-4131-a2cd-e1bc3de31444"
+          alt="Japón"
+          onerror="this.style.display='none'"
+        >
+        <div class="cover-overlay"></div>
+        <div class="cover-footer">
+          <div class="cover-photo-credit">
+            <span style="font-size:12px;color:rgba(255,255,255,0.8)">Foto de</span>
+            <span class="passporter-logo-pill">✦ Passporter</span>
+          </div>
+          <button class="btn-add-cover">Añadir portada</button>
+        </div>
+      </div>
+
+      <!-- Cards Grid (scroll propio) -->
+      <div class="cards-scroll">
+      <div class="cards-grid">
+
+        <!-- 1. Itinerario -->
+        <div class="card" onclick="alert('Abre el itinerario del viaje')">
+          <div class="card-title">Itinerario</div>
+          <div class="card-body">
+            <div class="itinerary-dates">
+              <div class="itin-date">
+                <div class="month">oct</div>
+                <div class="day">20</div>
+              </div>
+              <div class="itin-arrow">
+                <div class="itin-line"></div>
+                <div class="plane-pill">
+                  <i class="ti ti-plane plane-icon"></i>
+                </div>
+                <div class="itin-line"></div>
+              </div>
+              <div class="itin-date">
+                <div class="month">nov</div>
+                <div class="day">03</div>
+              </div>
+            </div>
+            <div class="card-stat">
+              <div class="number">14</div>
+              <div class="label">Días</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Mis sitios -->
+        <div class="card" onclick="alert('Abre tus sitios guardados')">
+          <div class="card-title">Mis sitios</div>
+          <div class="card-body">
+            <div class="fanned-photos">
+              <div class="photo-card">
+                <img src="https://www.figma.com/api/mcp/asset/d15a8884-1faf-4b97-bf35-a947d6fb1d18" alt="Lugar 1" onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><i class=\'ti ti-mountain\' style=\'font-size:22px;color:#abb2ba\'></i></div>'">
+              </div>
+              <div class="photo-card">
+                <img src="https://www.figma.com/api/mcp/asset/41b834c6-1ae7-4262-8079-97e8d5aa5ec4" alt="Lugar 2" onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><i class=\'ti ti-torii-gate\' style=\'font-size:22px;color:#abb2ba\'></i></div>'">
+              </div>
+              <div class="photo-card">
+                <img src="https://www.figma.com/api/mcp/asset/44503fdb-ddec-46b2-88be-85b3b77457eb" alt="Lugar 3" onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><i class=\'ti ti-camera\' style=\'font-size:22px;color:#abb2ba\'></i></div>'">
+              </div>
+            </div>
+            <div class="card-stat">
+              <div class="number">3</div>
+              <div class="label">Lugares</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Reservas y documentos -->
+        <div class="card" onclick="alert('Abre tus reservas y documentos')">
+          <div class="card-title">Reservas y documentos</div>
+          <div class="card-body">
+            <div class="folder-icon">
+              <i class="ti ti-folder" style="font-size:52px;color:var(--neutral-300)"></i>
+              <div class="folder-badge">4</div>
+            </div>
+            <div class="card-stat">
+              <div class="number">4</div>
+              <div class="label">Reservas</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Viajeros -->
+        <div class="card" onclick="alert('Gestiona los viajeros del viaje')">
+          <div class="card-title">Viajeros</div>
+          <div class="card-body">
+            <div class="traveler-avatars">
+              <div class="avatar-ring">
+                <img src="https://www.figma.com/api/mcp/asset/e5c6edb6-a484-4392-ba10-96235fede90c" alt="Viajero 1" onerror="this.parentElement.innerHTML='<div class=\'avatar-placeholder\'>M</div>'">
+              </div>
+              <div class="avatar-add">
+                <i class="ti ti-plus"></i>
+              </div>
+            </div>
+            <div class="card-stat">
+              <div class="number">1</div>
+              <div class="label">Viajero</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Tareas -->
+        <div class="card" onclick="alert('Abre el gestor de tareas')">
+          <div class="card-title">Tareas</div>
+          <div class="card-body">
+            <div class="task-bars">
+              <div class="task-bar-col">
+                <div class="task-bar-track">
+                  <div class="task-bar-fill fill-blue" style="height:75%"></div>
+                  <div class="bar-num">4</div>
+                </div>
+              </div>
+              <div class="task-bar-col">
+                <div class="task-bar-track">
+                  <div class="task-bar-fill fill-amber" style="height:50%"></div>
+                  <div class="bar-num">2</div>
+                </div>
+              </div>
+              <div class="task-bar-col">
+                <div class="task-bar-track">
+                  <div class="task-bar-fill fill-green" style="height:25%"></div>
+                  <div class="bar-num">1</div>
+                </div>
+              </div>
+            </div>
+            <div class="card-stat">
+              <div class="number">7</div>
+              <div class="label">Total Tareas</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Travel Store -->
+        <div class="card" style="cursor:default">
+          <div class="card-title">Travel Store</div>
+          <div class="card-body" style="align-items:flex-start;justify-content:center;width:100%">
+            <div class="store-list">
+              <a class="store-link" href="#actividades" onclick="event.preventDefault();document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));alert('Abriendo Actividades en Travel Store...')">
+                <div class="store-thumb" style="background:#e0f0ea;">
+                  <i class="ti ti-kayak" style="color:var(--primary-500)"></i>
+                </div>
+                <div class="store-link-text">
+                  <div class="store-item-name">Actividades</div>
+                  <div class="store-item-sub">Experiencias locales</div>
+                </div>
+                <i class="ti ti-chevron-right store-link-arrow"></i>
+              </a>
+              <a class="store-link" href="#imprescindibles" onclick="event.preventDefault();alert('Abriendo Imprescindibles en Travel Store...')">
+                <div class="store-thumb" style="background:#fef3c7;">
+                  <i class="ti ti-star" style="color:#b45309"></i>
+                </div>
+                <div class="store-link-text">
+                  <div class="store-item-name">Imprescindibles</div>
+                  <div class="store-item-sub">No te los pierdas</div>
+                </div>
+                <i class="ti ti-chevron-right store-link-arrow"></i>
+              </a>
+              <a class="store-link" href="#ideas" onclick="event.preventDefault();alert('Abriendo Ideas de viaje en Travel Store...')">
+                <div class="store-thumb" style="background:#ede9fe;">
+                  <i class="ti ti-bulb" style="color:#7c3aed"></i>
+                </div>
+                <div class="store-link-text">
+                  <div class="store-item-name">Ideas de viaje</div>
+                  <div class="store-item-sub">Inspiración para tu ruta</div>
+                </div>
+                <i class="ti ti-chevron-right store-link-arrow"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Tablero -->
+        <div class="card" onclick="alert('Abre el tablero')">
+          <div class="card-title">Tablero</div>
+          <div class="card-body">
+            <div class="corkboard">
+              <div class="corkboard-inner"></div>
+              <!-- Nota 1 -->
+              <div class="note note-1">
+                <div class="pin"></div>
+                <div class="note-lines">
+                  <div class="note-line"></div>
+                  <div class="note-line"></div>
+                  <div class="note-line short"></div>
+                </div>
+              </div>
+              <!-- Nota 2 -->
+              <div class="note note-2">
+                <div class="pin"></div>
+                <div class="note-lines">
+                  <div class="note-line"></div>
+                  <div class="note-line short"></div>
+                  <div class="note-line"></div>
+                </div>
+              </div>
+              <!-- Nota 3 -->
+              <div class="note note-3">
+                <div class="pin"></div>
+                <div class="note-lines">
+                  <div class="note-line"></div>
+                  <div class="note-line"></div>
+                  <div class="note-line short"></div>
+                </div>
+              </div>
+              <div class="board-dot"></div>
+            </div>
+            <div class="card-stat">
+              <div class="number">4</div>
+              <div class="label">notas</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. Información -->
+        <div class="card info-card" onclick="alert('Abre información del destino')">
+          <div class="card-title">Información</div>
+          <div class="card-body" style="align-items:flex-start;gap:12px">
+            <div>
+              <div class="info-header">Capital</div>
+              <div class="info-sub">Tokio</div>
+            </div>
+            <div class="info-icons">
+              <div class="info-icon-btn" title="Moneda"><i class="ti ti-currency-yen"></i></div>
+              <div class="info-icon-btn" title="Idioma"><i class="ti ti-language"></i></div>
+              <div class="info-icon-btn" title="Vuelos"><i class="ti ti-plane"></i></div>
+              <div class="info-icon-btn" title="Tiempo"><i class="ti ti-cloud"></i></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /cards-grid -->
+      </div><!-- /cards-scroll -->
+    </div><!-- /dashboard -->
+  </main>
+
+</div><!-- /app -->
+
+<script>
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.task-bar-fill').forEach(bar => {
+  const h = bar.style.height;
+  bar.style.height = '0%';
+  setTimeout(() => {
+    bar.style.transition = 'height 0.6s cubic-bezier(0.2,0,0,1)';
+    bar.style.height = h;
+  }, 300);
+});
+</script>
+</body>
+</html>
