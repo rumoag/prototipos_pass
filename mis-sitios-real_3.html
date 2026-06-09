@@ -1,0 +1,2686 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passporter — Mis Sitios</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --green:#1b352c;--green-mid:#007a51;--green-light:#e6f3ef;
+      --n25:#f8f9fa;--n50:#eef0f1;--n100:#e6e8ea;--n200:#dde0e3;
+      --n500:#abb2ba;--n700:#72777d;--n800:#55595f;--n950:#2a2d31;
+      --pos:#398a5e;--pos-bg:#dfeee6;
+      --font:'Cerebri Sans',system-ui,sans-serif;
+    }
+    body{font-family:var(--font);background:#fff;color:var(--n950);height:100vh;overflow:hidden;display:flex}
+    /* SIDEBAR */
+    .sb{width:64px;background:var(--n25);border-right:1px solid var(--n50);display:flex;flex-direction:column;align-items:center;padding:12px 0;flex-shrink:0}
+    .sb-logo{width:36px;height:44px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+    .sb-ico{width:36px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer;color:var(--n700);font-size:16px;transition:background .15s}
+    .sb-ico:hover{background:var(--n100)}
+    .sb-ico.on{background:var(--n100);color:var(--n950)}
+    .sb-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+    .sb-div{width:28px;height:1px;background:var(--n200);margin:8px 0}
+    .sb-bot{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:2px}
+    /* PANEL */
+    .panel{width:419px;flex-shrink:0;border-right:1px solid var(--n200);display:flex;flex-direction:column;height:100vh;overflow:hidden;background:#fff;position:relative}
+    .ph{padding:24px 16px 0;flex-shrink:0}
+    .ptitle{font-size:24px;font-weight:800;line-height:1.4;color:#021f15;letter-spacing:-.3px}
+    .tabs{display:flex;border-bottom:1px solid var(--n200);margin-top:12px}
+    .tab{display:flex;align-items:center;gap:5px;padding:6px 12px 7px;font-size:13.5px;font-weight:400;color:var(--n950);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;font-family:var(--font)}
+    .tab svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+    .tab.on{font-weight:700;border-bottom-color:#000}
+    .pscroll{flex:1;overflow-y:auto;padding:16px}
+    .pscroll::-webkit-scrollbar{width:3px}
+    .pscroll::-webkit-scrollbar-thumb{background:var(--n200);border-radius:2px}
+
+    /* DEST SELECTOR */
+    .dest-row{
+      display:flex;align-items:center;gap:6px;
+      overflow-x:auto;padding:10px 0 2px;
+      scrollbar-width:none;
+    }
+    .dest-row::-webkit-scrollbar{display:none}
+    .dest-chip{
+      display:inline-flex;align-items:center;gap:5px;
+      height:30px;padding:0 12px;border-radius:999px;
+      font-size:12px;font-weight:600;white-space:nowrap;
+      cursor:pointer;flex-shrink:0;
+      border:1.5px solid var(--n200);
+      background:#fff;color:var(--n800);
+      transition:background .15s,border-color .15s,color .15s;
+      font-family:var(--font);
+    }
+    .dest-chip:hover{background:var(--n25);border-color:var(--n300)}
+    .dest-chip.on{
+      background:#1b352c;border-color:#1b352c;color:#fff;
+    }
+    .dest-chip .dest-flag{font-size:14px;line-height:1}
+    /* GRID */
+    .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .ccard{position:relative;height:210px;border-radius:8px;overflow:hidden;cursor:pointer;border:1px solid var(--n200);transition:transform .2s,box-shadow .2s}
+    .ccard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+    .ccard:hover .covr{background:linear-gradient(180deg,rgba(0,0,0,0) 10%,rgba(0,0,0,.65) 100%)}
+    .cimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .covr{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 25%,rgba(0,0,0,.52) 100%);transition:background .25s}
+    .ccnt{position:absolute;bottom:0;left:0;right:0;padding:14px;color:#fff}
+    .ctitle{font-size:17px;font-weight:700;line-height:1.25;letter-spacing:-.2px;margin-bottom:2px}
+    .ccount{font-size:13px;opacity:.9}
+    /* COMING SOON */
+    .cs{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--n700);padding:40px}
+    .cs svg{width:40px;height:40px;opacity:.35;stroke:currentColor;fill:none;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
+    .cs-t{font-size:15px;font-weight:600;color:var(--n800)}
+    .cs-d{font-size:13px;text-align:center;line-height:1.5}
+    /* DETAIL */
+    .detail{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;overflow:hidden;transform:translateX(100%);transition:transform .28s cubic-bezier(.3,0,0,1);z-index:20}
+    .detail.on{transform:translateX(0)}
+    /* Sticky back bar — always visible at top */
+    .dsticky{
+      flex-shrink:0;
+      background:#fff;
+      border-bottom:1px solid var(--n100);
+      display:flex;align-items:center;gap:6px;
+      padding:12px 14px;cursor:pointer;
+    }
+    .dsticky svg{width:18px;height:18px;stroke:var(--n950);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .dsticky span{font-size:13.5px;font-weight:600;color:var(--n950);letter-spacing:.2px}
+    /* Scrollable content below sticky bar */
+    .dscroll{flex:1;overflow-y:auto}
+    .dscroll::-webkit-scrollbar{width:3px}
+    .dscroll::-webkit-scrollbar-thumb{background:var(--n200);border-radius:2px}
+    .dhero{position:relative;height:312px;flex-shrink:0;overflow:hidden}
+    .dhero-img{width:100%;height:100%;object-fit:cover}
+    .dhero-ovr{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(0,0,0,.55) 100%)}
+    .dhero-cnt{position:absolute;bottom:14px;left:14px;right:14px;color:#fff}
+    .dhero-title{font-size:32px;font-weight:700;line-height:38px;letter-spacing:-0.34px;color:#fff;margin-bottom:6px}
+    .dauthor{display:flex;align-items:center;gap:6px;font-size:13px}
+    .avatar{width:22px;height:22px;border-radius:50%;background:var(--green-mid);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+    .dbody{padding:16px;display:flex;flex-direction:column;gap:14px}
+    .ddesc{font-size:13.5px;line-height:1.6;color:var(--n950);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .ddesc.exp{display:block}
+    .showmore{font-size:13.5px;font-weight:600;color:var(--n950);cursor:pointer;margin-top:-4px}
+    .savebtn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid #dce1df;border-radius:8px;background:#fff;font-size:13.5px;font-weight:700;color:var(--green);cursor:pointer;font-family:var(--font);letter-spacing:-.15px;transition:background .15s;align-self:flex-start}
+    .savebtn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .savebtn:hover{background:var(--n25)}
+    .stitle{font-size:15.5px;font-weight:500;color:#000}
+    .slist{display:flex;flex-direction:column;gap:10px}
+    .sitem{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--n200);border-radius:8px;cursor:pointer;transition:background .15s,box-shadow .15s}
+    .sitem:hover{background:var(--n25)}
+    .sitem.active{background:#eef0f1;border-color:#dde0e3}
+    .sitem.hi{border-color:var(--green-mid)}
+    .sthumb{width:90px;height:90px;border-radius:6px;overflow:hidden;flex-shrink:0;background:var(--n100)}
+    .sthumb img{width:100%;height:100%;object-fit:cover}
+    .sthumb-ph{width:100%;height:100%;background:linear-gradient(135deg,var(--n100),var(--n200))}
+    .sinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+    .sname{font-size:13.5px;font-weight:600;color:var(--n950);letter-spacing:.1px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .stype{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--n800)}
+    .stype svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+    .sbkm{color:var(--n500);cursor:pointer;flex-shrink:0;padding:4px;border-radius:4px;transition:color .15s,background .15s}
+    .sbkm:hover{color:var(--n950);background:var(--n50)}
+    .sbkm.on{color:var(--green)}
+    .sbkm svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+    .sbkm.on svg{fill:currentColor}
+    /* MAP */
+    .mwrap{flex:1;position:relative;overflow:hidden}
+    #map{width:100%;height:100%}
+    .mnav{position:absolute;top:16px;right:16px;width:40px;height:40px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.18);cursor:pointer;z-index:1000;border:none;transition:background .15s}
+    .mnav:hover{background:var(--n25)}
+    .mnav svg{width:18px;height:18px;stroke:var(--n950);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    /* leaflet overrides */
+    .leaflet-control-zoom{border:2px solid #e5e5e5!important;border-radius:8px!important;box-shadow:none!important;overflow:hidden}
+    .leaflet-bar a{width:42px!important;height:42px!important;line-height:42px!important;font-size:18px!important;color:#343434!important}
+    .leaflet-bar a:first-child{border-top-left-radius:6px!important;border-top-right-radius:6px!important}
+    .leaflet-bar a:last-child{border-bottom-left-radius:6px!important;border-bottom-right-radius:6px!important}
+    .leaflet-popup-content-wrapper{border-radius:8px!important;font-family:var(--font)!important;font-size:13px!important}
+    /* pin */
+    .pin{width:28px;height:36px}
+    .pin-b{width:24px;height:24px;background:var(--green);border:2.5px solid #fff;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;margin:4px 0 0 2px;transition:background .2s,transform .2s}
+    .pin-d{width:7px;height:7px;background:#fff;border-radius:50%;transform:rotate(45deg)}
+    .pin.act .pin-b{background:var(--green-mid);transform:rotate(-45deg) scale(1.2)}
+    /* fade */
+    @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+    .fi{animation:fi .22s ease}
+
+    /* ── TOAST ── */
+    .toast{
+      position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);
+      background:#1b352c;color:#fff;
+      display:flex;align-items:center;gap:12px;
+      padding:12px 18px;border-radius:10px;
+      font-size:13.5px;font-weight:600;letter-spacing:.1px;
+      box-shadow:0 4px 16px rgba(0,0,0,.22);
+      opacity:0;pointer-events:none;z-index:9999;
+      transition:opacity .22s ease,transform .22s ease;
+      white-space:nowrap;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+    .toast svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .toast-sep{width:1px;height:16px;background:rgba(255,255,255,.25);flex-shrink:0}
+    .toast-action{
+      font-size:13px;font-weight:700;color:rgba(255,255,255,.85);
+      cursor:pointer;letter-spacing:.2px;
+      display:flex;align-items:center;gap:4px;
+      transition:color .15s;flex-shrink:0;
+    }
+    .toast-action:hover{color:#fff}
+    .toast-action svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+    /* ── TAB BADGE ── */
+    .tab-badge{
+      display:inline-flex;align-items:center;justify-content:center;
+      min-width:16px;height:16px;padding:0 4px;
+      background:#007a51;color:#fff;
+      border-radius:999px;font-size:10px;font-weight:700;
+      line-height:1;margin-left:4px;
+    }
+
+    /* ── GUARDADOS TAB ── */
+    .saved-wrap{display:flex;flex-direction:column;gap:16px}
+    .saved-group{display:flex;flex-direction:column;gap:10px}
+    .saved-chip-row{display:flex;align-items:center;justify-content:space-between;height:32px}
+    .saved-chip{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:0 12px;height:32px;border-radius:32px;
+      background:#ebf5f2;
+      font-size:12px;font-weight:700;color:#407563;
+      letter-spacing:.1px;white-space:nowrap;
+    }
+    .saved-dots{color:var(--n500);cursor:pointer;font-size:18px;line-height:1;padding:4px}
+    .saved-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--n700);padding:40px 24px;text-align:center}
+    .saved-empty svg{width:36px;height:36px;stroke:currentColor;fill:none;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;opacity:.35}
+    .saved-empty-t{font-size:15px;font-weight:600;color:var(--n800)}
+    .saved-empty-d{font-size:13px;line-height:1.5}
+
+    /* ── SPOT DETAIL PANEL ── */
+    .spot-detail{
+      width:0;
+      min-width:0;
+      height:100vh;
+      background:#fff;
+      border-left:1px solid var(--n200);
+      box-shadow:2px 0 16px rgba(0,0,0,.06);
+      display:flex;flex-direction:column;
+      overflow:hidden;
+      flex-shrink:0;
+      transition:width .28s cubic-bezier(.3,0,0,1), min-width .28s cubic-bezier(.3,0,0,1);
+    }
+    .spot-detail.on{width:419px;min-width:419px}
+    /* cover hero */
+    .sd-cover{
+      position:relative;height:242px;flex-shrink:0;overflow:hidden;
+    }
+    .sd-cover img.sd-hero{width:100%;height:100%;object-fit:cover}
+    .sd-cover-ovr{
+      position:absolute;inset:0;
+      background:linear-gradient(to top,rgba(0,0,0,.6) 0%,rgba(0,0,0,0) 55%);
+    }
+    .sd-cover-top{
+      position:absolute;top:12px;left:12px;right:12px;
+      display:flex;justify-content:space-between;align-items:flex-start;
+    }
+    .sd-cover-btn{
+      width:32px;height:32px;background:#fff;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;border:none;flex-shrink:0;
+      transition:background .15s;
+    }
+    .sd-cover-btn:hover{background:var(--n25)}
+    .sd-cover-btn svg{width:18px;height:18px;stroke:var(--n950);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+    .sd-cover-btn.bkm-on svg{stroke:var(--green);fill:var(--green)}
+    /* dots */
+    .sd-dots{
+      position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+      display:flex;gap:6px;align-items:center;
+    }
+    .sd-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5)}
+    .sd-dot.on{background:#fff}
+    /* body */
+    .sd-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+    .sd-body::-webkit-scrollbar{width:3px}
+    .sd-body::-webkit-scrollbar-thumb{background:var(--n200);border-radius:2px}
+    /* title row */
+    .sd-name{font-size:20px;font-weight:700;line-height:1.4;color:var(--n950);letter-spacing:-.3px}
+    .sd-meta{display:flex;align-items:center;gap:4px;font-size:13.5px;color:var(--n800);flex-wrap:wrap}
+    .sd-stars{display:flex;gap:2px;align-items:center;color:#fdd032}
+    .sd-stars svg{width:16px;height:16px;fill:currentColor;stroke:none}
+    .sd-stars svg.half{fill:url(#halfStar)}
+    .sd-rating{font-size:13.5px;color:var(--n800);font-weight:400}
+    .sd-dot-sep{font-size:18px;font-weight:700;color:var(--n800);line-height:1}
+    .sd-cat{display:flex;align-items:center;gap:4px;color:var(--n800);font-size:13.5px}
+    .sd-cat svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    /* how to get there btn */
+    .sd-btn{
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      width:100%;padding:10px 16px;
+      border:1px solid var(--n200);border-radius:8px;background:#fff;
+      font-size:13.5px;font-weight:700;color:var(--n950);
+      cursor:pointer;font-family:var(--font);letter-spacing:-.15px;
+      transition:background .15s;
+    }
+    .sd-btn:hover{background:var(--n25)}
+    .sd-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    /* description */
+    .sd-desc{font-size:13.5px;line-height:1.6;color:var(--n950);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .sd-desc.exp{display:block}
+    .sd-more{font-size:13.5px;font-weight:600;color:var(--n950);cursor:pointer;text-decoration:underline;margin-top:-6px}
+    /* info rows */
+    .sd-info-row{
+      display:flex;gap:8px;align-items:flex-start;
+      padding:12px 0;border-bottom:1px solid var(--n50);
+    }
+    .sd-info-row:last-child{border-bottom:none}
+    .sd-info-icon{
+      width:24px;height:24px;background:var(--n25);border-radius:6px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .sd-info-icon svg{width:14px;height:14px;stroke:var(--n800);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+    .sd-info-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+    .sd-info-label{font-size:13.5px;font-weight:600;color:var(--n800);letter-spacing:.2px}
+    .sd-info-val{font-size:13.5px;color:var(--n950);line-height:1.5}
+    .sd-info-link{font-size:13.5px;font-weight:600;color:#0060b2;text-decoration:underline;cursor:pointer}
+    .sd-schedule{display:flex;flex-direction:column;gap:3px}
+    .sd-schedule-row{display:flex;gap:4px;font-size:13.5px;line-height:1.5}
+    .sd-schedule-day{font-weight:600;color:var(--n950);width:80px;flex-shrink:0}
+    .sd-schedule-time{color:var(--n950)}
+
+    /* ── TAG FILTER ROW (Guardados) ── */
+    .tag-filter-row{
+      display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+      padding:0 0 4px;
+    }
+    .tag-create{
+      display:inline-flex;align-items:center;gap:4px;
+      height:32px;padding:0 12px 0 10px;
+      border:1.33px solid #e5e4e2;border-radius:32px;background:#fff;
+      font-size:12px;color:#33312e;cursor:pointer;
+      white-space:nowrap;font-family:var(--font);
+      transition:background .15s;flex-shrink:0;
+    }
+    .tag-create:hover{background:var(--n25)}
+    .tag-create svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+    .tag-chip{
+      display:inline-flex;align-items:center;gap:5px;
+      height:32px;padding:0 12px;border-radius:32px;
+      font-size:12px;font-weight:700;cursor:pointer;
+      white-space:nowrap;transition:opacity .15s, border .15s;
+      border:1.33px solid transparent;
+    }
+    .tag-chip.green{background:#ebf5f2;color:#407563}
+    .tag-chip.green.selected{border-color:#407563}
+    .tag-chip.amber{background:#faf5e7;color:#af8a2c;border-color:#af8a2c}
+    .tag-chip.amber.selected{border-color:#af8a2c}
+    .tag-chip.inactive{opacity:.38}
+    .tag-chip-x{font-size:13px;font-weight:400;line-height:1;opacity:.7}
+    /* spot item tag chip inside card */
+    .sitem-tag{
+      display:inline-flex;align-items:center;justify-content:center;
+      height:22px;padding:0 10px;border-radius:32px;
+      font-size:11px;font-weight:700;
+      white-space:nowrap;margin-top:2px;
+      align-self:flex-start;
+    }
+    .sitem-tag.green{background:#ebf5f2;color:#407563}
+    .sitem-tag.amber{background:#faf5e7;color:#af8a2c;border:1.33px solid #af8a2c}
+
+    /* ── TAG MENU DROPDOWN ── */
+    .tag-menu{
+      position:absolute;right:0;top:calc(100% + 6px);
+      background:#fff;border-radius:10px;
+      box-shadow:0 4px 20px rgba(0,0,0,.14);
+      min-width:180px;z-index:200;
+      overflow:hidden;
+    }
+    .tag-menu-item{
+      padding:14px 20px;font-size:14px;font-weight:500;
+      color:var(--n950);cursor:pointer;
+      transition:background .12s;
+    }
+    .tag-menu-item:hover{background:var(--n25)}
+    .tag-menu-item.danger{color:#c0392b}
+    .tag-menu-item.danger:hover{background:#fff0ee}
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sb">
+  <div class="sb-logo">
+    <svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:#1b352c;stroke:none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+  </div>
+  <div class="sb-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+  <div class="sb-ico"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div>
+  <div class="sb-ico"><svg viewBox="0 0 24 24"><polygon points="3,6 21,3 18,18 3,21"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg></div>
+  <div class="sb-ico"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></div>
+  <div class="sb-ico on"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+  <div class="sb-ico"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
+  <div class="sb-div"></div>
+  <div class="sb-ico"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+  <div class="sb-ico"><svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg></div>
+  <div class="sb-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+  <div class="sb-bot">
+    <div class="sb-div"></div>
+    <div class="sb-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+    <div class="sb-ico"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>
+    <div class="sb-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+  </div>
+</div>
+
+<!-- PANEL -->
+<div class="panel">
+  <!-- Collections view -->
+  <div id="cv" style="display:flex;flex-direction:column;height:100%;overflow:hidden">
+    <div class="ph">
+      <div class="ptitle">Mis sitios</div>
+      <div class="dest-row" id="dest-row"></div>
+      <div class="tabs">
+        <button class="tab on" onclick="switchTab('col',this)">
+          <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="9" y1="8" x2="15" y2="8"/></svg>
+          Colecciones
+        </button>
+        <button class="tab" onclick="switchTab('exp',this)">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88"/></svg>
+          Explorar
+        </button>
+        <button class="tab" onclick="switchTab('sav',this)">
+          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          Guardados<span class="tab-badge" id="saved-badge" style="display:none">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="pscroll">
+      <div class="cgrid" id="cgrid"></div>
+      <div class="cs" id="cs" style="display:none">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div class="cs-t">Próximamente</div>
+        <div class="cs-d">Esta sección estará disponible muy pronto. ¡Estamos trabajando en ello!</div>
+      </div>
+      <!-- Saved view -->
+      <div id="saved-view" style="display:none">
+        <div class="saved-empty" id="saved-empty">
+          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          <div class="saved-empty-t">Nada guardado aún</div>
+          <div class="saved-empty-d">Guarda lugares de tus colecciones y aparecerán aquí</div>
+        </div>
+        <div class="saved-wrap" id="saved-list" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail view -->
+  <div class="detail" id="detail">
+    <!-- Sticky back bar -->
+    <div class="dsticky" onclick="closeSpotDetail();closeDetail()">
+      <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,19 5,12 12,5"/></svg>
+      <span>Volver a colecciones</span>
+    </div>
+    <!-- Scrollable content -->
+    <div class="dscroll">
+      <div class="dhero">
+        <img class="dhero-img" id="d-img" src="" alt="">
+        <div class="dhero-ovr"></div>
+        <div class="dhero-cnt">
+          <div class="dhero-title" id="d-title"></div>
+          <div class="dauthor">
+            <div class="avatar" id="d-av"></div>
+            <span style="opacity:.85">Por</span>
+            <span style="font-weight:600" id="d-auth"></span>
+          </div>
+        </div>
+      </div>
+      <div class="dbody">
+        <div>
+          <div class="ddesc" id="d-desc"></div>
+          <div class="showmore" id="d-more" onclick="toggleDesc()" style="margin-top:8px">Mostrar más</div>
+        </div>
+        <button class="savebtn" id="d-save" onclick="saveAll()">
+          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          <span id="d-save-txt"></span>
+        </button>
+        <div class="stitle">Selección</div>
+        <div class="slist" id="d-spots"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SPOT DETAIL PANEL (overlays map) -->
+<div class="spot-detail" id="spotDetail">
+  <div class="sd-cover">
+    <img class="sd-hero" id="sd-hero-img" src="" alt="">
+    <div class="sd-cover-ovr"></div>
+    <div class="sd-cover-top">
+      <!-- Bookmark top-left -->
+      <button class="sd-cover-btn" id="sd-bkm-btn" onclick="toggleSpotBkm()" title="Guardar">
+        <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+      </button>
+      <!-- Close top-right -->
+      <button class="sd-cover-btn" onclick="closeSpotDetail()" title="Cerrar">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="sd-dots">
+      <div class="sd-dot on"></div>
+      <div class="sd-dot"></div>
+      <div class="sd-dot"></div>
+      <div class="sd-dot"></div>
+    </div>
+  </div>
+  <div class="sd-body">
+    <div>
+      <div class="sd-name" id="sd-name"></div>
+      <div class="sd-meta" style="margin-top:6px">
+        <div class="sd-stars">
+          <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg viewBox="0 0 24 24" style="color:#d9d9d9"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" style="fill:#fdd032;clip-path:inset(0 50% 0 0)"/><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" style="fill:#d9d9d9;clip-path:inset(0 0 0 50%)"/></svg>
+        </div>
+        <span class="sd-rating">4.8</span>
+        <span class="sd-dot-sep">·</span>
+        <div class="sd-cat">
+          <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span id="sd-type"></span>
+        </div>
+      </div>
+    </div>
+    <button class="sd-btn">
+      <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Cómo llegar
+    </button>
+    <div>
+      <div class="sd-desc" id="sd-desc-text">El Mercat de Sant Antoni es uno de los mercados más emblemáticos y auténticos de Barcelona. Ubicado en un edificio modernista restaurado, combina gastronomía local, productos frescos, cultura de barrio y un ambiente mucho más tranquilo que otros mercados turísticos de la ciudad.</div>
+      <div class="sd-more" id="sd-more-btn" onclick="toggleSdDesc()">Más información</div>
+    </div>
+    <div style="display:flex;flex-direction:column">
+      <div class="sd-info-row">
+        <div class="sd-info-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="sd-info-body">
+          <div class="sd-info-label">Dirección</div>
+          <div class="sd-info-val" id="sd-address">Gran Via de les Corts Catalanes, 563, L'Eixample, 08011 Barcelona</div>
+        </div>
+      </div>
+      <div class="sd-info-row">
+        <div class="sd-info-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div class="sd-info-body">
+          <div class="sd-info-label">Contacto</div>
+          <div class="sd-info-link">+34 937 37 96 18</div>
+        </div>
+      </div>
+      <div class="sd-info-row">
+        <div class="sd-info-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+        <div class="sd-info-body">
+          <div class="sd-info-label">Página web</div>
+          <div class="sd-info-link">www.mercatsantantoni.com</div>
+        </div>
+      </div>
+      <div class="sd-info-row">
+        <div class="sd-info-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
+        <div class="sd-info-body">
+          <div class="sd-info-label">Horario</div>
+          <div class="sd-schedule">
+            <div class="sd-schedule-row"><span class="sd-schedule-day">Lunes:</span><span class="sd-schedule-time">17:00–24:00</span></div>
+            <div class="sd-schedule-row"><span class="sd-schedule-day">Martes:</span><span class="sd-schedule-time">17:00–24:00</span></div>
+            <div class="sd-schedule-row"><span class="sd-schedule-day">Miércoles:</span><span class="sd-schedule-time">17:00–24:00</span></div>
+            <div class="sd-schedule-row"><span class="sd-schedule-day">Jueves:</span><span class="sd-schedule-time">17:00–24:00</span></div>
+            <div class="sd-schedule-row"><span class="sd-schedule-day">Viernes:</span><span class="sd-schedule-time">17:00–24:00</span></div>
+            <div class="sd-schedule-row"><span class="sd-schedule-day">Sábado:</span><span class="sd-schedule-time">12:30–24:00</span></div>
+            <div class="sd-schedule-row"><span class="sd-schedule-day">Domingo:</span><span class="sd-schedule-time">12:30–24:00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
+  <span id="toast-msg"></span>
+  <div class="toast-sep"></div>
+  <div class="toast-action" onclick="goToSaved()">
+    Ver guardados
+    <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+  </div>
+</div>
+
+<!-- MAP -->
+<div class="mwrap">
+  <div id="map"></div>
+  <button class="mnav" title="Centrar">
+    <svg viewBox="0 0 24 24"><polygon points="3,11 22,2 13,21 11,13"/></svg>
+  </button>
+
+</div>
+
+<script>
+// ── SVG ICONS ──
+const IC = {
+  bookmark: `<svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>`,
+  bookmarkFill: `<svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:currentColor;fill:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>`,
+  camera: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+  fork: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>`,
+  bed: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 012 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>`,
+  bank: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12,2 2,7 22,7"/></svg>`,
+  tree: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M17 22V12l-5-8-5 8v10"/><line x1="12" y1="22" x2="12" y2="14"/></svg>`,
+  waves: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M2 12c.5-2 2-3 4-3s3.5 1 5 3 2.5 3 4 3 3.5-1 4-3"/><path d="M2 17c.5-2 2-3 4-3s3.5 1 5 3 2.5 3 4 3 3.5-1 4-3"/><path d="M2 7c.5-2 2-3 4-3s3.5 1 5 3 2.5 3 4 3 3.5-1 4-3"/></svg>`,
+  store: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M3 9l1-5h16l1 5"/><path d="M3 9a2 2 0 002 2 2 2 0 002-2 2 2 0 002 2 2 2 0 002-2 2 2 0 002 2 2 2 0 002-2"/><path d="M5 20v-9"/><path d="M19 20v-9"/><rect x="9" y="14" width="6" height="6"/><line x1="3" y1="20" x2="21" y2="20"/></svg>`,
+  wine: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M8 22h8"/><line x1="12" y1="11" x2="12" y2="22"/><path d="M7 2h10l-2 9a5 5 0 01-10 0L7 2z"/></svg>`,
+  coffee: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
+  book: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>`,
+  fish: `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M18 6.5C16 4 12 2 7 2c0 5 2 9 5 11"/><path d="M18 17.5C16 20 12 22 7 22c0-5 2-9 5-11"/><path d="M7 13a5 5 0 0010 0 5 5 0 00-10 0z"/><line x1="21" y1="13" x2="17" y2="13"/></svg>`,
+};
+
+// ── DATA ──
+const COLS = [
+  {
+    id:1,title:"El Jordaan Alternativo y Astilleros",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Amsterdam",
+    cat:"Nature",tag:"Amsterdam_Secreto",
+    desc:"Perfecta para viajeros reincidentes que quieren salir del circuito unconventional. Descubre espacios industriales reconvertidos en arte urbano, canales residenciales tranquilos y pasajes de tiendas independientes exclusivas.",
+    img:"https://images.unsplash.com/photo-1468436385273-8abca6dfd8d3?w=1200&q=80",
+    spots:[
+      {id:1000,name:"NDSM Wharf",type:'Lugar',icon:'camera',lat:52.4011,lng:4.8936,img:''},
+      {id:1001,name:"Begijnhof",type:'Lugar',icon:'camera',lat:52.3694,lng:4.8901,img:''},
+      {id:1002,name:"Straat Museum",type:'Lugar',icon:'camera',lat:52.4025,lng:4.8929,img:''},
+      {id:1003,name:"Eye Filmmuseum",type:'Lugar',icon:'camera',lat:52.3842,lng:4.9009,img:''},
+      {id:1004,name:"Brouwersgracht Canal",type:'Lugar',icon:'camera',lat:52.3809,lng:4.8876,img:''},
+      {id:1005,name:"De Negen Straatjes",type:'Lugar',icon:'camera',lat:52.3698,lng:4.885,img:''},
+      {id:1006,name:"Hortus Botanicus Amsterdam",type:'Lugar',icon:'camera',lat:52.3669,lng:4.9077,img:''},
+      {id:1007,name:"REM Eiland",type:'Lugar',icon:'camera',lat:52.3997,lng:4.8814,img:''},
+      {id:1008,name:"Ons' Lieve Heer op Solder",type:'Lugar',icon:'camera',lat:52.3744,lng:4.8981,img:''},
+      {id:1009,name:"Tuschinski Theatre",type:'Lugar',icon:'camera',lat:52.3664,lng:4.8942,img:''}
+    ]
+  },
+  {
+    id:2,title:"Esencia de Molinos y Casas de Madera",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Amsterdam",
+    cat:"Family",tag:"Amsterdam_Esencia",
+    desc:"El superpoder cultural e interactivo fuera del centro. Recorre molinos de viento tradicionales, aldeas con casas de madera pintorescas junto al lago y fortalezas medievales rodeadas de fosos de agua.",
+    img:"https://images.unsplash.com/photo-1654000120329-7c07e9e56b54?w=1200&q=90",
+    spots:[
+      {id:1010,name:"Zaanse Schans Windmills",type:'Lugar',icon:'camera',lat:52.4731,lng:4.8168,img:''},
+      {id:1011,name:"Volendam Harbour",type:'Lugar',icon:'camera',lat:52.4939,lng:5.0744,img:''},
+      {id:1012,name:"Marken Traditional Village",type:'Lugar',icon:'camera',lat:52.4587,lng:5.1017,img:''},
+      {id:1013,name:"Edam Cheese Market Square",type:'Lugar',icon:'camera',lat:52.5111,lng:5.0505,img:''},
+      {id:1014,name:"A'DAM Lookout",type:'Lugar',icon:'camera',lat:52.3839,lng:4.9022,img:''},
+      {id:1015,name:"NEMO Science Museum",type:'Lugar',icon:'camera',lat:52.3738,lng:4.9123,img:''},
+      {id:1016,name:"Artis Royal Zoo",type:'Lugar',icon:'camera',lat:52.3661,lng:4.9167,img:''},
+      {id:1017,name:"Muiderslot Castle",type:'Lugar',icon:'camera',lat:52.3342,lng:5.0715,img:''},
+      {id:1018,name:"Haarlem Grote Markt",type:'Lugar',icon:'camera',lat:52.3811,lng:4.6361,img:''},
+      {id:1019,name:"Keukenhof Gardens",type:'Lugar',icon:'camera',lat:52.2669,lng:4.5464,img:''}
+    ]
+  },
+  {
+    id:3,title:"Gu\u00eda del Debutante: Canales y Grandes Museos",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Amsterdam",
+    cat:"Art & culture",tag:"Amsterdam_Basico",
+    desc:"El itinerario so\u00f1ado para tu primera toma de contacto con la capital neerlandesa. Pasea por el cintur\u00f3n de canales principales, visita museos de prestigio mundial y rel\u00e1jate en pulmones verdes urbanos.",
+    img:"https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=1200&q=80",
+    spots:[
+      {id:1020,name:"Van Gogh Museum",type:'Lugar',icon:'camera',lat:52.3584,lng:4.8811,img:''},
+      {id:1021,name:"Rijksmuseum",type:'Lugar',icon:'camera',lat:52.36,lng:4.8852,img:''},
+      {id:1022,name:"Anne Frank House",type:'Lugar',icon:'camera',lat:52.3752,lng:4.8839,img:''},
+      {id:1023,name:"Dam Square",type:'Lugar',icon:'camera',lat:52.3731,lng:4.8926,img:''},
+      {id:1024,name:"Royal Palace Amsterdam",type:'Lugar',icon:'camera',lat:52.3732,lng:4.8914,img:''},
+      {id:1025,name:"Vondelpark",type:'Lugar',icon:'camera',lat:52.358,lng:4.8686,img:''},
+      {id:1026,name:"Jordaan District",type:'Lugar',icon:'camera',lat:52.3725,lng:4.8812,img:''},
+      {id:1027,name:"Bloemenmarkt",type:'Lugar',icon:'camera',lat:52.3667,lng:4.8911,img:''},
+      {id:1028,name:"Rembrandthuis",type:'Lugar',icon:'camera',lat:52.3693,lng:4.9014,img:''},
+      {id:1029,name:"Oude Kerk",type:'Lugar',icon:'camera',lat:52.3742,lng:4.8981,img:''}
+    ]
+  },
+  {
+    id:4,title:"Quesos, Patatas y Cafeter\u00edas Hist\u00f3ricas",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Amsterdam",
+    cat:"Food & drinks",tag:"Amsterdam_Foodie",
+    desc:"El sue\u00f1o de los amantes del producto local de abastos. Saborea las mejores patatas fritas belgas, realiza catas de queso Gouda tradicional y visita mercados gastron\u00f3micos cerrados de gran ambiente.",
+    img:"https://images.unsplash.com/photo-1548091960-fa93ce7f544d?w=1200&q=80",
+    spots:[
+      {id:1030,name:"Albert Cuyp Market",type:'Lugar',icon:'camera',lat:52.3554,lng:4.8956,img:''},
+      {id:1031,name:"Foodhallen",type:'Lugar',icon:'camera',lat:52.3656,lng:4.8683,img:''},
+      {id:1032,name:"Winkel 43",type:'Lugar',icon:'camera',lat:52.3786,lng:4.8862,img:''},
+      {id:1033,name:"Vlaams Friteshuis Vleminckx",type:'Lugar',icon:'camera',lat:52.3687,lng:4.8911,img:''},
+      {id:1034,name:"Henri Willig Cheese Tasting",type:'Lugar',icon:'camera',lat:52.3764,lng:4.8953,img:''},
+      {id:1035,name:"Caf\u00e9 de Dokter",type:'Lugar',icon:'camera',lat:52.3691,lng:4.8906,img:''},
+      {id:1036,name:"Van Stapele Koekmakerij",type:'Lugar',icon:'camera',lat:52.3707,lng:4.8924,img:''},
+      {id:1037,name:"De Kas Restaurant",type:'Lugar',icon:'camera',lat:52.3523,lng:4.9312,img:''},
+      {id:1038,name:"FEBO Amsterdam City Centre",type:'Lugar',icon:'camera',lat:52.3678,lng:4.8931,img:''},
+      {id:1039,name:"The Pancake Bakery",type:'Lugar',icon:'camera',lat:52.3787,lng:4.8842,img:''}
+    ]
+  },
+  {
+    id:5,title:"Atardeceres, Surf y Beach Clubs",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Bali",
+    cat:"Beaches",tag:"Bali_Playas",
+    desc:"El alma ind\u00f3mita y costera de Bali. Una ruta que conecta espectaculares lenguas de arena blanca rodeadas de acantilados, miradores surferos ic\u00f3nicos y locales exclusivos frente al mar.",
+    img:"https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?w=1200&q=70",
+    spots:[
+      {id:1040,name:"Kelingking Beach",type:'Lugar',icon:'camera',lat:-8.7423,lng:115.4491,img:''},
+      {id:1041,name:"Padang Padang Beach",type:'Lugar',icon:'camera',lat:-8.8111,lng:115.1028,img:''},
+      {id:1042,name:"Single Fin Bali",type:'Lugar',icon:'camera',lat:-8.8139,lng:115.0886,img:''},
+      {id:1043,name:"Echo Beach",type:'Lugar',icon:'camera',lat:-8.6542,lng:115.1255,img:''},
+      {id:1044,name:"Potato Head Beach Club",type:'Lugar',icon:'camera',lat:-8.6798,lng:115.1517,img:''},
+      {id:1045,name:"Crystal Bay",type:'Lugar',icon:'camera',lat:-8.7144,lng:115.459,img:''},
+      {id:1046,name:"Balangan Beach",type:'Lugar',icon:'camera',lat:-8.7919,lng:115.1278,img:''},
+      {id:1047,name:"Blue Point Beach",type:'Lugar',icon:'camera',lat:-8.8142,lng:115.0881,img:''},
+      {id:1048,name:"Thomas Beach",type:'Lugar',icon:'camera',lat:-8.8131,lng:115.0922,img:''},
+      {id:1049,name:"Nyang Nyang Beach",type:'Lugar',icon:'camera',lat:-8.8391,lng:115.0984,img:''}
+    ]
+  },
+  {
+    id:6,title:"Gu\u00eda del Debutante: Templos Sagrados",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Bali",
+    cat:"Art & culture",tag:"Bali_Basico",
+    desc:"Un itinerario imprescindible para tu primera inmersi\u00f3n en la Isla de los Dioses. Marav\u00edllate ante santuarios sobre acantilados, templos purificadores e imponentes terrazas de arroz verdes.",
+    img:"https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1200&q=80",
+    spots:[
+      {id:1050,name:"Uluwatu Temple",type:'Lugar',icon:'camera',lat:-8.8291,lng:115.0849,img:''},
+      {id:1051,name:"Tanah Lot Temple",type:'Lugar',icon:'camera',lat:-8.6212,lng:115.0868,img:''},
+      {id:1052,name:"Tegalalang Rice Terraces",type:'Lugar',icon:'camera',lat:-8.4329,lng:115.2789,img:''},
+      {id:1053,name:"Pura Ulun Danu Bratan",type:'Lugar',icon:'camera',lat:-8.2753,lng:115.1661,img:''},
+      {id:1054,name:"Sacred Monkey Forest Sanctuary",type:'Lugar',icon:'camera',lat:-8.5194,lng:115.2611,img:''},
+      {id:1055,name:"Tirta Empul Temple",type:'Lugar',icon:'camera',lat:-8.4264,lng:115.3144,img:''},
+      {id:1056,name:"Besakih Mother Temple",type:'Lugar',icon:'camera',lat:-8.3742,lng:115.4506,img:''},
+      {id:1057,name:"Pura Lempuyang",type:'Lugar',icon:'camera',lat:-8.3917,lng:115.6294,img:''},
+      {id:1058,name:"Goa Gajah Elephant Cave",type:'Lugar',icon:'camera',lat:-8.5233,lng:115.2861,img:''},
+      {id:1059,name:"Pura Taman Saraswati",type:'Lugar',icon:'camera',lat:-8.5052,lng:115.2625,img:''}
+    ]
+  },
+  {
+    id:7,title:"Joyas Ocultas: Secretos en la Selva",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Bali",
+    cat:"Nature",tag:"Bali_Secreto",
+    desc:"Pensada para aventureros reincidentes que huyen de las masas. Descubre espectaculares saltos de agua ocultos en cuevas, ca\u00f1ones selv\u00e1ticos y gargantas m\u00e1gicas en el interior de la isla.",
+    img:"https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=1200&q=80",
+    spots:[
+      {id:1060,name:"Sekumpul Waterfall",type:'Lugar',icon:'camera',lat:-8.1732,lng:115.1823,img:''},
+      {id:1061,name:"Tegenungan Waterfall",type:'Lugar',icon:'camera',lat:-8.5755,lng:115.2897,img:''},
+      {id:1062,name:"Nungnung Waterfall",type:'Lugar',icon:'camera',lat:-8.3311,lng:115.2306,img:''},
+      {id:1063,name:"Gitgit Waterfall",type:'Lugar',icon:'camera',lat:-8.2036,lng:115.1386,img:''},
+      {id:1064,name:"Aling-Aling Waterfall",type:'Lugar',icon:'camera',lat:-8.1722,lng:115.1033,img:''},
+      {id:1065,name:"Kanto Lampo Waterfall",type:'Lugar',icon:'camera',lat:-8.5329,lng:115.3323,img:''},
+      {id:1066,name:"Tibumana Waterfall",type:'Lugar',icon:'camera',lat:-8.5045,lng:115.3303,img:''},
+      {id:1067,name:"Tukad Cepung Waterfall",type:'Lugar',icon:'camera',lat:-8.4411,lng:115.3874,img:''},
+      {id:1068,name:"Banyumala Twin Waterfalls",type:'Lugar',icon:'camera',lat:-8.2177,lng:115.1014,img:''},
+      {id:1069,name:"Peguyangan Waterfall",type:'Lugar',icon:'camera',lat:-8.7951,lng:115.5214,img:''}
+    ]
+  },
+  {
+    id:8,title:"Wellness, Retiros y Caf\u00e9s Aesthetics",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Bali",
+    cat:"Luxury",tag:"Bali_Wellness",
+    desc:"La gu\u00eda m\u00e1s sofisticada de Bali. Conecta con el bienestar profundo en reconocidos centros de yoga integrados en la jungla, cafeter\u00edas de dise\u00f1o impecable y spas de masajes tradicionales premium.",
+    img:"https://images.unsplash.com/photo-1554481923-a6918bd997bc?w=1200&q=90",
+    spots:[
+      {id:1070,name:"The Yoga Barn",type:'Lugar',icon:'camera',lat:-8.5191,lng:115.2661,img:''},
+      {id:1071,name:"Fivelements Retreat",type:'Lugar',icon:'camera',lat:-8.5447,lng:115.2213,img:''},
+      {id:1072,name:"Kynd Community",type:'Lugar',icon:'camera',lat:-8.6744,lng:115.1568,img:''},
+      {id:1073,name:"Milk & Madu",type:'Lugar',icon:'camera',lat:-8.6514,lng:115.1353,img:''},
+      {id:1074,name:"Alchemy Ubud",type:'Lugar',icon:'camera',lat:-8.5011,lng:115.2444,img:''},
+      {id:1075,name:"Bodyworks Bali",type:'Lugar',icon:'camera',lat:-8.6811,lng:115.1542,img:''},
+      {id:1076,name:"Cretya Ubud",type:'Lugar',icon:'camera',lat:-8.4186,lng:115.2825,img:''},
+      {id:1077,name:"Penny Lane",type:'Lugar',icon:'camera',lat:-8.6531,lng:115.1304,img:''},
+      {id:1078,name:"Clear Cafe",type:'Lugar',icon:'camera',lat:-8.5134,lng:115.2645,img:''},
+      {id:1079,name:"Akasha Restaurant & Juice Bar",type:'Lugar',icon:'camera',lat:-8.4674,lng:115.2814,img:''}
+    ]
+  },
+  {
+    id:9,title:"El Barrio Jud\u00edo Oculto y Rincones Secretos",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Budapest",
+    cat:"Art & culture",tag:"Budapest_Secreto",
+    desc:"Pensada para reincidentes. Ad\u00e9ntrate en b\u00fankeres de guerra convertidos en hospitales subterr\u00e1neos, museos interactivos de flippers y tranquilos paseos por islas verdes en mitad del r\u00edo.",
+    img:"https://images.unsplash.com/photo-1577366773073-a57cdf7132cb?w=1200&q=80",
+    spots:[
+      {id:1080,name:"Dohany Street Synagogue",type:'Lugar',icon:'camera',lat:47.4959,lng:19.0601,img:''},
+      {id:1081,name:"Gozsdu Udvar",type:'Lugar',icon:'camera',lat:47.4984,lng:19.0608,img:''},
+      {id:1082,name:"Hospital in the Rock",type:'Lugar',icon:'camera',lat:47.5023,lng:19.0235,img:''},
+      {id:1083,name:"Memento Park",type:'Lugar',icon:'camera',lat:47.4267,lng:19.0011,img:''},
+      {id:1084,name:"Margaret Island",type:'Lugar',icon:'camera',lat:47.5273,lng:19.0464,img:''},
+      {id:1085,name:"Vajdahunyad Castle",type:'Lugar',icon:'camera',lat:47.5144,lng:19.0825,img:''},
+      {id:1086,name:"Flippermuzeum",type:'Lugar',icon:'camera',lat:47.5142,lng:19.0527,img:''},
+      {id:1087,name:"New York Cafe",type:'Lugar',icon:'camera',lat:47.4985,lng:19.0702,img:''},
+      {id:1088,name:"Wenckheim Palace Szabo Ervin Library",type:'Lugar',icon:'camera',lat:47.4893,lng:19.0645,img:''},
+      {id:1089,name:"G\u00fcl Baba Tomb",type:'Lugar',icon:'camera',lat:47.5161,lng:19.0347,img:''}
+    ]
+  },
+  {
+    id:10,title:"El Imperio de las Aguas Termales",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Budapest",
+    cat:"Luxury",tag:"Budapest_Esencia",
+    desc:"El aut\u00e9ntico sello de Budapest. Rel\u00e1jate en majestuosos complejos de aguas mineromedicinales con siglos de antig\u00fcedad, ba\u00f1os otomanos tradicionales y piscinas al aire libre abiertas todo el a\u00f1o.",
+    img:"https://images.unsplash.com/photo-1572983417754-78ae967b181e?w=1200&q=80",
+    spots:[
+      {id:1090,name:"Szechenyi Thermal Bath",type:'Lugar',icon:'camera',lat:47.5181,lng:19.0822,img:''},
+      {id:1091,name:"Gellert Thermal Bath",type:'Lugar',icon:'camera',lat:47.4839,lng:19.0517,img:''},
+      {id:1092,name:"Rudas Thermal Bath",type:'Lugar',icon:'camera',lat:47.4892,lng:19.0475,img:''},
+      {id:1093,name:"Lukacs Thermal Bath",type:'Lugar',icon:'camera',lat:47.5178,lng:19.0369,img:''},
+      {id:1094,name:"Veli Bej Bath",type:'Lugar',icon:'camera',lat:47.5186,lng:19.0364,img:''},
+      {id:1095,name:"Dandar Bath",type:'Lugar',icon:'camera',lat:47.4715,lng:19.0682,img:''},
+      {id:1096,name:"Aquaworld Budapest",type:'Lugar',icon:'camera',lat:47.6006,lng:19.1128,img:''},
+      {id:1097,name:"Palatinus Strand",type:'Lugar',icon:'camera',lat:47.5285,lng:19.0474,img:''},
+      {id:1098,name:"Csillaghegyi Arpad Baths",type:'Lugar',icon:'camera',lat:47.5894,lng:19.0494,img:''},
+      {id:1099,name:"Kir\u00e1ly Thermal Bath",type:'Lugar',icon:'camera',lat:47.5111,lng:19.0372,img:''}
+    ]
+  },
+  {
+    id:11,title:"Gu\u00eda del Debutante: El Coraz\u00f3n del Danubio",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Budapest",
+    cat:"Art & culture",tag:"Budapest_Basico",
+    desc:"La introducci\u00f3n perfecta a la perla del Danubio. Cruza majestuosos puentes hist\u00f3ricos, sube a colinas reales fortificadas y d\u00e9jate impresionar por la arquitectura monumental de ambas orillas.",
+    img:"https://images.unsplash.com/photo-1541343672885-9be56236302a?w=1200&q=80",
+    spots:[
+      {id:1100,name:"Hungarian Parliament Building",type:'Lugar',icon:'camera',lat:47.5072,lng:19.0456,img:''},
+      {id:1101,name:"Fishermans Bastion",type:'Lugar',icon:'camera',lat:47.5022,lng:19.0348,img:''},
+      {id:1102,name:"Buda Castle",type:'Lugar',icon:'camera',lat:47.4962,lng:19.0396,img:''},
+      {id:1103,name:"Chain Bridge",type:'Lugar',icon:'camera',lat:47.4989,lng:19.0436,img:''},
+      {id:1104,name:"St Stephens Basilica",type:'Lugar',icon:'camera',lat:47.5009,lng:19.0514,img:''},
+      {id:1105,name:"Heroes Square",type:'Lugar',icon:'camera',lat:47.5149,lng:19.0778,img:''},
+      {id:1106,name:"Matthias Church",type:'Lugar',icon:'camera',lat:47.5019,lng:19.0342,img:''},
+      {id:1107,name:"Citadella",type:'Lugar',icon:'camera',lat:47.4866,lng:19.0464,img:''},
+      {id:1108,name:"Liberty Bridge",type:'Lugar',icon:'camera',lat:47.4856,lng:19.0549,img:''},
+      {id:1109,name:"Margaret Bridge Viewpoint",type:'Lugar',icon:'camera',lat:47.5133,lng:19.0461,img:''}
+    ]
+  },
+  {
+    id:12,title:"Ruin Pubs M\u00edticos y Gastronom\u00eda H\u00fangara",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Budapest",
+    cat:"Food & drinks",tag:"Budapest_Foodie",
+    desc:"Una ruta culinaria y nocturna inolvidable. Explora mercados de abastos cubiertos, los bares en ruinas m\u00e1s vanguardistas y art\u00edsticos del mundo y caf\u00e9s hist\u00f3ricos de reposter\u00eda fina.",
+    img:"https://images.unsplash.com/photo-1633895368599-cf8b689cb35d?w=1200&q=90",
+    spots:[
+      {id:1110,name:"Great Market Hall",type:'Lugar',icon:'camera',lat:47.4871,lng:19.0585,img:''},
+      {id:1111,name:"Szimpla Kert",type:'Lugar',icon:'camera',lat:47.4967,lng:19.0631,img:''},
+      {id:1112,name:"Instant Fogas Complex",type:'Lugar',icon:'camera',lat:47.4986,lng:19.0594,img:''},
+      {id:1113,name:"Karavan Street Food",type:'Lugar',icon:'camera',lat:47.4968,lng:19.0633,img:''},
+      {id:1114,name:"Mazel Tov",type:'Lugar',icon:'camera',lat:47.5016,lng:19.0656,img:''},
+      {id:1115,name:"Central Grand Cafe",type:'Lugar',icon:'camera',lat:47.4919,lng:19.0584,img:''},
+      {id:1116,name:"Ruszwurm Confectionery",type:'Lugar',icon:'camera',lat:47.502,lng:19.0325,img:''},
+      {id:1117,name:"Retro Langos Budapest",type:'Lugar',icon:'camera',lat:47.5011,lng:19.0552,img:''},
+      {id:1118,name:"Csendes Letterem",type:'Lugar',icon:'camera',lat:47.4925,lng:19.0608,img:''},
+      {id:1119,name:"Doblo Wine Bar",type:'Lugar',icon:'camera',lat:47.4969,lng:19.0628,img:''}
+    ]
+  },
+  {
+    id:13,title:"El Eje Cafetero y Paisajes de Palma Gigante",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Colombia",
+    cat:"Nature",tag:"Colombia_Esencia",
+    desc:"La esencia natural m\u00e1s pura de Colombia. Camina entre las palmeras de cera m\u00e1s altas del mundo, visita plantaciones cafeteras tradicionales y rel\u00e1jate en cascadas termales en mitad de la selva.",
+    img:"https://images.unsplash.com/photo-1532443603613-61fa154742cd?w=1200&q=80",
+    spots:[
+      {id:1120,name:"Valle de Cocora",type:'Lugar',icon:'camera',lat:4.6381,lng:-75.4886,img:''},
+      {id:1121,name:"Salento Town",type:'Lugar',icon:'camera',lat:4.6375,lng:-75.5703,img:''},
+      {id:1122,name:"Parque Nacional Natural Los Nevados",type:'Lugar',icon:'camera',lat:4.8833,lng:-75.3667,img:''},
+      {id:1123,name:"Recuca Coffee Farm",type:'Lugar',icon:'camera',lat:4.4939,lng:-75.6886,img:''},
+      {id:1124,name:"Filandia Viewpoint",type:'Lugar',icon:'camera',lat:4.6781,lng:-75.6486,img:''},
+      {id:1125,name:"Hacienda Venecia",type:'Lugar',icon:'camera',lat:5.0311,lng:-75.5233,img:''},
+      {id:1126,name:"Pance River",type:'Lugar',icon:'camera',lat:3.3294,lng:-76.5414,img:''},
+      {id:1127,name:"Termales Santa Rosa de Cabal",type:'Lugar',icon:'camera',lat:4.8464,lng:-75.5544,img:''},
+      {id:1128,name:"Pijao Coffee Town",type:'Lugar',icon:'camera',lat:4.3339,lng:-75.7031,img:''},
+      {id:1129,name:"Buenavista Coffee Viewpoint",type:'Lugar',icon:'camera',lat:4.3755,lng:-75.7444,img:''}
+    ]
+  },
+  {
+    id:14,title:"Gu\u00eda del Debutante: De Bogot\u00e1 al Caribe",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Colombia",
+    cat:"Art & culture",tag:"Colombia_Basico",
+    desc:"El kit b\u00e1sico de iniciaci\u00f3n en tierras colombianas. Marav\u00edllate con el deslumbrante arte del oro antiguo, sube a cerros sagrados y rec\u00f3rre las fortificaciones de la joya colonial del Caribe.",
+    img:"https://images.unsplash.com/photo-1720067392108-89b9485aa090?w=1200&q=90",
+    spots:[
+      {id:1130,name:"Plaza de Bolivar",type:'Lugar',icon:'camera',lat:4.5981,lng:-74.076,img:''},
+      {id:1131,name:"Museo del Oro",type:'Lugar',icon:'camera',lat:4.6017,lng:-74.0722,img:''},
+      {id:1132,name:"Cerro de Monserrate",type:'Lugar',icon:'camera',lat:4.6052,lng:-74.0554,img:''},
+      {id:1133,name:"Ciudad Amurallada",type:'Lugar',icon:'camera',lat:10.4239,lng:-75.5484,img:''},
+      {id:1134,name:"Castillo de San Felipe de Barajas",type:'Lugar',icon:'camera',lat:10.4225,lng:-75.5369,img:''},
+      {id:1135,name:"Barrio Getsemani",type:'Lugar',icon:'camera',lat:10.4208,lng:-75.5448,img:''},
+      {id:1136,name:"Plaza de Santo Domingo",type:'Lugar',icon:'camera',lat:10.4226,lng:-75.5513,img:''},
+      {id:1137,name:"Barrio La Candelaria",type:'Lugar',icon:'camera',lat:4.5975,lng:-74.0708,img:''},
+      {id:1138,name:"Convento de la Popa",type:'Lugar',icon:'camera',lat:10.4215,lng:-75.5262,img:''},
+      {id:1139,name:"Usaqu\u00e9n Flea Market Square",type:'Lugar',icon:'camera',lat:4.6964,lng:-74.0322,img:''}
+    ]
+  },
+  {
+    id:15,title:"Innovaci\u00f3n, Arte Urbano y Pueblos de Z\u00f3calos",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Colombia",
+    cat:"Art & culture",tag:"Colombia_Secreto",
+    desc:"Para viajeros inquietos que repiten destino. Explora galer\u00edas de arte urbano al aire libre que cuentan historias de resiliencia, catedrales talladas en minas de sal subterr\u00e1neas y pueblos empedrados de ensue\u00f1o.",
+    img:"https://images.unsplash.com/photo-1534943441045-1009d7cb0bb9?w=1200&q=90",
+    spots:[
+      {id:1140,name:"Comuna 13 Graffiti Tour",type:'Lugar',icon:'camera',lat:6.2558,lng:-75.6094,img:''},
+      {id:1141,name:"Plaza Botero",type:'Lugar',icon:'camera',lat:6.252,lng:-75.5684,img:''},
+      {id:1142,name:"El Penol Guatape",type:'Lugar',icon:'camera',lat:6.2207,lng:-75.1793,img:''},
+      {id:1143,name:"Villa de Leyva Main Square",type:'Lugar',icon:'camera',lat:5.6322,lng:-73.5247,img:''},
+      {id:1144,name:"Salt Cathedral of Zipaquira",type:'Lugar',icon:'camera',lat:5.0186,lng:-74.0094,img:''},
+      {id:1145,name:"Barichara Historic Town",type:'Lugar',icon:'camera',lat:6.6344,lng:-73.2233,img:''},
+      {id:1146,name:"Parque Arvi",type:'Lugar',icon:'camera',lat:6.2798,lng:-75.5025,img:''},
+      {id:1147,name:"Jardin Antioquia Town",type:'Lugar',icon:'camera',lat:5.5906,lng:-75.8192,img:''},
+      {id:1148,name:"Museo de Antioquia",type:'Lugar',icon:'camera',lat:6.2522,lng:-75.5689,img:''},
+      {id:1149,name:"Mongu\u00ed Town",type:'Lugar',icon:'camera',lat:5.7222,lng:-72.8408,img:''}
+    ]
+  },
+  {
+    id:16,title:"Playas Salvajes y Archipi\u00e9lagos del Caribe",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Colombia",
+    cat:"Beaches",tag:"Colombia_Playas",
+    desc:"Una gu\u00eda especializada en la id\u00edlica costa tropical. Desde playas ind\u00f3mitas protegidas por la selva tropical del Tayrona hasta lagunas de agua cristalina y arenas v\u00edrgenes en islas remotas.",
+    img:"https://images.unsplash.com/photo-1605216663980-b7ca6e9f2451?w=1200&q=80",
+    spots:[
+      {id:1150,name:"Parque Nacional Natural Tayrona",type:'Lugar',icon:'camera',lat:11.3025,lng:-74.0183,img:''},
+      {id:1151,name:"Islas del Rosario",type:'Lugar',icon:'camera',lat:10.1833,lng:-75.8,img:''},
+      {id:1152,name:"Playa Blanca Isla Baru",type:'Lugar',icon:'camera',lat:10.2236,lng:-75.5947,img:''},
+      {id:1153,name:"Cabo de la Vela",type:'Lugar',icon:'camera',lat:12.2036,lng:-72.1528,img:''},
+      {id:1154,name:"Palomino Beach",type:'Lugar',icon:'camera',lat:11.2503,lng:-73.5631,img:''},
+      {id:1155,name:"Taganga Bay",type:'Lugar',icon:'camera',lat:11.2675,lng:-74.1925,img:''},
+      {id:1156,name:"Johnny Cay",type:'Lugar',icon:'camera',lat:12.59,lng:-81.6908,img:''},
+      {id:1157,name:"Tintipan Island",type:'Lugar',icon:'camera',lat:9.7944,lng:-75.8453,img:''},
+      {id:1158,name:"Playa Cristal",type:'Lugar',icon:'camera',lat:11.3211,lng:-74.0842,img:''},
+      {id:1159,name:"San Luis Beach",type:'Lugar',icon:'camera',lat:12.5294,lng:-81.7111,img:''}
+    ]
+  },
+  {
+    id:17,title:"El Cairo Isl\u00e1mico y Callejones Secretos",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Egypt",
+    cat:"Art & culture",tag:"Egipto_Secreto",
+    desc:"Pensada para viajeros reincidentes que desean perderse m\u00e1s all\u00e1 del circuito tur\u00edstico b\u00e1sico. Camina por calles fotificadas medievales, admira patios ocultos y templos de arquitectura mameluca.",
+    img:"https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=1200&q=80",
+    spots:[
+      {id:1160,name:"Mosque of Sultan Hassan",type:'Lugar',icon:'camera',lat:30.0322,lng:31.2568,img:''},
+      {id:1161,name:"Ibn Tulun Mosque",type:'Lugar',icon:'camera',lat:30.0287,lng:31.2494,img:''},
+      {id:1162,name:"Al-Muizz li-Din Allah Al-Fatimi Street",type:'Lugar',icon:'camera',lat:30.0514,lng:31.2614,img:''},
+      {id:1163,name:"Bab Zuweila",type:'Lugar',icon:'camera',lat:30.0431,lng:31.2575,img:''},
+      {id:1164,name:"Gayer-Anderson Museum",type:'Lugar',icon:'camera',lat:30.0289,lng:31.2497,img:''},
+      {id:1165,name:"Coptic Museum",type:'Lugar',icon:'camera',lat:30.0058,lng:31.2306,img:''},
+      {id:1166,name:"Wekalet El Ghouri",type:'Lugar',icon:'camera',lat:30.0461,lng:31.2606,img:''},
+      {id:1167,name:"Al-Azhar Park",type:'Lugar',icon:'camera',lat:30.0411,lng:31.2653,img:''},
+      {id:1168,name:"Mosque of Muhammad Ali",type:'Lugar',icon:'camera',lat:30.0287,lng:31.2598,img:''},
+      {id:1169,name:"City of the Dead Backstreets",type:'Lugar',icon:'camera',lat:30.0475,lng:31.2722,img:''}
+    ]
+  },
+  {
+    id:18,title:"El Legado Inmortal del Valle del Nilo",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Egypt",
+    cat:"Nature",tag:"Egipto_Esencia",
+    desc:"La verdadera esencia hist\u00f3rica profunda de Egipto. Explora tumbas reales excavadas en roca de monta\u00f1as des\u00e9rticas, templos monumentales a orillas del r\u00edo y santuarios salvados de las aguas.",
+    img:"https://images.unsplash.com/photo-1774692085898-a53a1f04dc5c?w=1200&q=80",
+    spots:[
+      {id:1170,name:"Valley of the Kings",type:'Lugar',icon:'camera',lat:25.7408,lng:32.6014,img:''},
+      {id:1171,name:"Karnak Temple",type:'Lugar',icon:'camera',lat:25.7186,lng:32.6575,img:''},
+      {id:1172,name:"Luxor Temple",type:'Lugar',icon:'camera',lat:25.7005,lng:32.6394,img:''},
+      {id:1173,name:"Mortuary Temple of Hatshepsut",type:'Lugar',icon:'camera',lat:25.7381,lng:32.6067,img:''},
+      {id:1174,name:"Abu Simbel Temples",type:'Lugar',icon:'camera',lat:22.3372,lng:31.6258,img:''},
+      {id:1175,name:"Philae Temple",type:'Lugar',icon:'camera',lat:24.0255,lng:32.8842,img:''},
+      {id:1176,name:"Colossi of Memnon",type:'Lugar',icon:'camera',lat:25.7203,lng:32.6106,img:''},
+      {id:1177,name:"Kom Ombo Temple",type:'Lugar',icon:'camera',lat:24.4522,lng:32.9284,img:''},
+      {id:1178,name:"Edfu Temple",type:'Lugar',icon:'camera',lat:24.9781,lng:32.8744,img:''},
+      {id:1179,name:"Dendera Temple Complex",type:'Lugar',icon:'camera',lat:26.1412,lng:32.6704,img:''}
+    ]
+  },
+  {
+    id:19,title:"Fondos Coralinos: El Tesoro del Mar Rojo",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Egypt",
+    cat:"Beaches",tag:"Egipto_Playas",
+    desc:"Una gu\u00eda centrada en las costas y fondos marinos m\u00e1s espectaculares de Egipto. Descubre parques nacionales marinos repletos de arrecifes v\u00edrgenes de coral, marinas elegantes y bah\u00edas des\u00e9rticas.",
+    img:"https://images.unsplash.com/photo-1681158077449-77f23f629f0d?w=1200&q=90",
+    spots:[
+      {id:1180,name:"Blue Hole",type:'Lugar',icon:'camera',lat:28.5723,lng:34.5369,img:''},
+      {id:1181,name:"Ras Mohammed National Park",type:'Lugar',icon:'camera',lat:27.7567,lng:34.2533,img:''},
+      {id:1182,name:"Naama Bay",type:'Lugar',icon:'camera',lat:27.9144,lng:34.3244,img:''},
+      {id:1183,name:"Giftun Islands",type:'Lugar',icon:'camera',lat:27.1833,lng:33.9167,img:''},
+      {id:1184,name:"El Gouna Marina",type:'Lugar',icon:'camera',lat:27.3956,lng:33.6784,img:''},
+      {id:1185,name:"Sahl Hasheesh Bay",type:'Lugar',icon:'camera',lat:27.0514,lng:33.8825,img:''},
+      {id:1186,name:"Soma Bay",type:'Lugar',icon:'camera',lat:26.8439,lng:33.9906,img:''},
+      {id:1187,name:"Mahmya Beach Giftun Island",type:'Lugar',icon:'camera',lat:27.1655,lng:33.9242,img:''},
+      {id:1188,name:"Ras Um Sid",type:'Lugar',icon:'camera',lat:27.8464,lng:34.3122,img:''},
+      {id:1189,name:"Sharm El Luli",type:'Lugar',icon:'camera',lat:24.6056,lng:35.1186,img:''}
+    ]
+  },
+  {
+    id:20,title:"Gu\u00eda del Debutante: Las Maravillas de Giza",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Egypt",
+    cat:"Art & culture",tag:"Egipto_Basico",
+    desc:"La introducci\u00f3n milenaria obligatoria en Egipto. Admira las \u00fanicas maravillas del mundo antiguo en pie, contempla la gran esfinge y sorpr\u00e9ndete con los deslumbrantes tesoros reales de El Cairo.",
+    img:"https://images.unsplash.com/photo-1718403800110-bd008d361517?w=1200&q=100",
+    spots:[
+      {id:1190,name:"Giza Pyramids Complex",type:'Lugar',icon:'camera',lat:29.9792,lng:31.1342,img:''},
+      {id:1191,name:"Great Sphinx of Giza",type:'Lugar',icon:'camera',lat:29.9753,lng:31.1376,img:''},
+      {id:1192,name:"The Egyptian Museum",type:'Lugar',icon:'camera',lat:30.0444,lng:31.2357,img:''},
+      {id:1193,name:"Khan el-Khalili",type:'Lugar',icon:'camera',lat:30.0475,lng:31.2621,img:''},
+      {id:1194,name:"Grand Egyptian Museum",type:'Lugar',icon:'camera',lat:29.9944,lng:31.1211,img:''},
+      {id:1195,name:"Cairo Citadel",type:'Lugar',icon:'camera',lat:30.0297,lng:31.2612,img:''},
+      {id:1196,name:"Al-Azhar Mosque",type:'Lugar',icon:'camera',lat:30.0456,lng:31.2627,img:''},
+      {id:1197,name:"Hanging Church",type:'Lugar',icon:'camera',lat:30.0053,lng:31.2301,img:''},
+      {id:1198,name:"Saqqara Step Pyramid",type:'Lugar',icon:'camera',lat:29.8712,lng:31.2164,img:''},
+      {id:1199,name:"Memphis Open Air Museum",type:'Lugar',icon:'camera',lat:29.8456,lng:31.2531,img:''}
+    ]
+  },
+  {
+    id:21,title:"Ballenas, Rutas y Ocio en Familia",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Iceland",
+    cat:"Family",tag:"Islandia_Esencia",
+    desc:"Un itinerario interactivo lleno de aventuras estables todo el a\u00f1o. Disfruta de barcos para avistar cet\u00e1ceos en bah\u00edas profundas, planetarios de auroras boreales y b\u00fankeres interactivos con cuevas de hielo reales.",
+    img:"https://images.unsplash.com/photo-1525624160868-97095e12e633?w=1200&q=70",
+    spots:[
+      {id:1200,name:"Husavik Harbour Whale Watching",type:'Lugar',icon:'camera',lat:66.0447,lng:-17.3379,img:''},
+      {id:1201,name:"Perlan Museum",type:'Lugar',icon:'camera',lat:64.1294,lng:-21.9189,img:''},
+      {id:1202,name:"Whales of Iceland",type:'Lugar',icon:'camera',lat:64.1552,lng:-21.9421,img:''},
+      {id:1203,name:"FlyOver Iceland",type:'Lugar',icon:'camera',lat:64.1542,lng:-21.9481,img:''},
+      {id:1204,name:"Kerid Crater",type:'Lugar',icon:'camera',lat:64.0412,lng:-20.8851,img:''},
+      {id:1205,name:"Reykjavik Family Park and Zoo",type:'Lugar',icon:'camera',lat:64.1387,lng:-21.8755,img:''},
+      {id:1206,name:"Snorralaug Thermal Pool",type:'Lugar',icon:'camera',lat:64.6647,lng:-21.2894,img:''},
+      {id:1207,name:"Vik i Myrdal Church",type:'Lugar',icon:'camera',lat:63.4205,lng:-19.0112,img:''},
+      {id:1208,name:"Laufas Turf Houses",type:'Lugar',icon:'camera',lat:65.8944,lng:-18.0111,img:''},
+      {id:1209,name:"Dettifoss Waterfall",type:'Lugar',icon:'camera',lat:65.8142,lng:-16.3842,img:''}
+    ]
+  },
+  {
+    id:22,title:"Gu\u00eda del Debutante: El C\u00edrculo Dorado",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Iceland",
+    cat:"Nature",tag:"Islandia_Basico",
+    desc:"La ruta natural imprescindible para primerizos en Islandia. Admira lagunas glaciares repletas de icebergs flotantes, cascadas imponentes de fuerza descomunal y fallas tect\u00f3nicas visibles sobre la tierra.",
+    img:"https://images.unsplash.com/photo-1506261423908-ea2559c1f24c?w=1200&q=80",
+    spots:[
+      {id:1210,name:"Thingvellir National Park",type:'Lugar',icon:'camera',lat:64.2558,lng:-21.1294,img:''},
+      {id:1211,name:"Geysir Hot Springs",type:'Lugar',icon:'camera',lat:64.3144,lng:-20.3011,img:''},
+      {id:1212,name:"Gullfoss Waterfall",type:'Lugar',icon:'camera',lat:64.3273,lng:-20.1206,img:''},
+      {id:1213,name:"Seljalandsfoss",type:'Lugar',icon:'camera',lat:63.6156,lng:-19.9886,img:''},
+      {id:1214,name:"Sk\u00f3gafoss",type:'Lugar',icon:'camera',lat:63.5321,lng:-19.5114,img:''},
+      {id:1215,name:"Reynisfjara Black Sand Beach",type:'Lugar',icon:'camera',lat:63.4024,lng:-19.0214,img:''},
+      {id:1216,name:"J\u00f6kuls\u00e1rl\u00f3n Glacier Lagoon",type:'Lugar',icon:'camera',lat:64.0489,lng:-16.1793,img:''},
+      {id:1217,name:"Diamond Beach",type:'Lugar',icon:'camera',lat:64.0431,lng:-16.1825,img:''},
+      {id:1218,name:"Skaftafell National Park",type:'Lugar',icon:'camera',lat:64.0164,lng:-16.9661,img:''},
+      {id:1219,name:"Solheimasandur Plane Wreck",type:'Lugar',icon:'camera',lat:63.4594,lng:-19.3642,img:''}
+    ]
+  },
+  {
+    id:23,title:"Mitolog\u00eda, Auroras y Cultura Islandesa",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Iceland",
+    cat:"Art & culture",tag:"Islandia_Cultura",
+    desc:"Una inmersi\u00f3n profunda en el alma cultural e hist\u00f3rica de la capital. Visita iglesias colosales inspiradas en columnas de basalto, esculturas vikingas frente al mar y museos interactivos sobre los asentamientos.",
+    img:"https://images.unsplash.com/photo-1608468716860-5566b7671ea3?w=1200&q=90",
+    spots:[
+      {id:1220,name:"Hallgrimskirkja",type:'Lugar',icon:'camera',lat:64.1417,lng:-21.9267,img:''},
+      {id:1221,name:"Harpa Concert Hall",type:'Lugar',icon:'camera',lat:64.1504,lng:-21.9325,img:''},
+      {id:1222,name:"Sun Voyager Sculpture",type:'Lugar',icon:'camera',lat:64.1475,lng:-21.9221,img:''},
+      {id:1223,name:"National Museum of Iceland",type:'Lugar',icon:'camera',lat:64.1419,lng:-21.9472,img:''},
+      {id:1224,name:"Thingvellir Law Speaker Rock",type:'Lugar',icon:'camera',lat:64.2564,lng:-21.1311,img:''},
+      {id:1225,name:"\u00c1rb\u00e6r Open Air Museum",type:'Lugar',icon:'camera',lat:64.1186,lng:-21.8194,img:''},
+      {id:1226,name:"Settlement Exhibition",type:'Lugar',icon:'camera',lat:64.1472,lng:-21.9428,img:''},
+      {id:1227,name:"Aurora Basecamp",type:'Lugar',icon:'camera',lat:64.0329,lng:-21.9561,img:''},
+      {id:1228,name:"Reykjavik Art Museum Hafnarhus",type:'Lugar',icon:'camera',lat:64.1492,lng:-21.9414,img:''},
+      {id:1229,name:"Skogar Museum",type:'Lugar',icon:'camera',lat:63.5261,lng:-19.5114,img:''}
+    ]
+  },
+  {
+    id:24,title:"Spas Geotermales y Wellness Premium",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Iceland",
+    cat:"Luxury",tag:"Islandia_Wellness",
+    desc:"El aut\u00e9ntico sello de sofisticaci\u00f3n island\u00e9s. Rel\u00e1jate en complejos de aguas mineromedicinales calientes rodeados de lava volc\u00e1nica, miradores infinitos al oc\u00e9ano atl\u00e1ntico y lagunas de aguas turquesas.",
+    img:"https://images.unsplash.com/photo-1415226556993-1404e0c6e727?w=1200&q=100",
+    spots:[
+      {id:1230,name:"Blue Lagoon",type:'Lugar',icon:'camera',lat:63.8804,lng:-22.4491,img:''},
+      {id:1231,name:"Sky Lagoon",type:'Lugar',icon:'camera',lat:64.1144,lng:-21.9421,img:''},
+      {id:1232,name:"Secret Lagoon",type:'Lugar',icon:'camera',lat:64.1375,lng:-20.3094,img:''},
+      {id:1233,name:"Myvatn Nature Baths",type:'Lugar',icon:'camera',lat:65.6311,lng:-16.8472,img:''},
+      {id:1234,name:"Hvammsvik Hot Springs",type:'Lugar',icon:'camera',lat:64.3529,lng:-21.5631,img:''},
+      {id:1235,name:"Laugarvatn Fontana",type:'Lugar',icon:'camera',lat:64.2142,lng:-20.7303,img:''},
+      {id:1236,name:"GeoSea Thermal Baths",type:'Lugar',icon:'camera',lat:66.0514,lng:-17.3622,img:''},
+      {id:1237,name:"V\u00f6k Baths",type:'Lugar',icon:'camera',lat:65.2811,lng:-14.4061,img:''},
+      {id:1238,name:"Krauma Geothermal Bath",type:'Lugar',icon:'camera',lat:64.6644,lng:-21.2855,img:''},
+      {id:1239,name:"Reykjadalur Hot Spring River",type:'Lugar',icon:'camera',lat:64.0244,lng:-21.2122,img:''}
+    ]
+  },
+  {
+    id:25,title:"Gu\u00eda del Debutante: El Grand Tour",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Italy",
+    cat:"Art & culture",tag:"Italia_Basico",
+    desc:"El itinerario imprescindible para enamorarse de Italia por primera vez. Explora las espectaculares catedrales de Florencia, navega los rom\u00e1nticos canales de Venecia y contempla torres imposibles.",
+    img:"https://images.unsplash.com/photo-1528114039593-4366cc08227d?w=1200&q=80",
+    spots:[
+      {id:1240,name:"Cathedral of Santa Maria del Fiore",type:'Lugar',icon:'camera',lat:43.7731,lng:11.256,img:''},
+      {id:1241,name:"Uffizi Gallery",type:'Lugar',icon:'camera',lat:43.7678,lng:11.2553,img:''},
+      {id:1242,name:"Piazza San Marco",type:'Lugar',icon:'camera',lat:45.4342,lng:12.3385,img:''},
+      {id:1243,name:"Rialto Bridge",type:'Lugar',icon:'camera',lat:45.438,lng:12.3359,img:''},
+      {id:1244,name:"Leaning Tower of Pisa",type:'Lugar',icon:'camera',lat:43.7228,lng:10.4017,img:''},
+      {id:1245,name:"Ponte Vecchio",type:'Lugar',icon:'camera',lat:43.768,lng:11.2532,img:''},
+      {id:1246,name:"Grand Canal",type:'Lugar',icon:'camera',lat:45.4371,lng:12.3324,img:''},
+      {id:1247,name:"Piazza del Duomo Pisa",type:'Lugar',icon:'camera',lat:43.723,lng:10.3956,img:''},
+      {id:1248,name:"Duomo di Milano",type:'Lugar',icon:'camera',lat:45.4641,lng:9.1919,img:''},
+      {id:1249,name:"Galleria Vittorio Emanuele II",type:'Lugar',icon:'camera',lat:45.4656,lng:9.1899,img:''}
+    ]
+  },
+  {
+    id:26,title:"Joyas Ocultas y Pueblos Medievales",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Italy",
+    cat:"Art & culture",tag:"Italia_Secreto",
+    desc:"Dise\u00f1ada para viajeros reincidentes. Ad\u00e9ntrate en fortalezas de piedra intactas, ciudades excavadas en roca volc\u00e1nica y encantadoras villas fortificadas suspendidas en el tiempo.",
+    img:"https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=1200&q=80",
+    spots:[
+      {id:1250,name:"San Gimignano",type:'Lugar',icon:'camera',lat:43.4677,lng:11.043,img:''},
+      {id:1251,name:"Civita di Bagnoregio",type:'Lugar',icon:'camera',lat:42.6277,lng:12.1136,img:''},
+      {id:1252,name:"Volterra",type:'Lugar',icon:'camera',lat:43.4021,lng:10.8584,img:''},
+      {id:1253,name:"Matera Sassi",type:'Lugar',icon:'camera',lat:40.6664,lng:16.611,img:''},
+      {id:1254,name:"Pitigliano",type:'Lugar',icon:'camera',lat:42.6341,lng:11.6687,img:''},
+      {id:1255,name:"Lucca Historic City Walls",type:'Lugar',icon:'camera',lat:43.8428,lng:10.5065,img:''},
+      {id:1256,name:"Pienza Historic Centre",type:'Lugar',icon:'camera',lat:43.077,lng:11.6787,img:''},
+      {id:1257,name:"Assisi Historic Town",type:'Lugar',icon:'camera',lat:43.0707,lng:12.6186,img:''},
+      {id:1258,name:"Alberobello Trulli",type:'Lugar',icon:'camera',lat:40.7829,lng:17.2408,img:''},
+      {id:1259,name:"Calcata Old Town",type:'Lugar',icon:'camera',lat:42.2194,lng:12.4294,img:''}
+    ]
+  },
+  {
+    id:27,title:"La Cuna del Vino y el Producto Local",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Italy",
+    cat:"Food & drinks",tag:"Italia_Foodie",
+    desc:"Una ruta gourmet sublime. Saborea los mejores vinos tintos en bodegas tradicionales, descubre las cunas de los embutidos y quesos m\u00e1s famosos y degusta pasta de autor en mercados hist\u00f3ricos.",
+    img:"https://images.unsplash.com/photo-1498579150354-977475b7ea0b?w=1200&q=80",
+    spots:[
+      {id:1260,name:"Mercato Centrale Firenze",type:'Lugar',icon:'camera',lat:43.7766,lng:11.2535,img:''},
+      {id:1261,name:"Chianti Wine Region",type:'Lugar',icon:'camera',lat:43.5851,lng:11.3168,img:''},
+      {id:1262,name:"Osteria Francescana",type:'Lugar',icon:'camera',lat:44.6447,lng:10.9213,img:''},
+      {id:1263,name:"Mercato di Rialto",type:'Lugar',icon:'camera',lat:45.4387,lng:12.3346,img:''},
+      {id:1264,name:"Parma Ham and Cheese Tour",type:'Lugar',icon:'camera',lat:44.8015,lng:10.3279,img:''},
+      {id:1265,name:"Trattoria Mario",type:'Lugar',icon:'camera',lat:43.777,lng:11.2536,img:''},
+      {id:1266,name:"Panzano in Chianti Dario Cecchini",type:'Lugar',icon:'camera',lat:43.5439,lng:11.3142,img:''},
+      {id:1267,name:"Bologna Quadrilatero",type:'Lugar',icon:'camera',lat:44.4941,lng:11.3444,img:''},
+      {id:1268,name:"Antinori nel Chianti Classico",type:'Lugar',icon:'camera',lat:43.6128,lng:11.1947,img:''},
+      {id:1269,name:"Mercato delle Erbe",type:'Lugar',icon:'camera',lat:44.5011,lng:11.3431,img:''}
+    ]
+  },
+  {
+    id:28,title:"Postales de Infarto: Lagos y Costa",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Italy",
+    cat:"Nature",tag:"Italia_Esencia",
+    desc:"El gran superpoder paisaj\u00edstico de Italia. Recorre acantilados costeros de colores imposibles, villas se\u00f1oriales asomadas a lagos alpinos y pueblos pesqueros colgados frente al mar.",
+    img:"https://images.unsplash.com/photo-1499678329028-101435549a4e?w=1200&q=90",
+    spots:[
+      {id:1270,name:"Bellagio",type:'Lugar',icon:'camera',lat:45.9866,lng:9.2612,img:''},
+      {id:1271,name:"Positano",type:'Lugar',icon:'camera',lat:40.6281,lng:14.485,img:''},
+      {id:1272,name:"Manarola",type:'Lugar',icon:'camera',lat:44.1072,lng:9.7285,img:''},
+      {id:1273,name:"Villa del Balbianello",type:'Lugar',icon:'camera',lat:45.9649,lng:9.203,img:''},
+      {id:1274,name:"Ravello",type:'Lugar',icon:'camera',lat:40.6496,lng:14.6119,img:''},
+      {id:1275,name:"Vernazza",type:'Lugar',icon:'camera',lat:44.1351,lng:9.683,img:''},
+      {id:1276,name:"Varenna",type:'Lugar',icon:'camera',lat:46.0112,lng:9.2842,img:''},
+      {id:1277,name:"Amalfi Town",type:'Lugar',icon:'camera',lat:40.6331,lng:14.6028,img:''},
+      {id:1278,name:"Lago di Braies",type:'Lugar',icon:'camera',lat:46.6947,lng:12.0847,img:''},
+      {id:1279,name:"Capri Blue Grotto",type:'Lugar',icon:'camera',lat:40.5583,lng:14.2044,img:''}
+    ]
+  },
+  {
+    id:29,title:"El Eje Tokio - Kioto Imprescindible",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Japan",
+    cat:"Art & culture",tag:"Japon_Basico",
+    desc:"La selecci\u00f3n fundamental para enamorarse de Jap\u00f3n. Desde los templos sinto\u00edstas y budistas m\u00e1s fotografiados del pa\u00eds hasta el cruce peatonal m\u00e1s masivo del planeta.",
+    img:"https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?w=1200&q=80",
+    spots:[
+      {id:1280,name:"Senso-ji",type:'Lugar',icon:'camera',lat:35.7148,lng:139.7967,img:''},
+      {id:1281,name:"Fushimi Inari Taisha",type:'Lugar',icon:'camera',lat:34.9671,lng:135.7727,img:''},
+      {id:1282,name:"Kinkaku-ji",type:'Lugar',icon:'camera',lat:35.0394,lng:135.7292,img:''},
+      {id:1283,name:"Shibuya Crossing",type:'Lugar',icon:'camera',lat:35.6595,lng:139.7005,img:''},
+      {id:1284,name:"Meiji Jingu",type:'Lugar',icon:'camera',lat:35.6764,lng:139.6993,img:''},
+      {id:1285,name:"Tokyo Tower",type:'Lugar',icon:'camera',lat:35.6586,lng:139.7454,img:''},
+      {id:1286,name:"Kiyomizu-dera",type:'Lugar',icon:'camera',lat:34.9949,lng:135.785,img:''},
+      {id:1287,name:"Todai-ji",type:'Lugar',icon:'camera',lat:34.6889,lng:135.8398,img:''},
+      {id:1288,name:"Imperial Palace East Gardens",type:'Lugar',icon:'camera',lat:35.6866,lng:139.7614,img:''},
+      {id:1289,name:"Tokyo Skytree",type:'Lugar',icon:'camera',lat:35.7101,lng:139.8107,img:''}
+    ]
+  },
+  {
+    id:30,title:"El Para\u00edso del Ramen, Sushi y Street Food",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Japan",
+    cat:"Food & drinks",tag:"Japon_Foodie",
+    desc:"Descubre los mejores templos de la gastronom\u00eda de Jap\u00f3n. Desde mercados hist\u00f3ricos de pescado fresco y pasadizos angostos de tabernas tradicionales hasta la capital del street food.",
+    img:"https://images.unsplash.com/photo-1730277446333-df9ff34ef09b?w=1200&q=80",
+    spots:[
+      {id:1290,name:"Tsukiji Outer Market",type:'Lugar',icon:'camera',lat:35.6655,lng:139.7702,img:''},
+      {id:1291,name:"Nishiki Market",type:'Lugar',icon:'camera',lat:35.005,lng:135.7649,img:''},
+      {id:1292,name:"Dotonbori",type:'Lugar',icon:'camera',lat:34.6687,lng:135.5013,img:''},
+      {id:1293,name:"Omoide Yokocho",type:'Lugar',icon:'camera',lat:35.6931,lng:139.6999,img:''},
+      {id:1294,name:"Shin-Yokohama Ramen Museum",type:'Lugar',icon:'camera',lat:35.5097,lng:139.6146,img:''},
+      {id:1295,name:"Kuromon Ichiba Market",type:'Lugar',icon:'camera',lat:34.6655,lng:135.5068,img:''},
+      {id:1296,name:"Ameyoko Market",type:'Lugar',icon:'camera',lat:35.7095,lng:139.7744,img:''},
+      {id:1297,name:"Pontocho Alley",type:'Lugar',icon:'camera',lat:35.0053,lng:135.7712,img:''},
+      {id:1298,name:"Shinsekai District",type:'Lugar',icon:'camera',lat:34.6525,lng:135.5064,img:''},
+      {id:1299,name:"Ichiran Shibuya",type:'Lugar',icon:'camera',lat:35.6619,lng:139.7001,img:''}
+    ]
+  },
+  {
+    id:31,title:"Espiritualidad y Tradici\u00f3n Zen",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Japan",
+    cat:"Nature",tag:"Japon_Esencia",
+    desc:"Una inmersi\u00f3n profunda en la calma japonesa. Pasea por el legendario distrito de las geishas, bosques m\u00edsticos de bamb\u00fa, santuarios imperiales y la arquitectura paisaj\u00edstica m\u00e1s refinada.",
+    img:"https://images.unsplash.com/photo-1601823984263-b87b59798b70?w=1200&q=80",
+    spots:[
+      {id:1300,name:"Gion District",type:'Lugar',icon:'camera',lat:35.0037,lng:135.7782,img:''},
+      {id:1301,name:"Arashiyama Bamboo Grove",type:'Lugar',icon:'camera',lat:35.0156,lng:135.6715,img:''},
+      {id:1302,name:"Nara Park",type:'Lugar',icon:'camera',lat:34.6851,lng:135.8428,img:''},
+      {id:1303,name:"Kenroku-en Garden",type:'Lugar',icon:'camera',lat:36.5621,lng:136.6626,img:''},
+      {id:1304,name:"Hakone Shrine",type:'Lugar',icon:'camera',lat:35.2045,lng:139.0253,img:''},
+      {id:1305,name:"Mount Shosha",type:'Lugar',icon:'camera',lat:34.8917,lng:134.6578,img:''},
+      {id:1306,name:"Shinjuku Gyoen",type:'Lugar',icon:'camera',lat:35.6852,lng:139.7101,img:''},
+      {id:1307,name:"Ritsurin Garden",type:'Lugar',icon:'camera',lat:34.3297,lng:134.0443,img:''},
+      {id:1308,name:"Ginkaku-ji",type:'Lugar',icon:'camera',lat:35.0267,lng:135.7982,img:''},
+      {id:1309,name:"Ryoan-ji Temple",type:'Lugar',icon:'camera',lat:35.0344,lng:135.7182,img:''}
+    ]
+  },
+  {
+    id:32,title:"Tokio Alternativo: Subcultura y Ne\u00f3n",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Japan",
+    cat:"Family",tag:"Japon_Alternativo",
+    desc:"Explora los barrios m\u00e1s rompedores de Tokio. Museos de arte digital inmersivo, callejones de la era posguerra intactos, tiendas geek y la cuna de las tendencias urbanas juveniles.",
+    img:"https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=1200&q=90",
+    spots:[
+      {id:1310,name:"Akihabara Electric Town",type:'Lugar',icon:'camera',lat:35.6997,lng:139.7715,img:''},
+      {id:1311,name:"teamLab Planets",type:'Lugar',icon:'camera',lat:35.6491,lng:139.7905,img:''},
+      {id:1312,name:"Takeshita Street",type:'Lugar',icon:'camera',lat:35.6702,lng:139.7027,img:''},
+      {id:1313,name:"Golden Gai",type:'Lugar',icon:'camera',lat:35.6938,lng:139.7042,img:''},
+      {id:1314,name:"Nakano Broadway",type:'Lugar',icon:'camera',lat:35.7093,lng:139.6657,img:''},
+      {id:1315,name:"Odaiba Gundam Base",type:'Lugar',icon:'camera',lat:35.6252,lng:139.7755,img:''},
+      {id:1316,name:"Shimokitazawa District",type:'Lugar',icon:'camera',lat:35.6616,lng:139.6672,img:''},
+      {id:1317,name:"Ghibli Museum",type:'Lugar',icon:'camera',lat:35.6962,lng:139.5704,img:''},
+      {id:1318,name:"Shibuya Sky",type:'Lugar',icon:'camera',lat:35.6585,lng:139.7018,img:''},
+      {id:1319,name:"teamLab Borderless Azabudai Hills",type:'Lugar',icon:'camera',lat:35.6624,lng:139.7388,img:''}
+    ]
+  },
+  {
+    id:33,title:"El Romanticismo de Sintra y la Costa",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Lisbon",
+    cat:"Nature",tag:"Lisboa_Esencia",
+    desc:"El gran superpoder natural cercano a Lisboa. D\u00e9jate hechizar por los palacios y castillos rom\u00e1nticos m\u00e1s impresionantes de Europa integrados en colinas boscosas, acantilados atl\u00e1nticos y villas se\u00f1oriales.",
+    img:"https://images.unsplash.com/photo-1651520011190-6f37b5213684?w=1200&q=80",
+    spots:[
+      {id:1320,name:"Pena Palace",type:'Lugar',icon:'camera',lat:38.7876,lng:-9.3906,img:''},
+      {id:1321,name:"Quinta da Regaleira",type:'Lugar',icon:'camera',lat:38.7964,lng:-9.3961,img:''},
+      {id:1322,name:"Castle of the Moors",type:'Lugar',icon:'camera',lat:38.7892,lng:-9.3891,img:''},
+      {id:1323,name:"Cabo da Roca",type:'Lugar',icon:'camera',lat:38.7811,lng:-9.4975,img:''},
+      {id:1324,name:"Cascais Old Town",type:'Lugar',icon:'camera',lat:38.6969,lng:-9.4206,img:''},
+      {id:1325,name:"Boca do Inferno",type:'Lugar',icon:'camera',lat:38.6914,lng:-9.4311,img:''},
+      {id:1326,name:"Monserrate Palace",type:'Lugar',icon:'camera',lat:38.7919,lng:-9.4208,img:''},
+      {id:1327,name:"Praia da Adraga",type:'Lugar',icon:'camera',lat:38.8025,lng:-9.4847,img:''},
+      {id:1328,name:"Queluz National Palace",type:'Lugar',icon:'camera',lat:38.7506,lng:-9.2584,img:''},
+      {id:1329,name:"Convento dos Capuchos",type:'Lugar',icon:'camera',lat:38.7844,lng:-9.4381,img:''}
+    ]
+  },
+  {
+    id:34,title:"Gu\u00eda del Debutante: Los Barrios Hist\u00f3ricos",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Lisbon",
+    cat:"Art & culture",tag:"Lisboa_Basico",
+    desc:"El itinerario imprescindible para enamorarse de la capital lusa por primera vez. Sube a bordo de tranv\u00edas hist\u00f3ricos de madera, pasea por laberintos medievales de fado y admira fortalezas alfajores.",
+    img:"https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=1200&q=80",
+    spots:[
+      {id:1330,name:"Belem Tower",type:'Lugar',icon:'camera',lat:38.6916,lng:-9.216,img:''},
+      {id:1331,name:"Jeronimos Monastery",type:'Lugar',icon:'camera',lat:38.6978,lng:-9.2067,img:''},
+      {id:1332,name:"Sao Jorge Castle",type:'Lugar',icon:'camera',lat:38.7139,lng:-9.1334,img:''},
+      {id:1333,name:"Praca do Comercio",type:'Lugar',icon:'camera',lat:38.7077,lng:-9.1364,img:''},
+      {id:1334,name:"Santa Justa Lift",type:'Lugar',icon:'camera',lat:38.7122,lng:-9.1394,img:''},
+      {id:1335,name:"Tram 28 Route",type:'Lugar',icon:'camera',lat:38.7111,lng:-9.1331,img:''},
+      {id:1336,name:"Lisbon Cathedral Se",type:'Lugar',icon:'camera',lat:38.7099,lng:-9.1326,img:''},
+      {id:1337,name:"Rossio Square",type:'Lugar',icon:'camera',lat:38.7138,lng:-9.1397,img:''},
+      {id:1338,name:"National Tile Museum",type:'Lugar',icon:'camera',lat:38.7247,lng:-9.1139,img:''},
+      {id:1339,name:"National Pantheon",type:'Lugar',icon:'camera',lat:38.7151,lng:-9.1248,img:''}
+    ]
+  },
+  {
+    id:35,title:"Miradores Ocultos, Arte Urbano y Dise\u00f1o",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Lisbon",
+    cat:"Art & culture",tag:"Lisboa_Secreto",
+    desc:"Dise\u00f1ada especialmente para viajeros reincidentes. Descubre espectaculares complejos industriales victorianos reconvertidos en arte, miradores locales sin colas y palacios escondidos llenos de azulejos finos.",
+    img:"https://images.unsplash.com/photo-1697464960820-7a06f6854e7b?w=1200&q=80",
+    spots:[
+      {id:1340,name:"LX Factory",type:'Lugar',icon:'camera',lat:38.7032,lng:-9.1787,img:''},
+      {id:1341,name:"Miradouro da Senhora do Monte",type:'Lugar',icon:'camera',lat:38.7191,lng:-9.1326,img:''},
+      {id:1342,name:"Panoramico de Monsanto",type:'Lugar',icon:'camera',lat:38.7285,lng:-9.1936,img:''},
+      {id:1343,name:"Ler Devagar Bookstore",type:'Lugar',icon:'camera',lat:38.7031,lng:-9.1786,img:''},
+      {id:1344,name:"Carmo Convent Ruins",type:'Lugar',icon:'camera',lat:38.7121,lng:-9.1402,img:''},
+      {id:1345,name:"Miradouro da Graca",type:'Lugar',icon:'camera',lat:38.7161,lng:-9.1315,img:''},
+      {id:1346,name:"Village Underground Lisboa",type:'Lugar',icon:'camera',lat:38.7022,lng:-9.1793,img:''},
+      {id:1347,name:"Fronteira Palace",type:'Lugar',icon:'camera',lat:38.7402,lng:-9.1804,img:''},
+      {id:1348,name:"Estufa Fria",type:'Lugar',icon:'camera',lat:38.7291,lng:-9.1554,img:''},
+      {id:1349,name:"Palacio de Sao Bento Backstreets",type:'Lugar',icon:'camera',lat:38.7126,lng:-9.1539,img:''}
+    ]
+  },
+  {
+    id:36,title:"Pasteles de Nata, Marisco y Casas de Fado",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Lisbon",
+    cat:"Food & drinks",tag:"Lisboa_Foodie",
+    desc:"El viaje perfecto para los amantes del buen comer tradicional. Prueba los hojaldres calientes m\u00e1s legendarios del mundo, marisquer\u00edas vivas locales y mercados gastron\u00f3micos modernos muy din\u00e1micos.",
+    img:"https://images.unsplash.com/photo-1668396001678-d33131800ea7?w=1200&q=80",
+    spots:[
+      {id:1350,name:"Pasteis de Belem",type:'Lugar',icon:'camera',lat:38.6975,lng:-9.2031,img:''},
+      {id:1351,name:"Time Out Market Lisboa",type:'Lugar',icon:'camera',lat:38.7067,lng:-9.1456,img:''},
+      {id:1352,name:"A Cevicheria",type:'Lugar',icon:'camera',lat:38.7173,lng:-9.1481,img:''},
+      {id:1353,name:"Mercado de Campo de Ourique",type:'Lugar',icon:'camera',lat:38.7161,lng:-9.1654,img:''},
+      {id:1354,name:"Conserveira de Lisboa",type:'Lugar',icon:'camera',lat:38.7091,lng:-9.1342,img:''},
+      {id:1355,name:"Tasca do Chico",type:'Lugar',icon:'camera',lat:38.7125,lng:-9.1436,img:''},
+      {id:1356,name:"Cervejaria Ramiro",type:'Lugar',icon:'camera',lat:38.7211,lng:-9.1344,img:''},
+      {id:1357,name:"Fabrica da Nata Rossio",type:'Lugar',icon:'camera',lat:38.7144,lng:-9.1405,img:''},
+      {id:1358,name:"Manteigaria Chiado",type:'Lugar',icon:'camera',lat:38.7104,lng:-9.1433,img:''},
+      {id:1359,name:"Cafe A Brasileira",type:'Lugar',icon:'camera',lat:38.7107,lng:-9.1422,img:''}
+    ]
+  },
+  {
+    id:37,title:"El Londres Secreto y Alternativo",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"London",
+    cat:"Nature",tag:"Londres_Secreto",
+    desc:"Un recorrido pensado para quienes ya conocen lo t\u00edpico y buscan oasis urbanos, miradores de vanguardia sin masificar y rincones culturales con un encanto especial.",
+    img:"https://images.unsplash.com/photo-1755028845749-0688abac4033?w=1200&q=80",
+    spots:[
+      {id:1360,name:"Horizon 22",type:'Lugar',icon:'camera',lat:51.5145,lng:-0.0833,img:''},
+      {id:1361,name:"Word on the Water",type:'Lugar',icon:'camera',lat:51.5346,lng:-0.1235,img:''},
+      {id:1362,name:"Kyoto Garden",type:'Lugar',icon:'camera',lat:51.503,lng:-0.2014,img:''},
+      {id:1363,name:"Daunt Books",type:'Lugar',icon:'camera',lat:51.5209,lng:-0.1531,img:''},
+      {id:1364,name:"Little Venice",type:'Lugar',icon:'camera',lat:51.5217,lng:-0.1831,img:''},
+      {id:1365,name:"Leadenhall Market",type:'Lugar',icon:'camera',lat:51.5128,lng:-0.0835,img:''},
+      {id:1366,name:"St Dunstan in the East",type:'Lugar',icon:'camera',lat:51.5097,lng:-0.0825,img:''},
+      {id:1367,name:"Barbican Conservatory",type:'Lugar',icon:'camera',lat:51.5201,lng:-0.0932,img:''},
+      {id:1368,name:"Sir John Soane's Museum",type:'Lugar',icon:'camera',lat:51.517,lng:-0.1175,img:''},
+      {id:1369,name:"Dennis Severs' House",type:'Lugar',icon:'camera',lat:51.5197,lng:-0.0763,img:''}
+    ]
+  },
+  {
+    id:38,title:"Esencia de la Realeza y el West End",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"London",
+    cat:"Luxury",tag:"Londres_Premium",
+    desc:"Sum\u00e9rgete en el Londres m\u00e1s sofisticado. Una selecci\u00f3n de palacios reales, los distritos comerciales m\u00e1s distinguidos de la ciudad y el coraz\u00f3n del entretenimiento cl\u00e1sico.",
+    img:"https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=1200&q=90",
+    spots:[
+      {id:1370,name:"Buckingham Palace",type:'Lugar',icon:'camera',lat:51.5014,lng:-0.1419,img:''},
+      {id:1371,name:"Harrods",type:'Lugar',icon:'camera',lat:51.4994,lng:-0.1632,img:''},
+      {id:1372,name:"Liberty London",type:'Lugar',icon:'camera',lat:51.5137,lng:-0.142,img:''},
+      {id:1373,name:"West End Theatre District",type:'Lugar',icon:'camera',lat:51.5123,lng:-0.1311,img:''},
+      {id:1374,name:"The View from The Shard",type:'Lugar',icon:'camera',lat:51.5045,lng:-0.0865,img:''},
+      {id:1375,name:"Bond Street",type:'Lugar',icon:'camera',lat:51.5118,lng:-0.1447,img:''},
+      {id:1376,name:"Royal Albert Hall",type:'Lugar',icon:'camera',lat:51.5009,lng:-0.1774,img:''},
+      {id:1377,name:"Covent Garden Piazza",type:'Lugar',icon:'camera',lat:51.5117,lng:-0.124,img:''},
+      {id:1378,name:"Mayfair Shopping District",type:'Lugar',icon:'camera',lat:51.5113,lng:-0.1472,img:''},
+      {id:1379,name:"Kensington Palace",type:'Lugar',icon:'camera',lat:51.505,lng:-0.1877,img:''}
+    ]
+  },
+  {
+    id:39,title:"Gu\u00eda del Debutante: Los Imperdibles",count:11,
+    author:"Travel Specialist Mariano",av:"TM",dest:"London",
+    cat:"Art & culture",tag:"Londres_Basico",
+    desc:"La ruta perfecta para quienes visitan la ciudad por primera vez. Incluye monumentos hist\u00f3ricos, arte de categor\u00eda mundial y las vistas m\u00e1s ic\u00f3nicas a orillas del T\u00e1mesis.",
+    img:"https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1200&q=80",
+    spots:[
+      {id:1380,name:"Big Ben",type:'Lugar',icon:'camera',lat:51.5007,lng:-0.1246,img:''},
+      {id:1381,name:"Tower of London",type:'Lugar',icon:'camera',lat:51.5081,lng:-0.0759,img:''},
+      {id:1382,name:"British Museum",type:'Lugar',icon:'camera',lat:51.5194,lng:-0.127,img:''},
+      {id:1383,name:"London Eye",type:'Lugar',icon:'camera',lat:51.5033,lng:-0.1195,img:''},
+      {id:1384,name:"Westminster Abbey",type:'Lugar',icon:'camera',lat:51.4993,lng:-0.1273,img:''},
+      {id:1385,name:"Tower Bridge",type:'Lugar',icon:'camera',lat:51.5055,lng:-0.0754,img:''},
+      {id:1386,name:"Trafalgar Square",type:'Lugar',icon:'camera',lat:51.508,lng:-0.1281,img:''},
+      {id:1387,name:"National Gallery",type:'Lugar',icon:'camera',lat:51.5089,lng:-0.1286,img:''},
+      {id:1388,name:"St Paul's Cathedral",type:'Lugar',icon:'camera',lat:51.5138,lng:-0.0984,img:''},
+      {id:1389,name:"Tate Modern",type:'Lugar',icon:'camera',lat:51.5076,lng:-0.0994,img:''},
+      {id:1390,name:"Hyde Park",type:'Lugar',icon:'camera',lat:51.5073,lng:-0.1657,img:''}
+    ]
+  },
+  {
+    id:40,title:"Ruta Foodie y Mercados Globales",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"London",
+    cat:"Food & drinks",tag:"Londres_Foodie",
+    desc:"El viaje definitivo para el paladar. Descubre mercados hist\u00f3ricos resguardados del clima, barras gastron\u00f3micas innovadoras y bocados legendarios abiertos las 24 horas.",
+    img:"https://images.unsplash.com/photo-1489529243611-223e46f88e67?w=1200&q=80",
+    spots:[
+      {id:1391,name:"Borough Market",type:'Lugar',icon:'camera',lat:51.5055,lng:-0.0905,img:''},
+      {id:1392,name:"Seven Dials Market",type:'Lugar',icon:'camera',lat:51.5146,lng:-0.1264,img:''},
+      {id:1393,name:"Maltby Street Market",type:'Lugar',icon:'camera',lat:51.5001,lng:-0.0781,img:''},
+      {id:1394,name:"Beigel Bake",type:'Lugar',icon:'camera',lat:51.5242,lng:-0.0717,img:''},
+      {id:1395,name:"Mercato Mayfair",type:'Lugar',icon:'camera',lat:51.5134,lng:-0.1504,img:''},
+      {id:1396,name:"Pop Brixton",type:'Lugar',icon:'camera',lat:51.4628,lng:-0.1147,img:''},
+      {id:1397,name:"Greenwich Market",type:'Lugar',icon:'camera',lat:51.482,lng:-0.0094,img:''},
+      {id:1398,name:"Boxpark Shoreditch",type:'Lugar',icon:'camera',lat:51.5234,lng:-0.0757,img:''},
+      {id:1399,name:"Kingly Court",type:'Lugar',icon:'camera',lat:51.5126,lng:-0.1396,img:''},
+      {id:1400,name:"Broadway Market",type:'Lugar',icon:'camera',lat:51.5364,lng:-0.0611,img:''}
+    ]
+  },
+  {
+    id:41,title:"Esencia y Skyline: Atardeceres de Ensue\u00f1o",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Madrid",
+    cat:"Luxury",tag:"Madrid_Esencia",
+    desc:"Una gu\u00eda centrada en los miradores m\u00e1s sofisticados de la ciudad, monumentos antiguos y azoteas exclusivas donde vivir el aut\u00e9ntico atardecer y la vibrante vida en las alturas.",
+    img:"https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=1200&q=80",
+    spots:[
+      {id:1401,name:"Circulo de Bellas Artes Rooftop",type:'Lugar',icon:'camera',lat:40.4187,lng:-3.6966,img:''},
+      {id:1402,name:"Jardines de Sabatini",type:'Lugar',icon:'camera',lat:40.4201,lng:-3.7132,img:''},
+      {id:1403,name:"Parque de las Siete Tetas",type:'Lugar',icon:'camera',lat:40.3926,lng:-3.6559,img:''},
+      {id:1404,name:"Terraza Hotel Riu Plaza Espana",type:'Lugar',icon:'camera',lat:40.4233,lng:-3.7119,img:''},
+      {id:1405,name:"Plaza de Oriente",type:'Lugar',icon:'camera',lat:40.4181,lng:-3.7128,img:''},
+      {id:1406,name:"Mirador de la Cornisa de la Almudena",type:'Lugar',icon:'camera',lat:40.4156,lng:-3.7153,img:''},
+      {id:1407,name:"Palacio de Cibeles Mirador",type:'Lugar',icon:'camera',lat:40.4191,lng:-3.6931,img:''},
+      {id:1408,name:"Las Vistillas",type:'Lugar',icon:'camera',lat:40.4121,lng:-3.7139,img:''},
+      {id:1409,name:"Templo de Debod",type:'Lugar',icon:'camera',lat:40.4242,lng:-3.7178,img:''},
+      {id:1410,name:"Mirador Madrid CentroCentro",type:'Lugar',icon:'camera',lat:40.4189,lng:-3.6935,img:''}
+    ]
+  },
+  {
+    id:42,title:"Gu\u00eda del Debutante: El Madrid Castizo",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Madrid",
+    cat:"Art & culture",tag:"Madrid_Basico",
+    desc:"Un itinerario ideal para una primera toma de contacto con la capital espa\u00f1ola. Descubre el imponente legado de los Austrias y los Borbones, plazas vibrantes y pinacotecas de prestigio mundial.",
+    img:"https://images.unsplash.com/photo-1660506824779-b2c8503f4b17?w=1200&q=90",
+    spots:[
+      {id:1411,name:"Museo del Prado",type:'Lugar',icon:'camera',lat:40.4138,lng:-3.6921,img:''},
+      {id:1412,name:"Palacio Real de Madrid",type:'Lugar',icon:'camera',lat:40.4179,lng:-3.7143,img:''},
+      {id:1413,name:"Plaza Mayor",type:'Lugar',icon:'camera',lat:40.4154,lng:-3.7074,img:''},
+      {id:1414,name:"Parque del Retiro",type:'Lugar',icon:'camera',lat:40.4153,lng:-3.6839,img:''},
+      {id:1415,name:"Puerta del Sol",type:'Lugar',icon:'camera',lat:40.4167,lng:-3.7038,img:''},
+      {id:1416,name:"Museo Reina Sofia",type:'Lugar',icon:'camera',lat:40.4079,lng:-3.6946,img:''},
+      {id:1417,name:"Catedral de la Almudena",type:'Lugar',icon:'camera',lat:40.4154,lng:-3.7146,img:''},
+      {id:1418,name:"Plaza de la Villa",type:'Lugar',icon:'camera',lat:40.4151,lng:-3.709,img:''},
+      {id:1419,name:"Puerta de Alcala",type:'Lugar',icon:'camera',lat:40.4199,lng:-3.6888,img:''},
+      {id:1420,name:"Museo Thyssen-Bornemisza",type:'Lugar',icon:'camera',lat:40.4161,lng:-3.6949,img:''}
+    ]
+  },
+  {
+    id:43,title:"Madrid Alternativo: Tendencias y Vanguardia",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Madrid",
+    cat:"Art & culture",tag:"Madrid_Secreto",
+    desc:"Perfecta para viajeros reincidentes que quieren salir del circuito convencional. Descubre espacios industriales reconvertidos, tesoros literarios hist\u00f3ricos y la efervescencia cultural madrile\u00f1a.",
+    img:"https://images.unsplash.com/photo-1654941134943-0aa8d9addd69?w=1200&q=100",
+    spots:[
+      {id:1421,name:"Anden 0 Estacion de Chamberi",type:'Lugar',icon:'camera',lat:40.4321,lng:-3.6998,img:''},
+      {id:1422,name:"Matadero Madrid",type:'Lugar',icon:'camera',lat:40.3923,lng:-3.6974,img:''},
+      {id:1423,name:"El Rastro",type:'Lugar',icon:'camera',lat:40.4087,lng:-3.7081,img:''},
+      {id:1424,name:"Calle Espiritu Santo",type:'Lugar',icon:'camera',lat:40.4261,lng:-3.7042,img:''},
+      {id:1425,name:"Ermita de San Antonio de la Florida",type:'Lugar',icon:'camera',lat:40.4255,lng:-3.7258,img:''},
+      {id:1426,name:"Quinta de los Molinos",type:'Lugar',icon:'camera',lat:40.4444,lng:-3.6288,img:''},
+      {id:1427,name:"San Francisco el Grande",type:'Lugar',icon:'camera',lat:40.4106,lng:-3.7144,img:''},
+      {id:1428,name:"Cuesta de Moyano",type:'Lugar',icon:'camera',lat:40.4111,lng:-3.6894,img:''},
+      {id:1429,name:"Museo Sorolla",type:'Lugar',icon:'camera',lat:40.4354,lng:-3.6925,img:''},
+      {id:1430,name:"Estacion de Atocha Jardin Tropical",type:'Lugar',icon:'camera',lat:40.4066,lng:-3.6921,img:''}
+    ]
+  },
+  {
+    id:44,title:"Ruta de Tapas y Tabernas Centenarias",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Madrid",
+    cat:"Food & drinks",tag:"Madrid_Foodie",
+    desc:"El recorrido gastron\u00f3mico definitivo. Descubre bares centenarios llenos de historia, mercados culinarios sofisticados y bocados tradicionales memorables de la cocina madrile\u00f1a.",
+    img:"https://images.unsplash.com/photo-1515443961218-a51367888e4b?w=1200&q=80",
+    spots:[
+      {id:1431,name:"Mercado de San Miguel",type:'Lugar',icon:'camera',lat:40.4155,lng:-3.709,img:''},
+      {id:1432,name:"Casa Labra",type:'Lugar',icon:'camera',lat:40.4173,lng:-3.7042,img:''},
+      {id:1433,name:"Chocolateria San Gines",type:'Lugar',icon:'camera',lat:40.4167,lng:-3.7065,img:''},
+      {id:1434,name:"Mercado de San Anton",type:'Lugar',icon:'camera',lat:40.4224,lng:-3.6973,img:''},
+      {id:1435,name:"Casa Lucio",type:'Lugar',icon:'camera',lat:40.4125,lng:-3.7094,img:''},
+      {id:1436,name:"Mercado de San Fernando",type:'Lugar',icon:'camera',lat:40.4072,lng:-3.7044,img:''},
+      {id:1437,name:"Bodega La Ardosa",type:'Lugar',icon:'camera',lat:40.4244,lng:-3.7013,img:''},
+      {id:1438,name:"El Brillante",type:'Lugar',icon:'camera',lat:40.4081,lng:-3.6936,img:''},
+      {id:1439,name:"Casa Alberto",type:'Lugar',icon:'camera',lat:40.4146,lng:-3.7011,img:''},
+      {id:1440,name:"Lhardy",type:'Lugar',icon:'camera',lat:40.4169,lng:-3.7025,img:''}
+    ]
+  },
+  {
+    id:45,title:"El Pueblo Azul y Gargantas del Atlas",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Morocco",
+    cat:"Nature",tag:"Marruecos_Secreto",
+    desc:"Dise\u00f1ada para reincidentes que buscan la naturaleza m\u00e1s diversa. Explora una famosa medina pintada por completo de azul celeste, cascadas salvajes en mitad de monta\u00f1as y ca\u00f1ones de roca colosales.",
+    img:"https://images.unsplash.com/photo-1569383746724-6f1b882b8f46?w=1200&q=80",
+    spots:[
+      {id:1441,name:"Chefchaouen Medina",type:'Lugar',icon:'camera',lat:35.1687,lng:-5.2634,img:''},
+      {id:1442,name:"Imlil Berber Village",type:'Lugar',icon:'camera',lat:31.1351,lng:-7.9242,img:''},
+      {id:1443,name:"Ouzoud Falls",type:'Lugar',icon:'camera',lat:32.0156,lng:-6.7183,img:''},
+      {id:1444,name:"Todra Gorge",type:'Lugar',icon:'camera',lat:31.5492,lng:-5.5961,img:''},
+      {id:1445,name:"Ait Benhaddou Kasbah",type:'Lugar',icon:'camera',lat:31.0472,lng:-7.1323,img:''},
+      {id:1446,name:"Dades Gorges",type:'Lugar',icon:'camera',lat:31.59,lng:-5.9284,img:''},
+      {id:1447,name:"Paradise Valley",type:'Lugar',icon:'camera',lat:30.583,lng:-9.53,img:''},
+      {id:1448,name:"Akchour Waterfalls",type:'Lugar',icon:'camera',lat:35.2414,lng:-5.1744,img:''},
+      {id:1449,name:"Volubilis Roman Ruins",type:'Lugar',icon:'camera',lat:34.0733,lng:-5.5544,img:''},
+      {id:1450,name:"Legzira Beach",type:'Lugar',icon:'camera',lat:29.4354,lng:-10.1186,img:''}
+    ]
+  },
+  {
+    id:46,title:"Gu\u00eda del Debutante: Marrakech y la Plaza M\u00edtica",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Morocco",
+    cat:"Art & culture",tag:"Marruecos_Basico",
+    desc:"El kit de iniciaci\u00f3n obligatorio en Marruecos. Sorpr\u00e9ndete con la vibrante actividad de la plaza principal, explora madrazas isl\u00e1micas repletas de mosaicos antiguos y camina entre jardines bot\u00e1nicos exuberantes.",
+    img:"https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=1200&q=80",
+    spots:[
+      {id:1451,name:"Jemma el-Fna",type:'Lugar',icon:'camera',lat:31.6258,lng:-7.9892,img:''},
+      {id:1452,name:"Bahia Palace",type:'Lugar',icon:'camera',lat:31.6212,lng:-7.9814,img:''},
+      {id:1453,name:"Koutoubia Mosque",type:'Lugar',icon:'camera',lat:31.6239,lng:-7.9936,img:''},
+      {id:1454,name:"Saadian Tombs",type:'Lugar',icon:'camera',lat:31.6175,lng:-7.9889,img:''},
+      {id:1455,name:"Ben Youssef Madrasa",type:'Lugar',icon:'camera',lat:31.6319,lng:-7.9806,img:''},
+      {id:1456,name:"Majorelle Garden",type:'Lugar',icon:'camera',lat:31.6461,lng:-8.0028,img:''},
+      {id:1457,name:"Le Jardin Secret",type:'Lugar',icon:'camera',lat:31.6303,lng:-7.9861,img:''},
+      {id:1458,name:"El Badi Palace",type:'Lugar',icon:'camera',lat:31.6183,lng:-7.9856,img:''},
+      {id:1459,name:"Menara Gardens",type:'Lugar',icon:'camera',lat:31.6131,lng:-8.0256,img:''},
+      {id:1460,name:"Medersa Bou Inania",type:'Lugar',icon:'camera',lat:34.0614,lng:-4.9829,img:''}
+    ]
+  },
+  {
+    id:47,title:"Riads de Ensue\u00f1o y Lifestyle Premium",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Morocco",
+    cat:"Luxury",tag:"Marruecos_Premium",
+    desc:"La gu\u00eda m\u00e1s exclusiva y sofisticada de Marruecos. Al\u00f3jate y cena en antiguos palacios reconvertidos en hoteles boutique de s\u00faper lujo, patios con fuentes de m\u00e1rmol y terrazas con vistas a la cordillera.",
+    img:"https://images.unsplash.com/photo-1565020244281-fe53df7df170?w=1200&q=80",
+    spots:[
+      {id:1461,name:"La Mamounia",type:'Lugar',icon:'camera',lat:31.6194,lng:-7.9986,img:''},
+      {id:1462,name:"Royal Mansour",type:'Lugar',icon:'camera',lat:31.6225,lng:-7.9994,img:''},
+      {id:1463,name:"Riad Fes",type:'Lugar',icon:'camera',lat:34.0611,lng:-4.9744,img:''},
+      {id:1464,name:"Selman Marrakech",type:'Lugar',icon:'camera',lat:31.5725,lng:-8.0411,img:''},
+      {id:1465,name:"Amanjena",type:'Lugar',icon:'camera',lat:31.6052,lng:-7.9256,img:''},
+      {id:1466,name:"Riad Yasmine",type:'Lugar',icon:'camera',lat:31.6369,lng:-7.985,img:''},
+      {id:1467,name:"Kasbah Tamadot",type:'Lugar',icon:'camera',lat:31.2503,lng:-7.9839,img:''},
+      {id:1468,name:"Palais Faraj",type:'Lugar',icon:'camera',lat:34.0585,lng:-4.9806,img:''},
+      {id:1469,name:"Riad El Fenn",type:'Lugar',icon:'camera',lat:31.6269,lng:-7.9944,img:''},
+      {id:1470,name:"Riad Kasbah Tamadot",type:'Lugar',icon:'camera',lat:31.2503,lng:-7.9839,img:''}
+    ]
+  },
+  {
+    id:48,title:"Sabores de la Medina: Tajines y Especias",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Morocco",
+    cat:"Food & drinks",tag:"Marruecos_Foodie",
+    desc:"El viaje definitivo para el paladar en el norte de \u00c1frica. Descubre mercados callejeros de especias, degusta el cl\u00e1sico cordero al horno en callejones ocultos y cena tajines tradicionales bajo las estrellas.",
+    img:"https://images.unsplash.com/photo-1580746738099-1cb74f972feb?w=1200&q=80",
+    spots:[
+      {id:1471,name:"March\u00e9 Central de Casablanca",type:'Lugar',icon:'camera',lat:33.5954,lng:-7.6111,img:''},
+      {id:1472,name:"Cafe des Espices",type:'Lugar',icon:'camera',lat:31.6285,lng:-7.9868,img:''},
+      {id:1473,name:"Nomad Restaurant",type:'Lugar',icon:'camera',lat:31.6288,lng:-7.9862,img:''},
+      {id:1474,name:"Al Fassia",type:'Lugar',icon:'camera',lat:31.6341,lng:-8.0121,img:''},
+      {id:1475,name:"Souk El Attarine",type:'Lugar',icon:'camera',lat:34.0649,lng:-4.9776,img:''},
+      {id:1476,name:"Rick's Caf\u00e9",type:'Lugar',icon:'camera',lat:33.6031,lng:-7.6206,img:''},
+      {id:1477,name:"Cafe Clock",type:'Lugar',icon:'camera',lat:34.0621,lng:-4.9825,img:''},
+      {id:1478,name:"Mechoui Alley",type:'Lugar',icon:'camera',lat:31.6272,lng:-7.9886,img:''},
+      {id:1479,name:"Grand Balcon Cafe Glacier",type:'Lugar',icon:'camera',lat:31.6261,lng:-7.9881,img:''},
+      {id:1480,name:"Cafe Clock Marrakech",type:'Lugar',icon:'camera',lat:31.6186,lng:-7.9894,img:''}
+    ]
+  },
+  {
+    id:49,title:"Broadway y Cultura de Vanguardia",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"New York",
+    cat:"Luxury",tag:"NY_Esencia",
+    desc:"Sum\u00e9rgete en el Nueva York m\u00e1s exclusivo. Una ruta enfocada en los espect\u00e1culos m\u00e1s famosos, museos de arte contempor\u00e1neo de categor\u00eda mundial y los miradores acristalados m\u00e1s lujosos.",
+    img:"https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1200&q=80",
+    spots:[
+      {id:1481,name:"Broadway Theatre District",type:'Lugar',icon:'camera',lat:40.759,lng:-73.9845,img:''},
+      {id:1482,name:"Museum of Modern Art MoMA",type:'Lugar',icon:'camera',lat:40.7614,lng:-73.9776,img:''},
+      {id:1483,name:"Lincoln Center",type:'Lugar',icon:'camera',lat:40.7725,lng:-73.9835,img:''},
+      {id:1484,name:"Summit One Vanderbilt",type:'Lugar',icon:'camera',lat:40.753,lng:-73.9785,img:''},
+      {id:1485,name:"The Edge",type:'Lugar',icon:'camera',lat:40.7541,lng:-74.001,img:''},
+      {id:1486,name:"Fifth Avenue Shopping",type:'Lugar',icon:'camera',lat:40.7641,lng:-73.9729,img:''},
+      {id:1487,name:"Solomon R Guggenheim Museum",type:'Lugar',icon:'camera',lat:40.783,lng:-73.959,img:''},
+      {id:1488,name:"Radio City Music Hall",type:'Lugar',icon:'camera',lat:40.7599,lng:-73.9798,img:''},
+      {id:1489,name:"St. Patrick's Cathedral",type:'Lugar',icon:'camera',lat:40.7585,lng:-73.9762,img:''},
+      {id:1490,name:"Whitney Museum of American Art",type:'Lugar',icon:'camera',lat:40.7396,lng:-74.0089,img:''}
+    ]
+  },
+  {
+    id:50,title:"Brooklyn y Rincones del Cine Alternativo",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"New York",
+    cat:"Family",tag:"NY_Secreto",
+    desc:"Una ruta pensada para reincidentes. Recorre parques elevados sobre antiguas l\u00edneas de ferrocarril, distritos industriales repletos de murales art\u00edsticos y barrios residenciales emblem\u00e1ticos.",
+    img:"https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1200&q=80",
+    spots:[
+      {id:1491,name:"High Line",type:'Lugar',icon:'camera',lat:40.748,lng:-74.0048,img:''},
+      {id:1492,name:"DUMBO",type:'Lugar',icon:'camera',lat:40.7033,lng:-73.9884,img:''},
+      {id:1493,name:"Williamsburg Waterfront",type:'Lugar',icon:'camera',lat:40.7212,lng:-73.9621,img:''},
+      {id:1494,name:"The Vessel",type:'Lugar',icon:'camera',lat:40.7538,lng:-74.0018,img:''},
+      {id:1495,name:"Bushwick Collective",type:'Lugar',icon:'camera',lat:40.7043,lng:-73.9213,img:''},
+      {id:1496,name:"Roosevelt Island Tramway",type:'Lugar',icon:'camera',lat:40.7611,lng:-73.9602,img:''},
+      {id:1497,name:"Morgan Library & Museum",type:'Lugar',icon:'camera',lat:40.7492,lng:-73.9814,img:''},
+      {id:1498,name:"Greenwich Village Backstreets",type:'Lugar',icon:'camera',lat:40.7336,lng:-74.0027,img:''},
+      {id:1499,name:"Little Island",type:'Lugar',icon:'camera',lat:40.742,lng:-74.0101,img:''},
+      {id:1500,name:"Roosevelt Island Smallpox Hospital Ruins",type:'Lugar',icon:'camera',lat:40.7511,lng:-73.9601,img:''}
+    ]
+  },
+  {
+    id:51,title:"Burgers, Pizzas y Mercados Gastron\u00f3micos",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"New York",
+    cat:"Food & drinks",tag:"NY_Foodie",
+    desc:"El sue\u00f1o culinario de los amantes del street food. Prueba las porciones de pizza m\u00e1s m\u00edticas, locales hist\u00f3ricos de pastrami sacados de pel\u00edculas y espectaculares mercados cerrados.",
+    img:"https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=1200&q=80",
+    spots:[
+      {id:1501,name:"Chelsea Market",type:'Lugar',icon:'camera',lat:40.742,lng:-74.0048,img:''},
+      {id:1502,name:"Joe's Pizza Carmine St",type:'Lugar',icon:'camera',lat:40.7306,lng:-74.0021,img:''},
+      {id:1503,name:"Katz's Delicatessen",type:'Lugar',icon:'camera',lat:40.7222,lng:-73.9874,img:''},
+      {id:1504,name:"Time Out Market New York",type:'Lugar',icon:'camera',lat:40.7034,lng:-73.9921,img:''},
+      {id:1505,name:"Ellen's Stardust Diner",type:'Lugar',icon:'camera',lat:40.7619,lng:-73.983,img:''},
+      {id:1506,name:"Peter Luger Steak House",type:'Lugar',icon:'camera',lat:40.7099,lng:-73.9625,img:''},
+      {id:1507,name:"Levain Bakery",type:'Lugar',icon:'camera',lat:40.7801,lng:-73.9801,img:''},
+      {id:1508,name:"230 Fifth Rooftop Bar",type:'Lugar',icon:'camera',lat:40.7441,lng:-73.9882,img:''},
+      {id:1509,name:"Russ & Daughters",type:'Lugar',icon:'camera',lat:40.7224,lng:-73.9882,img:''},
+      {id:1510,name:"Balthazar",type:'Lugar',icon:'camera',lat:40.7226,lng:-73.9982,img:''}
+    ]
+  },
+  {
+    id:52,title:"Gu\u00eda del Debutante: Manhattan de Pel\u00edcula",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"New York",
+    cat:"Art & culture",tag:"NY_Basico",
+    desc:"La selecci\u00f3n so\u00f1ada para tu primer viaje a la Gran Manzana. Cruza puentes colosales, pasea por el pulm\u00f3n verde del mundo y qu\u00e9date sin aliento ante las luces de los cruces m\u00e1s famosos.",
+    img:"https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=1200&q=80",
+    spots:[
+      {id:1511,name:"Times Square",type:'Lugar',icon:'camera',lat:40.758,lng:-73.9855,img:''},
+      {id:1512,name:"Central Park",type:'Lugar',icon:'camera',lat:40.7829,lng:-73.9654,img:''},
+      {id:1513,name:"Empire State Building",type:'Lugar',icon:'camera',lat:40.7484,lng:-73.9857,img:''},
+      {id:1514,name:"Statue of Liberty",type:'Lugar',icon:'camera',lat:40.6892,lng:-74.0445,img:''},
+      {id:1515,name:"Brooklyn Bridge",type:'Lugar',icon:'camera',lat:40.7061,lng:-73.9969,img:''},
+      {id:1516,name:"Metropolitan Museum of Art",type:'Lugar',icon:'camera',lat:40.7794,lng:-73.9632,img:''},
+      {id:1517,name:"Grand Central Terminal",type:'Lugar',icon:'camera',lat:40.7527,lng:-73.9772,img:''},
+      {id:1518,name:"Rockefeller Center",type:'Lugar',icon:'camera',lat:40.7587,lng:-73.9787,img:''},
+      {id:1519,name:"9/11 Memorial",type:'Lugar',icon:'camera',lat:40.7115,lng:-74.0132,img:''},
+      {id:1520,name:"Flatiron Building Crossroad",type:'Lugar',icon:'camera',lat:40.7411,lng:-73.9897,img:''}
+    ]
+  },
+  {
+    id:53,title:"El Par\u00eds Exclusivo: Lujo, Moda y el Sena",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Paris",
+    cat:"Luxury",tag:"Paris_Premium",
+    desc:"Recorre el Par\u00eds m\u00e1s sofisticado y opulento. Las avenidas comerciales de dise\u00f1adores prestigiosos, palacios de la \u00f3pera neobarrocos, plazas majestuosas y c\u00fapulas de cristal hist\u00f3ricas.",
+    img:"https://images.unsplash.com/photo-1550340499-a6c60fc8287c?w=1200&q=80",
+    spots:[
+      {id:1521,name:"Avenue des Champs-\u00c9lys\u00e9es",type:'Lugar',icon:'camera',lat:48.8698,lng:2.3075,img:''},
+      {id:1522,name:"Palais Garnier",type:'Lugar',icon:'camera',lat:48.872,lng:2.3316,img:''},
+      {id:1523,name:"Place Vend\u00f4me",type:'Lugar',icon:'camera',lat:48.8675,lng:2.3294,img:''},
+      {id:1524,name:"Galeries Lafayette Haussmann",type:'Lugar',icon:'camera',lat:48.8732,lng:2.3323,img:''},
+      {id:1525,name:"Le Bon March\u00e9",type:'Lugar',icon:'camera',lat:48.8508,lng:2.3248,img:''},
+      {id:1526,name:"Place de la Concorde",type:'Lugar',icon:'camera',lat:48.8656,lng:2.3212,img:''},
+      {id:1527,name:"Fondation Louis Vuitton",type:'Lugar',icon:'camera',lat:48.8766,lng:2.2634,img:''},
+      {id:1528,name:"Pont Alexandre III",type:'Lugar',icon:'camera',lat:48.8639,lng:2.3136,img:''},
+      {id:1529,name:"Place du Trocadero",type:'Lugar',icon:'camera',lat:48.8629,lng:2.2872,img:''},
+      {id:1530,name:"Avenue Montaigne",type:'Lugar',icon:'camera',lat:48.8664,lng:2.3061,img:''}
+    ]
+  },
+  {
+    id:54,title:"Gu\u00eda del Debutante: El Par\u00eds de Postal",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Paris",
+    cat:"Art & culture",tag:"Paris_Basico",
+    desc:"El itinerario so\u00f1ado para primerizos. Contempla la imponente Torre Eiffel, las obras maestras del Louvre, la m\u00edtica catedral g\u00f3tica y los rincones bohemios de Montmartre.",
+    img:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&q=80",
+    spots:[
+      {id:1531,name:"Tour Eiffel",type:'Lugar',icon:'camera',lat:48.8584,lng:2.2945,img:''},
+      {id:1532,name:"Mus\u00e9e du Louvre",type:'Lugar',icon:'camera',lat:48.8606,lng:2.3376,img:''},
+      {id:1533,name:"Cath\u00e9drale Notre-Dame",type:'Lugar',icon:'camera',lat:48.853,lng:2.3499,img:''},
+      {id:1534,name:"Sacr\u00e9-C\u0153ur",type:'Lugar',icon:'camera',lat:48.8867,lng:2.3431,img:''},
+      {id:1535,name:"Arc de Triomphe",type:'Lugar',icon:'camera',lat:48.8738,lng:2.295,img:''},
+      {id:1536,name:"Mus\u00e9e d'Orsay",type:'Lugar',icon:'camera',lat:48.8599,lng:2.3265,img:''},
+      {id:1537,name:"Centre Pompidou",type:'Lugar',icon:'camera',lat:48.8606,lng:2.3522,img:''},
+      {id:1538,name:"Jardin des Tuileries",type:'Lugar',icon:'camera',lat:48.8635,lng:2.3274,img:''},
+      {id:1539,name:"Place de la Bastille",type:'Lugar',icon:'camera',lat:48.8531,lng:2.3691,img:''},
+      {id:1540,name:"Jardin du Luxembourg",type:'Lugar',icon:'camera',lat:48.8462,lng:2.3371,img:''}
+    ]
+  },
+  {
+    id:55,title:"Pasajes Cubiertos y Rincones Secretos",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Paris",
+    cat:"Nature",tag:"Paris_Secreto",
+    desc:"Explora pasadizos comerciales del siglo XIX cubiertos de cristaleras, iglesias medievales con vitrales sobrecogedores, museos \u00edntimos y parques elevados construidos sobre antiguas v\u00edas de tren.",
+    img:"https://images.unsplash.com/photo-1734789339344-2b6a4e82422b?q=80&w=687?w=1200&q=80",
+    spots:[
+      {id:1541,name:"Galerie Vivienne",type:'Lugar',icon:'camera',lat:48.8667,lng:2.3397,img:''},
+      {id:1542,name:"Sainte-Chapelle",type:'Lugar',icon:'camera',lat:48.8554,lng:2.345,img:''},
+      {id:1543,name:"Coul\u00e9e Verte Ren\u00e9-Dumont",type:'Lugar',icon:'camera',lat:48.8492,lng:2.3734,img:''},
+      {id:1544,name:"Mus\u00e9e de l'Orangerie",type:'Lugar',icon:'camera',lat:48.8638,lng:2.3227,img:''},
+      {id:1545,name:"Parc des Buttes-Chaumont",type:'Lugar',icon:'camera',lat:48.8809,lng:2.3828,img:''},
+      {id:1546,name:"Shakespeare and Company",type:'Lugar',icon:'camera',lat:48.8525,lng:2.3471,img:''},
+      {id:1547,name:"P\u00e8re Lachaise Cemetery",type:'Lugar',icon:'camera',lat:48.8614,lng:2.3933,img:''},
+      {id:1548,name:"Place des Vosges",type:'Lugar',icon:'camera',lat:48.855,lng:2.3622,img:''},
+      {id:1549,name:"Musee de la Vie Romantique",type:'Lugar',icon:'camera',lat:48.8812,lng:2.3332,img:''},
+      {id:1550,name:"Passage des Panoramas",type:'Lugar',icon:'camera',lat:48.8714,lng:2.3419,img:''}
+    ]
+  },
+  {
+    id:56,title:"Ruta de las Boulangeries, Caf\u00e9s y Bistr\u00f3s",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Paris",
+    cat:"Food & drinks",tag:"Paris_Foodie",
+    desc:"Un fest\u00edn para los sentidos. Desde calles empedradas repletas de queser\u00edas y mercados locales tradicionales hasta los legendarios caf\u00e9s literarios donde se reun\u00edan los intelectuales.",
+    img:"https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80",
+    spots:[
+      {id:1551,name:"Rue Mouffetard",type:'Lugar',icon:'camera',lat:48.8423,lng:2.3498,img:''},
+      {id:1552,name:"March\u00e9 d'Aligre",type:'Lugar',icon:'camera',lat:48.8491,lng:2.3784,img:''},
+      {id:1553,name:"Caf\u00e9 de Flore",type:'Lugar',icon:'camera',lat:48.8542,lng:2.3331,img:''},
+      {id:1554,name:"Le Comptoir du Relais",type:'Lugar',icon:'camera',lat:48.8521,lng:2.3389,img:''},
+      {id:1555,name:"Rue Montorgueil",type:'Lugar',icon:'camera',lat:48.8654,lng:2.3468,img:''},
+      {id:1556,name:"March\u00e9 des Enfants Rouges",type:'Lugar',icon:'camera',lat:48.8627,lng:2.3622,img:''},
+      {id:1557,name:"Angelina Paris",type:'Lugar',icon:'camera',lat:48.8651,lng:2.327,img:''},
+      {id:1558,name:"Les Deux Magots",type:'Lugar',icon:'camera',lat:48.8541,lng:2.3335,img:''},
+      {id:1559,name:"E. Dehillerin Cookware",type:'Lugar',icon:'camera',lat:48.8643,lng:2.3424,img:''},
+      {id:1560,name:"Poil\u00e2ne Bakery",type:'Lugar',icon:'camera',lat:48.8541,lng:2.3268,img:''}
+    ]
+  },
+  {
+    id:57,title:"Alta Cocina Lime\u00f1a y Mercados Tradicionales",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Peru",
+    cat:"Food & drinks",tag:"Peru_Foodie",
+    desc:"La ruta definitiva para paladares exigentes. Saborea ceviches frescos, descubre restaurantes galardonados mundialmente y recorre mercados repletos de frutas ex\u00f3ticas e ingredientes andinos \u00fanicos.",
+    img:"https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=1200&q=80",
+    spots:[
+      {id:1561,name:"Central Restaurante",type:'Lugar',icon:'camera',lat:-12.1453,lng:-77.0223,img:''},
+      {id:1562,name:"Maido",type:'Lugar',icon:'camera',lat:-12.1248,lng:-77.027,img:''},
+      {id:1563,name:"Astrid y Gaston",type:'Lugar',icon:'camera',lat:-12.0967,lng:-77.0354,img:''},
+      {id:1564,name:"Mercado Surquillo No 1",type:'Lugar',icon:'camera',lat:-12.1141,lng:-77.0233,img:''},
+      {id:1565,name:"Canta Rana",type:'Lugar',icon:'camera',lat:-12.1481,lng:-77.0236,img:''},
+      {id:1566,name:"Isolina Taberna Peruana",type:'Lugar',icon:'camera',lat:-12.1492,lng:-77.0211,img:''},
+      {id:1567,name:"Chocomuseo Cusco",type:'Lugar',icon:'camera',lat:-13.5153,lng:-71.9794,img:''},
+      {id:1568,name:"Mercado Central de San Pedro",type:'Lugar',icon:'camera',lat:-13.5175,lng:-71.9825,img:''},
+      {id:1569,name:"La Mar Cebicher\u00eda",type:'Lugar',icon:'camera',lat:-12.1123,lng:-77.0456,img:''},
+      {id:1570,name:"El Mercado Restaurant",type:'Lugar',icon:'camera',lat:-13.5181,lng:-71.9814,img:''}
+    ]
+  },
+  {
+    id:58,title:"Bohemia, Desierto y Monasterios",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Peru",
+    cat:"Art & culture",tag:"Peru_Secreto",
+    desc:"Una ruta ideal para reincidentes que quieren descubrir el Per\u00fa m\u00e1s diverso. Cruza dunas gigantes en mitad del desierto, sobrevuela l\u00edneas enigm\u00e1ticas y pasea por ciudadelas coloniales de sillar.",
+    img:"https://images.unsplash.com/photo-1545206085-d0e519bdcecd?w=1200&q=80",
+    spots:[
+      {id:1571,name:"Barranco District",type:'Lugar',icon:'camera',lat:-12.1487,lng:-77.0211,img:''},
+      {id:1572,name:"Huacachina Oasis",type:'Lugar',icon:'camera',lat:-14.0875,lng:-75.7633,img:''},
+      {id:1573,name:"Paracas National Reserve",type:'Lugar',icon:'camera',lat:-13.8744,lng:-76.2464,img:''},
+      {id:1574,name:"Nazca Lines Viewpoint",type:'Lugar',icon:'camera',lat:-14.6936,lng:-74.9272,img:''},
+      {id:1575,name:"Santa Catalina Monastery",type:'Lugar',icon:'camera',lat:-16.3951,lng:-71.5367,img:''},
+      {id:1576,name:"Plaza de Armas Arequipa",type:'Lugar',icon:'camera',lat:-16.3989,lng:-71.5369,img:''},
+      {id:1577,name:"Colca Canyon Cruz del Condor",type:'Lugar',icon:'camera',lat:-15.6111,lng:-71.8611,img:''},
+      {id:1578,name:"Huaca Pucllana",type:'Lugar',icon:'camera',lat:-12.1106,lng:-77.0303,img:''},
+      {id:1579,name:"San Francisco Catacombs",type:'Lugar',icon:'camera',lat:-12.0452,lng:-77.0274,img:''},
+      {id:1580,name:"Huaca Pucllana Park",type:'Lugar',icon:'camera',lat:-12.1106,lng:-77.0303,img:''}
+    ]
+  },
+  {
+    id:59,title:"Esencia Andina: Lagos Sagrados y Glaciares",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Peru",
+    cat:"Nature",tag:"Peru_Esencia",
+    desc:"La esencia natural m\u00e1s imponente de la cordillera peruana. Descubre islas flotantes milenarias en el lago navegable m\u00e1s alto del mundo, lagunas de deshielo andino y picos nevados espectaculares.",
+    img:"https://images.unsplash.com/photo-1590545651636-f0e7f151239f?w=1200&q=80",
+    spots:[
+      {id:1581,name:"Lake Titicaca",type:'Lugar',icon:'camera',lat:-15.8402,lng:-69.3421,img:''},
+      {id:1582,name:"Uros Floating Islands",type:'Lugar',icon:'camera',lat:-15.8111,lng:-69.9744,img:''},
+      {id:1583,name:"Taquile Island",type:'Lugar',icon:'camera',lat:-15.7725,lng:-69.6844,img:''},
+      {id:1584,name:"Laguna Humantay",type:'Lugar',icon:'camera',lat:-13.4111,lng:-72.5722,img:''},
+      {id:1585,name:"Vinicunca Rainbow Mountain",type:'Lugar',icon:'camera',lat:-13.8694,lng:-71.3028,img:''},
+      {id:1586,name:"Huascaran National Park",type:'Lugar',icon:'camera',lat:-9.53,lng:-77.53,img:''},
+      {id:1587,name:"Laguna 69",type:'Lugar',icon:'camera',lat:-9.0044,lng:-77.6111,img:''},
+      {id:1588,name:"Pastoruri Glacier",type:'Lugar',icon:'camera',lat:-9.8794,lng:-77.1972,img:''},
+      {id:1589,name:"Laguna Paron",type:'Lugar',icon:'camera',lat:-8.9984,lng:-77.6833,img:''},
+      {id:1590,name:"Ausangate Trek Mountain",type:'Lugar',icon:'camera',lat:-13.7833,lng:-71.25,img:''}
+    ]
+  },
+  {
+    id:60,title:"Gu\u00eda del Debutante: El Imperio Inca",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Peru",
+    cat:"Art & culture",tag:"Peru_Basico",
+    desc:"El recorrido imprescindible para adentrarse por primera vez en el legado de la civilizaci\u00f3n inca. Explora templos de piedra colosales, valles sagrados y la ciudadela perdida m\u00e1s famosa del mundo.",
+    img:"https://images.unsplash.com/photo-1526392060635-9d6019884377?w=1200&q=80",
+    spots:[
+      {id:1591,name:"Machu Picchu",type:'Lugar',icon:'camera',lat:-13.1631,lng:-72.545,img:''},
+      {id:1592,name:"Sacsayhuaman",type:'Lugar',icon:'camera',lat:-13.5078,lng:-71.9822,img:''},
+      {id:1593,name:"Ollantaytambo Fortress",type:'Lugar',icon:'camera',lat:-13.2584,lng:-72.2634,img:''},
+      {id:1594,name:"Plaza de Armas Cusco",type:'Lugar',icon:'camera',lat:-13.516,lng:-71.9785,img:''},
+      {id:1595,name:"Maras Salt Mines",type:'Lugar',icon:'camera',lat:-13.3044,lng:-72.1544,img:''},
+      {id:1596,name:"Moray Archaeological Site",type:'Lugar',icon:'camera',lat:-13.3298,lng:-72.1957,img:''},
+      {id:1597,name:"Qorikancha Temple",type:'Lugar',icon:'camera',lat:-13.5203,lng:-71.9754,img:''},
+      {id:1598,name:"Pisac Market",type:'Lugar',icon:'camera',lat:-13.4225,lng:-71.8514,img:''},
+      {id:1599,name:"Chinchero Archeological Site",type:'Lugar',icon:'camera',lat:-13.3911,lng:-72.0487,img:''},
+      {id:1600,name:"Larco Museum",type:'Lugar',icon:'camera',lat:-12.0724,lng:-77.0708,img:''}
+    ]
+  },
+  {
+    id:61,title:"Azulejos Hist\u00f3ricos y Pueblos de Piedra",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Portugal",
+    cat:"Art & culture",tag:"Portugal_Secreto",
+    desc:"Dise\u00f1ada para reincidentes que buscan parajes rurales intactos. Descubre villas fortificadas colgadas sobre abismos, canales con barcas tradicionales y capillas cubiertas por miles de mosaicos azules.",
+    img:"https://images.unsplash.com/photo-1662149191062-68917c79bbd6?w=1200&q=80",
+    spots:[
+      {id:1601,name:"Capela das Almas",type:'Lugar',icon:'camera',lat:41.1498,lng:-8.6056,img:''},
+      {id:1602,name:"Aveiro Canals",type:'Lugar',icon:'camera',lat:40.6444,lng:-8.6523,img:''},
+      {id:1603,name:"Costa Nova Striped Houses",type:'Lugar',icon:'camera',lat:40.6156,lng:-8.7494,img:''},
+      {id:1604,name:"Obidos Walled Town",type:'Lugar',icon:'camera',lat:39.3611,lng:-9.1572,img:''},
+      {id:1605,name:"Monsanto Stone Village",type:'Lugar',icon:'camera',lat:40.0387,lng:-7.1136,img:''},
+      {id:1606,name:"Coimbra Old University",type:'Lugar',icon:'camera',lat:40.2075,lng:-8.4264,img:''},
+      {id:1607,name:"Guimaraes Castle",type:'Lugar',icon:'camera',lat:41.4478,lng:-8.2902,img:''},
+      {id:1608,name:"Marvao Walled Village",type:'Lugar',icon:'camera',lat:39.3944,lng:-7.3767,img:''},
+      {id:1609,name:"Bom Jesus do Monte",type:'Lugar',icon:'camera',lat:41.5546,lng:-8.3775,img:''},
+      {id:1610,name:"Piodao Schist Village",type:'Lugar',icon:'camera',lat:40.2294,lng:-7.825,img:''}
+    ]
+  },
+  {
+    id:62,title:"El Algarve Salvaje: Arcos y Cuevas",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Portugal",
+    cat:"Beaches",tag:"Portugal_Playas",
+    desc:"El gran superpoder costero de Portugal. Una refinada selecci\u00f3n de arcos de roca esculpidos por el oc\u00e9ano, espectaculares cuevas marinas accesibles solo por agua y cabos ind\u00f3mitos con faros hist\u00f3ricos.",
+    img:"https://images.unsplash.com/photo-1569406829354-eb0cc9e653e8?w=1200&q=80",
+    spots:[
+      {id:1611,name:"Marinha Beach",type:'Lugar',icon:'camera',lat:37.0897,lng:-8.4128,img:''},
+      {id:1612,name:"Benagil Cave",type:'Lugar',icon:'camera',lat:37.0872,lng:-8.4239,img:''},
+      {id:1613,name:"Camilo Beach",type:'Lugar',icon:'camera',lat:37.0865,lng:-8.6687,img:''},
+      {id:1614,name:"Ponta da Piedade",type:'Lugar',icon:'camera',lat:37.0809,lng:-8.6694,img:''},
+      {id:1615,name:"Fal\u00e9sia Beach",type:'Lugar',icon:'camera',lat:37.0894,lng:-8.1722,img:''},
+      {id:1616,name:"Cape Saint Vincent",type:'Lugar',icon:'camera',lat:37.0233,lng:-8.9961,img:''},
+      {id:1617,name:"Tavira Island Beach",type:'Lugar',icon:'camera',lat:37.1111,lng:-7.6256,img:''},
+      {id:1618,name:"Tres Irmaos Beach",type:'Lugar',icon:'camera',lat:37.1211,lng:-8.5802,img:''},
+      {id:1619,name:"Dona Ana Beach",type:'Lugar',icon:'camera',lat:37.0914,lng:-8.6692,img:''},
+      {id:1620,name:"Praia da Bordeira",type:'Lugar',icon:'camera',lat:37.1931,lng:-8.9029,img:''}
+    ]
+  },
+  {
+    id:63,title:"El Valle del Duero y Catas de Autor",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Portugal",
+    cat:"Food & drinks",tag:"Portugal_Foodie",
+    desc:"Una ruta gourmet sublime para los amantes del vino. Visita hist\u00f3ricas bodegas a orillas del r\u00edo, contempla paisajes infinitos protegidos por la Unesco y disfruta de la alta reposter\u00eda en caf\u00e9s cl\u00e1sicos.",
+    img:"https://images.unsplash.com/photo-1600699899970-b1c9fadd8f9e?w=1200&q=80",
+    spots:[
+      {id:1621,name:"Taylor's Port Wine Cellars",type:'Lugar',icon:'camera',lat:41.1341,lng:-8.6142,img:''},
+      {id:1622,name:"Sandeman Cellars",type:'Lugar',icon:'camera',lat:41.137,lng:-8.6121,img:''},
+      {id:1623,name:"Pinhao Railway Station",type:'Lugar',icon:'camera',lat:41.1903,lng:-7.5414,img:''},
+      {id:1624,name:"Casal de Loivos Viewpoint",type:'Lugar',icon:'camera',lat:41.2015,lng:-7.5311,img:''},
+      {id:1625,name:"Graham's Port Lodge",type:'Lugar',icon:'camera',lat:41.1378,lng:-8.6256,img:''},
+      {id:1626,name:"Quinta da Roeda",type:'Lugar',icon:'camera',lat:41.1944,lng:-7.5256,img:''},
+      {id:1627,name:"Mercado do Bolhao",type:'Lugar',icon:'camera',lat:41.1486,lng:-8.6067,img:''},
+      {id:1628,name:"Majestic Cafe",type:'Lugar',icon:'camera',lat:41.1472,lng:-8.6064,img:''},
+      {id:1629,name:"Cafe Santiago",type:'Lugar',icon:'camera',lat:41.1466,lng:-8.6048,img:''},
+      {id:1630,name:"Quinta da Pacheca",type:'Lugar',icon:'camera',lat:41.1554,lng:-7.7981,img:''}
+    ]
+  },
+  {
+    id:64,title:"Gu\u00eda del Debutante: El Eje Oporto - Ribera",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Portugal",
+    cat:"Art & culture",tag:"Portugal_Basico",
+    desc:"La introducci\u00f3n perfecta para enamorarse de Portugal. Contempla iglesias barrocas monumentales, cruza puentes colosales de hierro sobre el Duero y pasea por los barrios medievales ribere\u00f1os m\u00e1s fotog\u00e9nicos.",
+    img:"https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=1200&q=80",
+    spots:[
+      {id:1631,name:"Clerigos Tower",type:'Lugar',icon:'camera',lat:41.1456,lng:-8.6147,img:''},
+      {id:1632,name:"Dom Luis I Bridge",type:'Lugar',icon:'camera',lat:41.1399,lng:-8.6094,img:''},
+      {id:1633,name:"Sao Bento Railway Station",type:'Lugar',icon:'camera',lat:41.1455,lng:-8.6103,img:''},
+      {id:1634,name:"Livraria Lello",type:'Lugar',icon:'camera',lat:41.1468,lng:-8.6148,img:''},
+      {id:1635,name:"Ribeira District",type:'Lugar',icon:'camera',lat:41.1406,lng:-8.6111,img:''},
+      {id:1636,name:"Porto Cathedral Se",type:'Lugar',icon:'camera',lat:41.1428,lng:-8.6114,img:''},
+      {id:1637,name:"Bolsa Palace",type:'Lugar',icon:'camera',lat:41.1412,lng:-8.6158,img:''},
+      {id:1638,name:"Church of Saint Ildefonso",type:'Lugar',icon:'camera',lat:41.1461,lng:-8.6065,img:''},
+      {id:1639,name:"Igreja do Carmo",type:'Lugar',icon:'camera',lat:41.1475,lng:-8.6164,img:''},
+      {id:1640,name:"Igreja de Sao Francisco",type:'Lugar',icon:'camera',lat:41.1408,lng:-8.6159,img:''}
+    ]
+  },
+  {
+    id:65,title:"Cultura de la Cerveza y Tabernas",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Prague",
+    cat:"Food & drinks",tag:"Praga_Foodie",
+    desc:"El recorrido culinario definitivo por la capital mundial de la cerveza. Saborea el goulash tradicional, visita bodegas de cerveza centenarias con recetas secretas y mercados gastron\u00f3micos modernos de vanguardia.",
+    img:"https://images.unsplash.com/photo-1687771454203-97d0b08bbeb2?w=1200&q=80",
+    spots:[
+      {id:1641,name:"U Fleku Brewery",type:'Lugar',icon:'camera',lat:50.0787,lng:14.4172,img:''},
+      {id:1642,name:"Lok\u00e1l Dlouh\u00e1\u00e1\u00e1",type:'Lugar',icon:'camera',lat:50.0901,lng:14.4261,img:''},
+      {id:1643,name:"Manifesto Market Andel",type:'Lugar',icon:'camera',lat:50.0702,lng:14.4031,img:''},
+      {id:1644,name:"U Pinkas\u016f",type:'Lugar',icon:'camera',lat:50.0827,lng:14.423,img:''},
+      {id:1645,name:"Prague Central Market Hall",type:'Lugar',icon:'camera',lat:50.0954,lng:14.4452,img:''},
+      {id:1646,name:"Caf\u00e9 Louvre",type:'Lugar',icon:'camera',lat:50.0819,lng:14.4188,img:''},
+      {id:1647,name:"Kant\u00fdna",type:'Lugar',icon:'camera',lat:50.0839,lng:14.4294,img:''},
+      {id:1648,name:"Pivovarsk\u00fd D\u016fm",type:'Lugar',icon:'camera',lat:50.0755,lng:14.4244,img:''},
+      {id:1649,name:"U Zlateho Tygra",type:'Lugar',icon:'camera',lat:50.0861,lng:14.4184,img:''},
+      {id:1650,name:"Choco-Story Prague",type:'Lugar',icon:'camera',lat:50.0877,lng:14.4239,img:''}
+    ]
+  },
+  {
+    id:66,title:"Esencia de Leyendas: Miradores y Parques",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Prague",
+    cat:"Family",tag:"Praga_Esencia",
+    desc:"Una ruta enfocada en las vistas panor\u00e1micas m\u00e1s sofisticadas y tranquilas de la ciudad. Pasea por islas del r\u00edo, colinas se\u00f1oriales con jardines y terrazas ic\u00f3nicas para ver el atardecer.",
+    img:"https://images.unsplash.com/photo-1584142639606-325473d1b2dc?w=1200&q=80",
+    spots:[
+      {id:1651,name:"Petrin Lookout Tower",type:'Lugar',icon:'camera',lat:50.0835,lng:14.3951,img:''},
+      {id:1652,name:"Letna Park Viewpoint",type:'Lugar',icon:'camera',lat:50.0958,lng:14.4141,img:''},
+      {id:1653,name:"Old Town Bridge Tower",type:'Lugar',icon:'camera',lat:50.0862,lng:14.4131,img:''},
+      {id:1654,name:"Kampa Island",type:'Lugar',icon:'camera',lat:50.085,lng:14.4085,img:''},
+      {id:1655,name:"Dancing House",type:'Lugar',icon:'camera',lat:50.0754,lng:14.4142,img:''},
+      {id:1656,name:"Riegrovy Sady Park",type:'Lugar',icon:'camera',lat:50.0805,lng:14.4431,img:''},
+      {id:1657,name:"Municipal House",type:'Lugar',icon:'camera',lat:50.0877,lng:14.4278,img:''},
+      {id:1658,name:"Clementinum",type:'Lugar',icon:'camera',lat:50.0864,lng:14.4162,img:''},
+      {id:1659,name:"Wallenstein Garden",type:'Lugar',icon:'camera',lat:50.09,lng:14.4052,img:''},
+      {id:1660,name:"Vysehrad Cemetery",type:'Lugar',icon:'camera',lat:50.0645,lng:14.4162,img:''}
+    ]
+  },
+  {
+    id:67,title:"Gu\u00eda del Debutante: La Praga Medieval",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Prague",
+    cat:"Art & culture",tag:"Praga_Basico",
+    desc:"El itinerario imprescindible para tu primer viaje a la capital checa. Cruza el ic\u00f3nico puente g\u00f3tico, explora la fortaleza real m\u00e1s grande del mundo y sum\u00e9rgete en el encanto hist\u00f3rico de la Ciudad Vieja.",
+    img:"https://images.unsplash.com/photo-1541849546-216549ae216d?w=1200&q=80",
+    spots:[
+      {id:1661,name:"Charles Bridge",type:'Lugar',icon:'camera',lat:50.0865,lng:14.4114,img:''},
+      {id:1662,name:"Prague Castle",type:'Lugar',icon:'camera',lat:50.0902,lng:14.3988,img:''},
+      {id:1663,name:"Old Town Astronomical Clock",type:'Lugar',icon:'camera',lat:50.087,lng:14.4207,img:''},
+      {id:1664,name:"St Vitus Cathedral",type:'Lugar',icon:'camera',lat:50.0909,lng:14.4005,img:''},
+      {id:1665,name:"Old Town Square",type:'Lugar',icon:'camera',lat:50.0875,lng:14.4212,img:''},
+      {id:1666,name:"Wenceslas Square",type:'Lugar',icon:'camera',lat:50.0813,lng:14.4275,img:''},
+      {id:1667,name:"Powder Tower",type:'Lugar',icon:'camera',lat:50.0873,lng:14.4278,img:''},
+      {id:1668,name:"Josefov Jewish Quarter",type:'Lugar',icon:'camera',lat:50.0897,lng:14.4172,img:''},
+      {id:1669,name:"St. Nicholas Church",type:'Lugar',icon:'camera',lat:50.088,lng:14.4032,img:''},
+      {id:1670,name:"Loreto Prague",type:'Lugar',icon:'camera',lat:50.0894,lng:14.3917,img:''}
+    ]
+  },
+  {
+    id:68,title:"Praga Alternativa: Esculturas y Callejones",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Prague",
+    cat:"Art & culture",tag:"Praga_Secreto",
+    desc:"Pensada para viajeros reincidentes que quieren descubrir el lado B checo. Descubre pol\u00e9micas esculturas interactivas de metal, el callej\u00f3n m\u00e1s estrecho de Europa y bibliotecas barrocas espectaculares.",
+    img:"https://images.unsplash.com/photo-1592906209472-a36b1f3782ef?w=1200&q=80",
+    spots:[
+      {id:1671,name:"Franz Kafka Rotating Head",type:'Lugar',icon:'camera',lat:50.0818,lng:14.4201,img:''},
+      {id:1672,name:"Hanging Man Sculpture",type:'Lugar',icon:'camera',lat:50.0834,lng:14.4181,img:''},
+      {id:1673,name:"Vinarna Certovka Narrowest Street",type:'Lugar',icon:'camera',lat:50.0881,lng:14.4072,img:''},
+      {id:1674,name:"Lennon Wall",type:'Lugar',icon:'camera',lat:50.0862,lng:14.4069,img:''},
+      {id:1675,name:"Piss Sculpture by David Cerny",type:'Lugar',icon:'camera',lat:50.088,lng:14.4089,img:''},
+      {id:1676,name:"Strahov Library",type:'Lugar',icon:'camera',lat:50.0867,lng:14.3897,img:''},
+      {id:1677,name:"Golden Lane",type:'Lugar',icon:'camera',lat:50.092,lng:14.4042,img:''},
+      {id:1678,name:"Vysehrad Fortress",type:'Lugar',icon:'camera',lat:50.0644,lng:14.4179,img:''},
+      {id:1679,name:"Speculum Alchemiae Museum",type:'Lugar',icon:'camera',lat:50.0901,lng:14.4239,img:''},
+      {id:1680,name:"Speculum Alchemiae Museum",type:'Lugar',icon:'camera',lat:50.0901,lng:14.4239,img:''}
+    ]
+  },
+  {
+    id:69,title:"El Imperio Romano y el Vaticano Esencial",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Rome",
+    cat:"Art & culture",tag:"Roma_Basico",
+    desc:"Una inmersi\u00f3n obligatoria en la historia occidental. Marav\u00edllate con el gran anfiteatro Flavio, pide un deseo en la fuente barroca m\u00e1s hermosa del mundo, visita el templo de los dioses y la gran bas\u00edlica de San Pedro.",
+    img:"https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200&q=80",
+    spots:[
+      {id:1681,name:"Colosseo",type:'Lugar',icon:'camera',lat:41.8902,lng:12.4922,img:''},
+      {id:1682,name:"Fontana di Trevi",type:'Lugar',icon:'camera',lat:41.9009,lng:12.4833,img:''},
+      {id:1683,name:"Pantheon",type:'Lugar',icon:'camera',lat:41.8986,lng:12.4769,img:''},
+      {id:1684,name:"Bas\u00edlica de San Pedro",type:'Lugar',icon:'camera',lat:41.9022,lng:12.4533,img:''},
+      {id:1685,name:"Foro Romano",type:'Lugar',icon:'camera',lat:41.8925,lng:12.4853,img:''},
+      {id:1686,name:"Piazza Navona",type:'Lugar',icon:'camera',lat:41.8989,lng:12.4731,img:''},
+      {id:1687,name:"Castel Sant'Angelo",type:'Lugar',icon:'camera',lat:41.9031,lng:12.4663,img:''},
+      {id:1688,name:"Musei Capitolini",type:'Lugar',icon:'camera',lat:41.8929,lng:12.4826,img:''},
+      {id:1689,name:"Campo de' Fiori Square",type:'Lugar',icon:'camera',lat:41.8956,lng:12.4722,img:''},
+      {id:1690,name:"Piazza del Popolo",type:'Lugar',icon:'camera',lat:41.9107,lng:12.4764,img:''}
+    ]
+  },
+  {
+    id:70,title:"La Ruta de la Pasta, Pizza y Gelato Aut\u00e9ntico",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Rome",
+    cat:"Food & drinks",tag:"Roma_Foodie",
+    desc:"El viaje perfecto para los amantes del buen comer. Descubre los mercados gastron\u00f3micos m\u00e1s vivos, trattorias hist\u00f3ricas con manteles de cuadros, el epicentro de la pizza al corte y helader\u00edas centenarias.",
+    img:"https://images.unsplash.com/photo-1595295333158-4742f28fbd85?w=1200&q=80",
+    spots:[
+      {id:1691,name:"Mercato Centrale Roma",type:'Lugar',icon:'camera',lat:41.9011,lng:12.5021,img:''},
+      {id:1692,name:"Trattoria Da Enzo al 29",type:'Lugar',icon:'camera',lat:41.8874,lng:12.4776,img:''},
+      {id:1693,name:"Bonci Pizzarium",type:'Lugar',icon:'camera',lat:41.9075,lng:12.4491,img:''},
+      {id:1694,name:"Giolitti",type:'Lugar',icon:'camera',lat:41.9009,lng:12.4776,img:''},
+      {id:1695,name:"Mercato di Testaccio",type:'Lugar',icon:'camera',lat:41.8786,lng:12.4755,img:''},
+      {id:1696,name:"Frigidarium",type:'Lugar',icon:'camera',lat:41.8997,lng:12.4704,img:''},
+      {id:1697,name:"Forno Campo de' Fiori",type:'Lugar',icon:'camera',lat:41.8956,lng:12.4722,img:''},
+      {id:1698,name:"Dar Poeta",type:'Lugar',icon:'camera',lat:41.8903,lng:-12.4683,img:''},
+      {id:1699,name:"Pasticceria Regoli",type:'Lugar',icon:'camera',lat:41.8953,lng:12.5034,img:''},
+      {id:1700,name:"Suppl\u00ed Roma",type:'Lugar',icon:'camera',lat:41.8894,lng:12.4711,img:''}
+    ]
+  },
+  {
+    id:71,title:"Plazas Monumentales y Galer\u00edas de Arte",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Rome",
+    cat:"Luxury",tag:"Roma_Premium",
+    desc:"Una ruta centrada en la sofisticaci\u00f3n art\u00edstica y arquitect\u00f3nica de Roma. Visita pinacotecas papales, plazas monumentales llenas de fuentes escult\u00f3ricas y villas nobiliarias con jardines renacentistas.",
+    img:"https://images.unsplash.com/photo-1529260830199-42c24126f198?w=1200&q=80",
+    spots:[
+      {id:1701,name:"Museos Vaticanos",type:'Lugar',icon:'camera',lat:41.9065,lng:12.4536,img:''},
+      {id:1702,name:"Piazza di Spagna",type:'Lugar',icon:'camera',lat:41.9057,lng:12.4823,img:''},
+      {id:1703,name:"Palazzo Doria Pamphilj",type:'Lugar',icon:'camera',lat:41.8977,lng:12.4812,img:''},
+      {id:1704,name:"Galleria Borghese",type:'Lugar',icon:'camera',lat:41.9142,lng:12.4921,img:''},
+      {id:1705,name:"Via Condotti",type:'Lugar',icon:'camera',lat:41.9053,lng:12.48,img:''},
+      {id:1706,name:"Villa d'Este",type:'Lugar',icon:'camera',lat:41.9634,lng:12.7961,img:''},
+      {id:1707,name:"Palazzo Barberini",type:'Lugar',icon:'camera',lat:41.9031,lng:12.4903,img:''},
+      {id:1708,name:"Terme di Caracalla",type:'Lugar',icon:'camera',lat:41.8792,lng:12.4926,img:''},
+      {id:1709,name:"Villa Adriana",type:'Lugar',icon:'camera',lat:41.9431,lng:12.7761,img:''},
+      {id:1710,name:"Palazzo Colonna",type:'Lugar',icon:'camera',lat:41.8972,lng:12.4831,img:''}
+    ]
+  },
+  {
+    id:72,title:"Rincones Secretos y Paseos Alternativos",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Rome",
+    cat:"Nature",tag:"Roma_Secreto",
+    desc:"Dise\u00f1ada para reincidentes. Recorre un barrio de arquitectura fant\u00e1stica y mitol\u00f3gica, del\u00e9itate con las mejores puestas de sol entre jardines de naranjos y pasea por la calzada de la v\u00eda m\u00e1s antigua de Europa.",
+    img:"https://images.unsplash.com/photo-1573071314614-17a369b48e7d?w=1200&q=80",
+    spots:[
+      {id:1711,name:"Quartiere Copped\u00e8",type:'Lugar',icon:'camera',lat:41.9182,lng:12.502,img:''},
+      {id:1712,name:"Giardino degli Aranci",type:'Lugar',icon:'camera',lat:41.8851,lng:12.4798,img:''},
+      {id:1713,name:"Villa Borghese",type:'Lugar',icon:'camera',lat:41.9131,lng:12.4862,img:''},
+      {id:1714,name:"Via Appia Antica",type:'Lugar',icon:'camera',lat:41.853,lng:12.5152,img:''},
+      {id:1715,name:"Cimitero Acattolico",type:'Lugar',icon:'camera',lat:41.8757,lng:12.4791,img:''},
+      {id:1716,name:"Trastevere Backstreets",type:'Lugar',icon:'camera',lat:41.8894,lng:12.4691,img:''},
+      {id:1717,name:"Isola Tiberina",type:'Lugar',icon:'camera',lat:41.8906,lng:12.4781,img:''},
+      {id:1718,name:"Roseto Comunale",type:'Lugar',icon:'camera',lat:41.8842,lng:12.4842,img:''},
+      {id:1719,name:"Parco degli Acquedotti",type:'Lugar',icon:'camera',lat:41.8461,lng:12.5604,img:''},
+      {id:1720,name:"Keyhole of the Aventine Hill",type:'Lugar',icon:'camera',lat:41.8826,lng:12.4784,img:''}
+    ]
+  },
+  {
+    id:73,title:"Alta Gastronom\u00eda: Vi\u00f1edos y Alta Cocina en Miniatura",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Spain",
+    cat:"Food & drinks",tag:"Espana_Foodie",
+    desc:"El viaje so\u00f1ado de cualquier amante del buen comer. Descubre calles medievales repletas de alta cocina en miniatura, mercados legendarios y catedrales del vino futuristas dise\u00f1adas por grandes arquitectos.",
+    img:"https://images.unsplash.com/photo-1624361141205-e0fd424dd800?w=1200&q=80",
+    spots:[
+      {id:1721,name:"Calle Laurel",type:'Lugar',icon:'camera',lat:42.4655,lng:-2.4491,img:''},
+      {id:1722,name:"Parte Vieja San Sebastian",type:'Lugar',icon:'camera',lat:43.3233,lng:-1.9839,img:''},
+      {id:1723,name:"Bodegas Ysios",type:'Lugar',icon:'camera',lat:42.5681,lng:-2.5694,img:''},
+      {id:1724,name:"Bodegas Marques de Riscal",type:'Lugar',icon:'camera',lat:42.5111,lng:-2.6183,img:''},
+      {id:1725,name:"Mercado de la Boqueria",type:'Lugar',icon:'camera',lat:41.3819,lng:2.1722,img:''},
+      {id:1726,name:"Bar El Xampanyet",type:'Lugar',icon:'camera',lat:41.3839,lng:2.1814,img:''},
+      {id:1727,name:"Bodega Casa Montana",type:'Lugar',icon:'camera',lat:39.4678,lng:-0.3294,img:''},
+      {id:1728,name:"Taberna Casa Manteca",type:'Lugar',icon:'camera',lat:36.5303,lng:-6.3033,img:''},
+      {id:1729,name:"Mercado de la Ribera",type:'Lugar',icon:'camera',lat:43.2567,lng:-2.9242,img:''},
+      {id:1730,name:"El Celler de Can Roca",type:'Lugar',icon:'camera',lat:41.9931,lng:2.8094,img:''}
+    ]
+  },
+  {
+    id:74,title:"Gu\u00eda del Debutante: Joyas de la Arquitectura",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Spain",
+    cat:"Art & culture",tag:"Espana_Basico",
+    desc:"La ruta cultural definitiva para comprender la grandeza hist\u00f3rica de Espa\u00f1a. De las majestuosas mezquitas andalus\u00edes y palacios nazar\u00edes a las vanguardistas catedrales modernistas de Gaud\u00ed.",
+    img:"https://images.unsplash.com/photo-1688680437050-d2cddf4f20b2?w=1200&q=80",
+    spots:[
+      {id:1731,name:"La Alhambra",type:'Lugar',icon:'camera',lat:37.1773,lng:-3.5897,img:''},
+      {id:1732,name:"Bas\u00edlica de la Sagrada Familia",type:'Lugar',icon:'camera',lat:41.4036453,lng:2.1742754,img:''},
+      {id:1733,name:"Mezquita-Catedral de Cordoba",type:'Lugar',icon:'camera',lat:37.8797,lng:-4.7794,img:''},
+      {id:1734,name:"Plaza de Espana",type:'Lugar',icon:'camera',lat:37.3772,lng:-5.9869,img:''},
+      {id:1735,name:"Real Alcazar de Sevilla",type:'Lugar',icon:'camera',lat:37.3831,lng:-5.9903,img:''},
+      {id:1736,name:"Park Guell",type:'Lugar',icon:'camera',lat:41.41459,lng:2.1523607,img:''},
+      {id:1737,name:"Acueducto de Segovia",type:'Lugar',icon:'camera',lat:40.9481,lng:-4.1183,img:''},
+      {id:1738,name:"Catedral de Santiago de Compostela",type:'Lugar',icon:'camera',lat:42.8806,lng:-8.5456,img:''},
+      {id:1739,name:"Real Monasterio de El Escorial",type:'Lugar',icon:'camera',lat:40.5891,lng:-4.1477,img:''},
+      {id:1740,name:"Catedral de Sevilla",type:'Lugar',icon:'camera',lat:37.3856,lng:-5.9931,img:''}
+    ]
+  },
+  {
+    id:75,title:"Oasis de Costa: Calas y Playas Salvajes",count:10,
+    author:"Travel Specialist Carlos",av:"TC",dest:"Spain",
+    cat:"Beaches",tag:"Espana_Playas",
+    desc:"El superpoder costero espa\u00f1ol. Una refinada selecci\u00f3n de monumentos naturales esculpidos por el mar, dunas atl\u00e1nticas salvajes y rec\u00f3nditas calas mediterr\u00e1neas de agua cristalina.",
+    img:"https://images.unsplash.com/photo-1663601920971-903f3710ea39?w=1200&q=90",
+    spots:[
+      {id:1741,name:"Playa de Ses Illetes",type:'Lugar',icon:'camera',lat:38.7567,lng:1.4331,img:''},
+      {id:1742,name:"Cala Macarella",type:'Lugar',icon:'camera',lat:39.9381,lng:3.9369,img:''},
+      {id:1743,name:"Playa de las Catedrales",type:'Lugar',icon:'camera',lat:43.5542,lng:-7.1583,img:''},
+      {id:1744,name:"Playa de Bolonia",type:'Lugar',icon:'camera',lat:36.0894,lng:-5.7725,img:''},
+      {id:1745,name:"Cala Sa Tuna",type:'Lugar',icon:'camera',lat:41.9611,lng:3.2306,img:''},
+      {id:1746,name:"Playa de los Genoveses",type:'Lugar',icon:'camera',lat:36.7455,lng:-2.1228,img:''},
+      {id:1747,name:"Playa de Papagayo",type:'Lugar',icon:'camera',lat:28.8464,lng:-13.7886,img:''},
+      {id:1748,name:"Cala Conta",type:'Lugar',icon:'camera',lat:38.9619,lng:1.2239,img:''},
+      {id:1749,name:"Playa de Gulpiyuri",type:'Lugar',icon:'camera',lat:43.4475,lng:-4.8861,img:''},
+      {id:1750,name:"Playa de Rodas",type:'Lugar',icon:'camera',lat:42.2214,lng:-8.9022,img:''}
+    ]
+  },
+  {
+    id:76,title:"Rincones Ocultos y Villas de Piedra",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Spain",
+    cat:"Art & culture",tag:"Espana_Secreto",
+    desc:"Dise\u00f1ada para reincidentes que buscan parajes de postal intactos. Descubre peque\u00f1os pueblos pesqueros del Cant\u00e1brico y encantadoras villas fortificadas colgadas sobre cortados rocosos.",
+    img:"https://images.unsplash.com/photo-1553107763-f3d860a41a91?w=1200&q=100",
+    spots:[
+      {id:1751,name:"Cudillero",type:'Lugar',icon:'camera',lat:43.5631,lng:-6.1464,img:''},
+      {id:1752,name:"Santillana del Mar",type:'Lugar',icon:'camera',lat:43.3894,lng:-4.1111,img:''},
+      {id:1753,name:"Albarracin",type:'Lugar',icon:'camera',lat:40.4072,lng:-1.4428,img:''},
+      {id:1754,name:"Puente Nuevo de Ronda",type:'Lugar',icon:'camera',lat:36.7408,lng:-5.1661,img:''},
+      {id:1755,name:"Besalu",type:'Lugar',icon:'camera',lat:42.1994,lng:2.7989,img:''},
+      {id:1756,name:"Potes",type:'Lugar',icon:'camera',lat:43.1539,lng:-4.6234,img:''},
+      {id:1757,name:"Lastres",type:'Lugar',icon:'camera',lat:43.5142,lng:-5.2711,img:''},
+      {id:1758,name:"Pedraza",type:'Lugar',icon:'camera',lat:41.1342,lng:-3.8111,img:''},
+      {id:1759,name:"Frigiliana",type:'Lugar',icon:'camera',lat:36.7908,lng:-3.8961,img:''},
+      {id:1760,name:"Ainsa Historic Town",type:'Lugar',icon:'camera',lat:42.4175,lng:0.1386,img:''}
+    ]
+  },
+  {
+    id:77,title:"Bangkok Esencial y los Templos M\u00edticos",count:10,
+    author:"Travel Specialist Mariano",av:"TM",dest:"Thailand",
+    cat:"Art & culture",tag:"Tailandia_Basico",
+    desc:"El punto de partida imprescindible en Tailandia. Sorpr\u00e9ndete con los deslumbrantes palacios reales de Bangkok, majestuosos budas reclinados, templos al amanecer y las espectaculares ruinas de la antigua capital.",
+    img:"https://images.unsplash.com/photo-1660964365980-95981659b572?w=1200&q=60",
+    spots:[
+      {id:1761,name:"Grand Palace",type:'Lugar',icon:'camera',lat:13.75,lng:100.4913,img:''},
+      {id:1762,name:"Wat Pho",type:'Lugar',icon:'camera',lat:13.7465,lng:100.4933,img:''},
+      {id:1763,name:"Wat Arun",type:'Lugar',icon:'camera',lat:13.7437,lng:100.4889,img:''},
+      {id:1764,name:"Ayutthaya Historical Park",type:'Lugar',icon:'camera',lat:14.3569,lng:100.5586,img:''},
+      {id:1765,name:"Wat Phra Kaew",type:'Lugar',icon:'camera',lat:13.7516,lng:100.4927,img:''},
+      {id:1766,name:"Sukhothai Historical Park",type:'Lugar',icon:'camera',lat:17.0205,lng:99.7037,img:''},
+      {id:1767,name:"Wat Saket",type:'Lugar',icon:'camera',lat:13.7538,lng:100.5066,img:''},
+      {id:1768,name:"Jim Thompson House",type:'Lugar',icon:'camera',lat:13.7494,lng:100.5284,img:''},
+      {id:1769,name:"Wat Traimit",type:'Lugar',icon:'camera',lat:13.7374,lng:100.5131,img:''},
+      {id:1770,name:"Wat Rong Khun White Temple",type:'Lugar',icon:'camera',lat:19.8242,lng:99.7631,img:''}
+    ]
+  },
+  {
+    id:78,title:"Mercados Asombrosos y Oasis Naturales",count:10,
+    author:"Travel Specialist Fernando",av:"TF",dest:"Thailand",
+    cat:"Nature",tag:"Tailandia_Secreto",
+    desc:"Un itinerario para reincidentes que buscan adrenalina y rarezas. Mercados donde el tren pasa a mil\u00edmetros de los puestos, cascadas de siete niveles en plena selva y templos rodeados por dragones gigantes.",
+    img:"https://images.unsplash.com/photo-1611590716234-c0e2c72af2ea?w=1200&q=70",
+    spots:[
+      {id:1771,name:"Maeklong Railway Market",type:'Lugar',icon:'camera',lat:13.4074,lng:99.9957,img:''},
+      {id:1772,name:"Erawan National Park",type:'Lugar',icon:'camera',lat:14.3686,lng:99.1433,img:''},
+      {id:1773,name:"Wat Sam Phran",type:'Lugar',icon:'camera',lat:13.7342,lng:100.2155,img:''},
+      {id:1774,name:"Talad Rot Fai Srinakarin",type:'Lugar',icon:'camera',lat:13.6957,lng:100.6478,img:''},
+      {id:1775,name:"Damnoen Saduak Floating Market",type:'Lugar',icon:'camera',lat:13.5186,lng:99.9592,img:''},
+      {id:1776,name:"Khao Yai National Park",type:'Lugar',icon:'camera',lat:14.4394,lng:101.3725,img:''},
+      {id:1777,name:"Wat Umong",type:'Lugar',icon:'camera',lat:18.7836,lng:98.9515,img:''},
+      {id:1778,name:"Koh Kret",type:'Lugar',icon:'camera',lat:13.9128,lng:100.4897,img:''},
+      {id:1779,name:"Amphawa Floating Market",type:'Lugar',icon:'camera',lat:13.4259,lng:99.9547,img:''},
+      {id:1780,name:"Ancient City Muang Boran",type:'Lugar',icon:'camera',lat:13.5394,lng:100.6231,img:''}
+    ]
+  },
+  {
+    id:79,title:"Playas paradis\u00edacas e Islas de Ensue\u00f1o",count:10,
+    author:"Travel Specialist Sofia",av:"TS",dest:"Thailand",
+    cat:"Beaches",tag:"Tailandia_Playas",
+    desc:"La verdadera esencia del sur de Tailandia. Bah\u00edas de pel\u00edcula bordeadas por imponentes formaciones de piedra caliza, playas accesibles solo por barco y lagunas de coral.",
+    img:"https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?w=1200&q=80",
+    spots:[
+      {id:1781,name:"Railay Beach",type:'Lugar',icon:'camera',lat:8.0119,lng:98.8376,img:''},
+      {id:1782,name:"Maya Bay",type:'Lugar',icon:'camera',lat:7.6811,lng:98.7661,img:''},
+      {id:1783,name:"Phang Nga Bay",type:'Lugar',icon:'camera',lat:8.2439,lng:98.5061,img:''},
+      {id:1784,name:"Freedom Beach",type:'Lugar',icon:'camera',lat:7.8742,lng:98.2753,img:''},
+      {id:1785,name:"Similan Islands",type:'Lugar',icon:'camera',lat:8.6472,lng:97.6406,img:''},
+      {id:1786,name:"Chaweng Beach",type:'Lugar',icon:'camera',lat:9.5329,lng:100.0614,img:''},
+      {id:1787,name:"Ao Nang Beach",type:'Lugar',icon:'camera',lat:8.0329,lng:98.8242,img:''},
+      {id:1788,name:"Phra Nang Cave Beach",type:'Lugar',icon:'camera',lat:8.0087,lng:98.8385,img:''},
+      {id:1789,name:"Kata Noi Beach",type:'Lugar',icon:'camera',lat:7.8081,lng:98.2994,img:''},
+      {id:1790,name:"Koh Nang Yuan",type:'Lugar',icon:'camera',lat:10.1172,lng:99.8142,img:''}
+    ]
+  },
+  {
+    id:80,title:"Street Food Legendario y Mercados Nocturnos",count:10,
+    author:"Travel Specialist Alba",av:"TA",dest:"Thailand",
+    cat:"Food & drinks",tag:"Tailandia_Foodie",
+    desc:"Recorrido gastron\u00f3mico definitivo de norte a sur. Degusta el mejor pad thai callejero del mundo, visita mercados nocturnos vibrantes y descubre los secretos culinarios del norte de Tailandia.",
+    img:"https://images.unsplash.com/photo-1506781961370-37a89d6b3095?w=1200&q=90",
+    spots:[
+      {id:1791,name:"Khao San Road",type:'Lugar',icon:'camera',lat:13.7589,lng:100.4974,img:''},
+      {id:1792,name:"Chatuchak Weekend Market",type:'Lugar',icon:'camera',lat:13.7999,lng:100.5496,img:''},
+      {id:1793,name:"Jodd Fairs",type:'Lugar',icon:'camera',lat:13.7567,lng:100.5661,img:''},
+      {id:1794,name:"Chiang Mai Gate Night Market",type:'Lugar',icon:'camera',lat:18.7812,lng:98.9881,img:''},
+      {id:1795,name:"Yaowarat Road",type:'Lugar',icon:'camera',lat:13.7412,lng:100.5083,img:''},
+      {id:1796,name:"Or Tor Kor Market",type:'Lugar',icon:'camera',lat:13.8011,lng:100.5469,img:''},
+      {id:1797,name:"Jay Fai",type:'Lugar',icon:'camera',lat:13.7525,lng:100.5048,img:''},
+      {id:1798,name:"Chang Phuak Gate Market",type:'Lugar',icon:'camera',lat:18.7961,lng:98.9856,img:''},
+      {id:1799,name:"Warorot Market",type:'Lugar',icon:'camera',lat:18.7903,lng:99.0008,img:''},
+      {id:1800,name:"Thip Samai Pad Thai",type:'Lugar',icon:'camera',lat:13.7528,lng:100.5042,img:''}
+    ]
+  },
+];
+
+// ── STATE ──
+let map, cur = null, allLG, colLG, mkrs = {}, descExp = false;
+
+
+// ── DEST FLAGS ──
+const DEST_FLAGS = {
+  'London':'🇬🇧','Japan':'🇯🇵','Paris':'🇫🇷','Thailand':'🇹🇭','Rome':'🇮🇹',
+  'Madrid':'🇪🇸','Bali':'🇮🇩','Amsterdam':'🇳🇱','Budapest':'🇭🇺','Iceland':'🇮🇸',
+  'Morocco':'🇲🇦','Egypt':'🇪🇬','Lisbon':'🇵🇹','Prague':'🇨🇿','Colombia':'🇨🇴',
+  'Peru':'🇵🇪','Portugal':'🇵🇹','Spain':'🇪🇸','Italy':'🇮🇹','New York':'🇺🇸',
+};
+
+let activeDest = null;
+
+function renderDestSelector() {
+  const row = document.getElementById('dest-row');
+  if (!row) return;
+  const dests = [...new Set(COLS.map(c => c.dest))];
+  row.innerHTML = `
+    <button class="dest-chip${activeDest===null?' on':''}" onclick="filterDest(null)">Todos</button>
+    ${dests.map(d => `
+      <button class="dest-chip${activeDest===d?' on':''}" onclick="filterDest('${d}')">
+        <span class="dest-flag">${DEST_FLAGS[d]||'🌍'}</span>${d}
+      </button>`).join('')}
+  `;
+}
+
+function filterDest(dest) {
+  activeDest = dest;
+  renderDestSelector();
+  renderCols();
+  // fly map to dest bounds if selected
+  if (dest && map) {
+    const spots = COLS.filter(c=>c.dest===dest).flatMap(c=>c.spots).filter(s=>s.lat&&s.lng);
+    if (spots.length) map.fitBounds(spots.map(s=>[s.lat,s.lng]),{padding:[60,60],maxZoom:12});
+  } else if (map) {
+    map.setView([20,0],2);
+  }
+}
+
+// ── RENDER COLLECTIONS ──
+function renderCols() {
+  const filtered = activeDest ? COLS.filter(c=>c.dest===activeDest) : COLS;
+  document.getElementById('cgrid').innerHTML = filtered.map(c => `
+    <div class="ccard" onclick="openCol(${c.id})">
+      <img class="cimg" src="${c.img}" alt="${c.title}" loading="lazy">
+      <div class="covr"></div>
+      <div class="ccnt">
+        <div style="font-size:10px;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">${c.dest}</div><div class="ctitle">${c.title}</div>
+        <div class="ccount">${c.spots.length} lugares</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── TABS ──
+function switchTab(t, el) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  const g = document.getElementById('cgrid');
+  const cs = document.getElementById('cs');
+  const sv = document.getElementById('saved-view');
+  // hide all
+  g.style.display='none'; cs.style.display='none'; sv.style.display='none';
+  if (t === 'col') {
+    g.style.display='grid';
+    // No pins in collections view — clear map
+    if (allLG) allLG.clearLayers();
+    if (colLG) colLG.clearLayers();
+  }
+  else if (t === 'sav') {
+    sv.style.display='block';
+    renderSaved();
+    showSavedPins();
+  }
+  else { cs.style.display='flex'; }
+}
+
+// ── MAP ──
+function initMap() {
+  map = L.map('map', { center:[20, 0], zoom:2, zoomControl:false });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom:19
+  }).addTo(map);
+  L.control.zoom({ position:'bottomright' }).addTo(map);
+  allLG = L.layerGroup().addTo(map);
+  colLG = L.layerGroup();
+  // Start with no pins (collections tab)
+}
+
+function pinIcon(active) {
+  return L.divIcon({
+    className:'',
+    html:`<div class="pin${active?' act':''}"><div class="pin-b"><div class="pin-d"></div></div></div>`,
+    iconSize:[28,36], iconAnchor:[14,36], popupAnchor:[0,-38]
+  });
+}
+
+function showAllPins() {
+  if (!allLG || !colLG) return;
+  allLG.clearLayers(); colLG.clearLayers(); mkrs={};
+  COLS.flatMap(c=>c.spots).forEach(s => {
+    const m = L.marker([s.lat,s.lng],{icon:pinIcon(false)})
+      .bindPopup(`<b>${s.name}</b><br><small style="color:#72777d">${s.type}</small>`);
+    mkrs[s.id]=m; allLG.addLayer(m);
+  });
+}
+
+function showColPins(col) {
+  if (!allLG || !colLG) return;
+  allLG.clearLayers(); colLG.clearLayers(); mkrs={};
+  col.spots.forEach(s => {
+    const m = L.marker([s.lat,s.lng],{icon:pinIcon(false)})
+      .bindPopup(`<b>${s.name}</b><br><small style="color:#72777d">${s.type}</small>`);
+    mkrs[s.id]=m; colLG.addLayer(m);
+  });
+  colLG.addTo(map);
+  const ll = col.spots.map(s=>[s.lat,s.lng]);
+  if (ll.length) map.fitBounds(ll, {padding:[60,60], maxZoom:15});
+}
+
+function hiPin(id) {
+  if (!map) return;
+  Object.keys(mkrs).forEach(k => mkrs[k].setIcon(pinIcon(+k===id)));
+}
+function resetPins() {
+  if (!map) return;
+  Object.values(mkrs).forEach(m => m.setIcon(pinIcon(false)));
+}
+
+// ── DETAIL ──
+function openCol(id) {
+  cur = COLS.find(c=>c.id===id);
+  if(!cur) return;
+  descExp = false;
+  document.getElementById('d-img').src = cur.img;
+  document.getElementById('d-title').textContent = cur.title;
+  document.getElementById('d-av').textContent = cur.av;
+  document.getElementById('d-auth').textContent = cur.author;
+  const dd = document.getElementById('d-desc');
+  dd.textContent = cur.desc;
+  dd.classList.remove('exp');
+  document.getElementById('d-more').textContent = 'Mostrar más';
+  document.getElementById('d-save-txt').textContent = `Guardar los ${cur.spots.length} lugares`;
+  renderSpots(cur.spots);
+  document.getElementById('detail').classList.add('on');
+  // Reset scroll
+  const dscrollEl = document.querySelector('.dscroll');
+  if (dscrollEl) dscrollEl.scrollTop = 0;
+  showColPins(cur);
+}
+
+// ── DETAIL SCROLL HEADER ──
+function closeDetail() {
+  document.getElementById('detail').classList.remove('on');
+  cur = null;
+  if (colLG) colLG.clearLayers();
+  if (allLG) allLG.clearLayers();
+  if (map) map.setView([41.3851,2.1734],13);
+}
+
+function toggleDesc() {
+  descExp = !descExp;
+  document.getElementById('d-desc').classList.toggle('exp', descExp);
+  document.getElementById('d-more').textContent = descExp ? 'Mostrar menos' : 'Mostrar más';
+}
+
+// ── BOOKMARK TOGGLE ──
+const BKM = '<svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>';
+const BKM_ON = '<svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:currentColor;fill:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>';
+function renderSpots(spots) {
+  document.getElementById('d-spots').innerHTML = spots.map(s=>`
+    <div class="sitem fi" id="sitem-${s.id}" onmouseenter="hiPin(${s.id})" onmouseleave="resetPins()"
+         onclick="handleSpotItemClick(event, ${JSON.stringify(s).replace(/"/g,'&quot;')})">
+      <div class="sthumb">
+        <div class="sthumb-ph"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" style="width:28px;height:28px;opacity:.35"><path d="M8 42 L22 22 L32 34 L39 26 L48 42Z" fill="#abb2ba"/><circle cx="41" cy="16" r="5" fill="#cdd1d6"/></svg></div>
+      </div>
+      <div class="sinfo">
+        <div class="sname">${s.name}</div>
+        <div class="stype">${IC[s.icon]||''} ${s.type}</div>
+      </div>
+      <div class="sbkm${savedItems.some(sv=>sv.spotId===s.id)?' on':''}" onclick="event.stopPropagation();toggleBkm(this)">${savedItems.some(sv=>sv.spotId===s.id)?BKM_ON:IC.bookmark}</div>
+    </div>`).join('');
+}
+
+function toggleBkm(el) {
+  el.classList.toggle('on');
+  el.innerHTML = el.classList.contains('on') ? BKM_ON : BKM;
+  if (el.classList.contains('on')) {
+    const item = el.closest('.sitem');
+    const name = item?.querySelector('.sname')?.textContent || '';
+    showToast((name || 'Lugar') + ' guardado');
+    // find spot in current collection and save it
+    if (cur && name) {
+      const spot = cur.spots.find(s => s.name === name);
+      if (spot) addToSaved(spot, cur);
+    }
+  } else {
+    const item = el.closest('.sitem');
+    const name = item?.querySelector('.sname')?.textContent || '';
+    if (name) {
+      const spot = cur?.spots.find(s => s.name === name);
+      if (spot) removeFromSaved(spot.id);
+    }
+  }
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── SAVE ALL ──
+function saveAll() {
+  if (!cur) return;
+  // Mark all spot bookmarks as saved and add to savedItems
+  document.querySelectorAll('#d-spots .sbkm').forEach(el => {
+    el.classList.add('on');
+    el.innerHTML = BKM_ON;
+  });
+  cur.spots.forEach(spot => addToSaved(spot, cur));
+  showToast(cur.count + ' lugares guardados');
+}
+
+// ── SAVED NAVIGATION ──
+function goToSaved() {
+  // Close detail panel if open
+  if (cur) closeDetail();
+  // Switch to saved tab
+  const savBtn = document.querySelector('.tab[onclick*="sav"]');
+  if (savBtn) switchTab('sav', savBtn);
+  // Hide toast
+  document.getElementById('toast').classList.remove('show');
+}
+
+function updateSavedBadge() {
+  const badge = document.getElementById('saved-badge');
+  if (!badge) return;
+  if (savedItems.length === 0) {
+    badge.style.display = 'none';
+  } else {
+    badge.style.display = 'inline-flex';
+    badge.textContent = savedItems.length;
+  }
+}
+
+// ── SAVED STATE ──
+// savedItems: array of { spotId, spotName, spotType, spotIcon, spotImg, collectionId, collectionTitle, collectionShort }
+const savedItems = [];
+
+function collectionShortName(title) {
+  // produce a short chip label from the collection title
+  const map = {
+    'Imprescindibles de Barcelona': 'Imprescindibles',
+    'Barcelona Secreta': 'Secreta',
+    'Barcelona de Local': 'De Local',
+    'Barcelona Foodie': 'Foodie',
+  };
+  return map[title] || title.split(' ').slice(0,2).join(' ');
+}
+
+function addToSaved(spot, collection) {
+  if (!savedItems.find(s => s.spotId === spot.id)) {
+    savedItems.push({
+      spotId: spot.id,
+      spotName: spot.name,
+      spotType: spot.type,
+      spotIcon: spot.icon,
+      spotImg: spot.img,
+      collectionId: collection.id,
+      collectionTitle: collection.title,
+      collectionShort: collectionShortName(collection.title),
+    });
+    updateSavedBadge();
+  }
+}
+
+function removeFromSaved(spotId) {
+  const i = savedItems.findIndex(s => s.spotId === spotId);
+  if (i !== -1) { savedItems.splice(i, 1); updateSavedBadge(); }
+}
+
+// Tag filter state
+let activeTagFilter = null; // null = show all
+
+// Tag color palette — cycle through a few distinct ones
+const TAG_COLORS = ['green','amber','green','amber'];
+function tagColor(idx) { return TAG_COLORS[idx % TAG_COLORS.length]; }
+
+function renderSaved() {
+  const empty = document.getElementById('saved-empty');
+  const list = document.getElementById('saved-list');
+  if (savedItems.length === 0) {
+    empty.style.display = 'flex';
+    list.style.display = 'none';
+    activeTagFilter = null;
+    return;
+  }
+  empty.style.display = 'none';
+  list.style.display = 'flex';
+
+  // Collect unique collection tags
+  const tags = [];
+  const seenTags = new Set();
+  savedItems.forEach(s => {
+    if (s.collectionShort && !seenTags.has(s.collectionShort)) {
+      seenTags.add(s.collectionShort);
+      tags.push({ short: s.collectionShort, id: s.collectionId });
+    }
+  });
+
+  // Build tag filter row (only if 2+ tags)
+  let filterHtml = '';
+  if (tags.length >= 1) {
+    filterHtml = `<div class="tag-filter-row">
+      <button class="tag-create" onclick="void(0)">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Crear nueva tag
+      </button>
+      ${tags.map((t, i) => {
+        const color = tagColor(i);
+        const isActive = activeTagFilter === t.short;
+        const isInactive = activeTagFilter && !isActive;
+        return `<div class="tag-chip ${color}${isActive ? ' selected' : ''}${isInactive ? ' inactive' : ''}"
+             onclick="filterByTag('${t.short}')">
+          ${t.short}${isActive ? '<span class="tag-chip-x">×</span>' : ''}
+        </div>`;
+      }).join('')}
+      ${activeTagFilter ? `<div class="saved-dots" onclick="toggleTagMenu(this)" style="margin-left:auto;position:relative">···
+        <div class="tag-menu" id="tagMenu" style="display:none">
+          <div class="tag-menu-item" onclick="void(0)">Crear nuevo tag</div>
+          <div class="tag-menu-item" onclick="void(0)">Editar tag</div>
+          <div class="tag-menu-item danger" onclick="deleteActiveTag()">Eliminar tag</div>
+        </div>
+      </div>` : ''}
+    </div>`;
+  }
+
+  // Filter items
+  const filtered = activeTagFilter
+    ? savedItems.filter(s => s.collectionShort === activeTagFilter)
+    : savedItems;
+
+  // Group filtered by collection
+  const groups = {};
+  const groupOrder = [];
+  filtered.forEach(s => {
+    const gid = s.collectionId || '__untagged__';
+    if (!groups[gid]) {
+      groups[gid] = { short: s.collectionShort, items: [] };
+      groupOrder.push(gid);
+    }
+    groups[gid].items.push(s);
+  });
+
+  // Find color for each tag
+  const tagColorMap = {};
+  tags.forEach((t, i) => { tagColorMap[t.short] = tagColor(i); });
+
+  const spotsHtml = groupOrder.map(gid => {
+    const g = groups[gid];
+    const color = g.short ? (tagColorMap[g.short] || 'green') : null;
+    return `<div class="saved-group">
+      ${g.items.map(s => `
+        <div class="sitem fi">
+          <div class="sthumb" onclick="openSpotDetailFromSaved(${s.spotId})" style="cursor:pointer">
+            ${s.spotImg ? `<img src="${s.spotImg}" alt="${s.spotName}" loading="lazy">` : '<div class="sthumb-ph"></div>'}
+          </div>
+          <div class="sinfo" onclick="openSpotDetailFromSaved(${s.spotId})" style="cursor:pointer">
+            <div class="sname">${s.spotName}</div>
+            <div class="stype">${IC[s.spotIcon]||''} ${s.spotType}</div>
+            <div class="sitem-tag ${color}">${s.collectionShort}</div>
+          </div>
+          <div class="sbkm on" onclick="unsaveFromList(${s.spotId}, this)">${BKM_ON}</div>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+
+  list.innerHTML = filterHtml + spotsHtml;
+}
+
+function filterByTag(tag) {
+  activeTagFilter = (activeTagFilter === tag) ? null : tag; // toggle
+  renderSaved();
+}
+
+function openSpotDetailFromSaved(spotId) {
+  // Find the spot across all collections
+  for (const col of COLS) {
+    const spot = col.spots.find(s => s.id === spotId);
+    if (spot) {
+      // We need cur to be set for bookmark sync — set cur to that collection
+      cur = col;
+      openSpotDetail(spot);
+      return;
+    }
+  }
+}
+
+function unsaveFromList(spotId, el) {
+  removeFromSaved(spotId);
+  if (savedItems.length === 0) activeTagFilter = null;
+  renderSaved();
+}
+
+// ── SPOT DETAIL ──
+let curSpot = null;
+let sdDescExp = false;
+
+function handleSpotItemClick(e, spot) {
+  // Don't trigger if clicking bookmark button
+  if (e.target.closest('.sbkm')) return;
+  openSpotDetail(spot);
+}
+
+function openSpotDetail(spot) {
+  curSpot = spot;
+  sdDescExp = false;
+  // Mark active card
+  document.querySelectorAll('.sitem').forEach(el => el.classList.remove('active'));
+  const activeItem = document.getElementById('sitem-' + spot.id);
+  if (activeItem) activeItem.classList.add('active');
+
+  // hero image
+  document.getElementById('sd-hero-img').src = spot.img || 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&q=80';
+  document.getElementById('sd-name').textContent = spot.name;
+  document.getElementById('sd-type').textContent = spot.type;
+  document.getElementById('sd-address').textContent = spot.address || 'Barcelona, España';
+
+  // description per spot
+  const descs = {
+    'Sagrada Família': 'La Sagrada Família es la obra maestra inacabada de Antoni Gaudí y uno de los monumentos más visitados del mundo. Su arquitectura única combina el modernismo catalán con elementos góticos y naturalistas que la hacen irrepetible.',
+    'Mercat de Sant Antoni': 'El Mercat de Sant Antoni es uno de los mercados más emblemáticos y auténticos de Barcelona. Ubicado en un edificio modernista restaurado, combina gastronomía local, productos frescos, cultura de barrio y un ambiente mucho más tranquilo que otros mercados turísticos de la ciudad.',
+    "Museu Nacional d'Art": "El MNAC alberga la colección de arte románico más importante del mundo, junto con obras del gótico, renacimiento y arte moderno catalán. Sus vistas panorámicas desde Montjuïc son uno de los mejores miradores de Barcelona.",
+    'Parc Güell': 'El Parc Güell es otro de los grandes proyectos de Gaudí, un espacio mágico con terrazas de mosaico, columnas sinuosas y vistas privilegiadas de la ciudad. Un lugar donde la arquitectura y la naturaleza se fusionan.',
+    'La Barceloneta': 'La Barceloneta es el barrio marinero por excelencia de Barcelona, con sus playas urbanas, chiringuitos y ambiente mediterráneo. Ideal para un baño o para disfrutar de la mejor paella frente al mar.',
+  };
+  const desc = descs[spot.name] || 'Un lugar imprescindible en Barcelona, lleno de historia, cultura y vida local. No te lo pierdas en tu visita a la ciudad.';
+  const descEl = document.getElementById('sd-desc-text');
+  descEl.textContent = desc;
+  descEl.classList.remove('exp');
+  document.getElementById('sd-more-btn').textContent = 'Más información';
+
+  // bookmark state — check if already saved
+  const btn = document.getElementById('sd-bkm-btn');
+  const isSaved = savedItems.some(s => s.spotId === spot.id);
+  btn.classList.toggle('bkm-on', isSaved);
+  const bkmSvg = btn.querySelector('svg');
+  bkmSvg.style.fill = isSaved ? 'var(--green)' : 'none';
+  bkmSvg.style.stroke = isSaved ? 'var(--green)' : 'var(--n950)';
+
+  document.getElementById('spotDetail').classList.add('on');
+
+  // zoom map to spot and highlight pin
+  hiPin(spot.id);
+  if (map && spot.lat && spot.lng) {
+    map.flyTo([spot.lat, spot.lng], 16, { duration: 0.8 });
+  }
+}
+
+function closeSpotDetail() {
+  document.getElementById('spotDetail').classList.remove('on');
+  // Remove active state from card
+  document.querySelectorAll('.sitem').forEach(el => el.classList.remove('active'));
+  // Restore all collection pins (not just the single active one)
+  if (cur) showColPins(cur);
+  else resetPins();
+  curSpot = null;
+}
+
+function toggleSpotBkm() {
+  if (!curSpot || !cur) return;
+  const btn = document.getElementById('sd-bkm-btn');
+  const svg = btn.querySelector('svg');
+  const isSaved = savedItems.some(s => s.spotId === curSpot.id);
+
+  if (!isSaved) {
+    addToSaved(curSpot, cur);
+    btn.classList.add('bkm-on');
+    svg.style.fill = 'var(--green)'; svg.style.stroke = 'var(--green)';
+    showToast(curSpot.name + ' guardado');
+  } else {
+    removeFromSaved(curSpot.id);
+    btn.classList.remove('bkm-on');
+    svg.style.fill = 'none'; svg.style.stroke = 'var(--n950)';
+  }
+  // Sync mini card bookmark
+  const miniItem = document.getElementById('sitem-' + curSpot.id);
+  if (miniItem) {
+    const bkm = miniItem.querySelector('.sbkm');
+    const nowSaved = savedItems.some(s => s.spotId === curSpot.id);
+    bkm.classList.toggle('on', nowSaved);
+    bkm.innerHTML = nowSaved ? BKM_ON : BKM;
+  }
+}
+
+function toggleSdDesc() {
+  sdDescExp = !sdDescExp;
+  document.getElementById('sd-desc-text').classList.toggle('exp', sdDescExp);
+  document.getElementById('sd-more-btn').textContent = sdDescExp ? 'Menos información' : 'Más información';
+}
+
+// ── TAG MENU ──
+function toggleTagMenu(el) {
+  const menu = document.getElementById('tagMenu');
+  if (!menu) return;
+  const isOpen = menu.style.display === 'block';
+  menu.style.display = isOpen ? 'none' : 'block';
+  // close on outside click
+  if (!isOpen) {
+    setTimeout(() => {
+      document.addEventListener('click', function close(e) {
+        if (!el.contains(e.target)) {
+          menu.style.display = 'none';
+          document.removeEventListener('click', close);
+        }
+      });
+    }, 0);
+  }
+}
+
+function deleteActiveTag() {
+  if (!activeTagFilter) return;
+  // Remove the tag from spots but keep them in saved
+  savedItems.forEach(s => {
+    if (s.collectionShort === activeTagFilter) {
+      s.collectionShort = null;
+      s.collectionId = null;
+      s.collectionTitle = null;
+    }
+  });
+  activeTagFilter = null;
+  renderSaved();
+}
+
+// ── SAVED PINS ──
+function showSavedPins() {
+  if (!allLG || !colLG || !map) return;
+  allLG.clearLayers(); colLG.clearLayers(); mkrs = {};
+  if (savedItems.length === 0) return;
+  const bounds = [];
+  savedItems.forEach(sv => {
+    // Find the spot across all collections
+    for (const col of COLS) {
+      const spot = col.spots.find(s => s.id === sv.spotId);
+      if (spot && spot.lat && spot.lng) {
+        const m = L.marker([spot.lat, spot.lng], {icon: pinIcon(false)})
+          .addTo(allLG)
+          .on('click', () => { cur = col; openSpotDetail(spot); });
+        mkrs[spot.id] = m;
+        bounds.push([spot.lat, spot.lng]);
+        break;
+      }
+    }
+  });
+  if (bounds.length > 0) map.fitBounds(bounds, {padding:[40,40]});
+}
+
+// ── BOOT ──
+renderCols();
+renderDestSelector();
+
+// Load Leaflet dynamically then init map
+(function loadLeaflet() {
+  const css = document.createElement('link');
+  css.rel = 'stylesheet';
+  css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  document.head.appendChild(css);
+
+  const js = document.createElement('script');
+  js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  js.onload = initMap;
+  js.onerror = function() {
+    // fallback: show map unavailable
+    document.getElementById('map').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#72777d;font-size:14px;background:#f8f9fa">Mapa no disponible</div>';
+  };
+  document.body.appendChild(js);
+})();
+</script>
+</body>
+</html>
