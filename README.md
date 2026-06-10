@@ -1,3 +1,3 @@
 # prototipos_pass
-prototipos html = Prototipes /n
+prototipos html = los html sueltos
 Design System = Atlas Design System (pruebas ruben)
