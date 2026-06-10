@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- @dsCard group="Spacing" name="Aspect Ratio" subtitle="square · card 16:10 · video 16:9 · banner 16:5" viewport="760x260" -->
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+<style>
+  body { margin: 0; padding: 24px 28px; background: #fff; }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-end; }
+  .tile { display: flex; flex-direction: column; gap: 9px; }
+  .frame { width: 160px; background: var(--neutral-100) url('../assets/placeholder-image.png') center/cover; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); }
+  .sq { width: 100px; }
+  .l { font: 700 11px/14px var(--font-sans); color: var(--text-primary); }
+  .v { font: 400 11px/14px ui-monospace, Menlo, monospace; color: var(--text-secondary); }
+  .note { margin-top: 22px; font: 400 12px/18px var(--font-sans); color: var(--text-tertiary); max-width:560px; }
+  .note code { font-size: 11px; }
+</style></head><body>
+<div class="row">
+  <div class="tile"><div class="frame sq" style="aspect-ratio:var(--aspect-square)"></div><div class="l">square</div><div class="v">1 / 1</div></div>
+  <div class="tile"><div class="frame" style="aspect-ratio:var(--aspect-card)"></div><div class="l">card</div><div class="v">16 / 10 · media de card</div></div>
+  <div class="tile"><div class="frame" style="aspect-ratio:var(--aspect-video)"></div><div class="l">video</div><div class="v">16 / 9 · mapas, hero</div></div>
+  <div class="tile"><div class="frame" style="aspect-ratio:var(--aspect-banner)"></div><div class="l">banner</div><div class="v">16 / 5 · hero de modal</div></div>
+</div>
+<p class="note">Los media de card usan <code>aspect-ratio: var(--aspect-card)</code> en vez de <code>height</code> fija — así la imagen se adapta al ancho de columna del auto-grid y mantiene la proporción.</p>
+</body></html>

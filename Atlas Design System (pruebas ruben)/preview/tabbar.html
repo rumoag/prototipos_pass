@@ -1,0 +1,72 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Tab Bar" subtitle="Mobile bottom navigation · active swaps to filled icon + primary indicator" viewport="460x320" -->
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;padding:32px;background:var(--neutral-25);font-family:var(--font-sans);
+       display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap;}
+
+  /* Phone-width shell so the bar reads as a real bottom nav */
+  .phone{width:360px;border:1px solid var(--border-subtle);border-radius:var(--radius-xl);
+         background:var(--bg-default);box-shadow:var(--shadow-md);overflow:hidden;}
+  .phone-caption{font:600 12px/19px var(--font-sans);color:var(--neutral-600);
+                 letter-spacing:var(--ls-wide);margin:0 0 10px 4px;}
+
+  /* === Tab bar === */
+  .tabbar{display:flex;justify-content:space-around;align-items:stretch;
+          background:var(--bg-default);border-top:1px solid var(--border-subtle);
+          padding-top:var(--border-thick);}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+       gap:var(--space-1);position:relative;border:0;background:transparent;cursor:pointer;
+       padding:10px 4px 8px;min-height:56px;
+       font:600 10px/14px var(--font-sans);letter-spacing:var(--ls-wide);
+       color:var(--neutral-600);transition:color var(--dur-fast) var(--ease-standard);}
+  .tab iconify-icon{font-size:var(--icon-md);}
+  .tab .on{display:none;}
+  .tab:hover{color:var(--neutral-900);}
+
+  /* Active: filled icon, primary color, top indicator pip */
+  .tab.active{color:var(--primary-600);}
+  .tab.active .on{display:inline-flex;}
+  .tab.active .off{display:none;}
+  .tab.active::before{content:"";position:absolute;top:calc(-1 * var(--border-thick));
+       left:50%;transform:translateX(-50%);width:32px;height:var(--border-thick);
+       background:var(--primary-500);border-radius:0 0 var(--radius-full) var(--radius-full);}
+
+  /* iOS-style home indicator under the bar */
+  .home-indicator{display:flex;justify-content:center;padding:6px 0 8px;background:var(--bg-default);}
+  .home-indicator span{width:128px;height:5px;border-radius:var(--radius-full);background:var(--neutral-300);}
+</style>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+</head><body>
+
+<div>
+  <div class="phone">
+    <nav class="tabbar">
+      <button class="tab active">
+        <iconify-icon class="off" icon="ph:house"></iconify-icon>
+        <iconify-icon class="on" icon="ph:house-fill"></iconify-icon>
+        Inicio
+      </button>
+      <button class="tab">
+        <iconify-icon class="off" icon="ph:compass"></iconify-icon>
+        <iconify-icon class="on" icon="ph:compass-fill"></iconify-icon>
+        Explorar
+      </button>
+      <button class="tab">
+        <iconify-icon class="off" icon="ph:suitcase-rolling"></iconify-icon>
+        <iconify-icon class="on" icon="ph:suitcase-rolling-fill"></iconify-icon>
+        Viajes
+      </button>
+      <button class="tab">
+        <iconify-icon class="off" icon="ph:user-circle"></iconify-icon>
+        <iconify-icon class="on" icon="ph:user-circle-fill"></iconify-icon>
+        Perfil
+      </button>
+    </nav>
+    <div class="home-indicator"><span></span></div>
+  </div>
+</div>
+
+</body></html>

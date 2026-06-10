@@ -1,0 +1,24 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Inputs & Filters" subtitle="Search field, tag pill y barra de filtros / orden" viewport="600x240" -->
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+<style>
+body{margin:0;padding:24px;background:#fff;font-family:var(--font-sans);display:flex;flex-direction:column;gap:18px;}
+.search{display:flex;align-items:center;gap:10px;height:48px;padding:0 16px;border:1px solid var(--border-default);border-radius:9999px;width:520px;font:400 14px/1 var(--font-sans);color:var(--neutral-500);}
+.search i{font-size:20px;color:var(--neutral-700);}
+.tag{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border:1px solid var(--border-default);border-radius:9999px;background:#fff;font:600 13px/1 var(--font-sans);color:var(--text-primary);cursor:pointer;width:fit-content;}
+.tag i{font-size:16px;color:var(--primary-500);}
+.bar{display:flex;gap:24px;align-items:center;width:fit-content;}
+.fbtn{display:inline-flex;align-items:center;gap:8px;font:600 14px/1 var(--font-sans);color:var(--text-primary);cursor:pointer;}
+.fbtn i{font-size:18px;color:var(--neutral-700);}
+.sort{display:inline-flex;align-items:center;gap:6px;font:400 14px/1 var(--font-sans);color:var(--neutral-700);}
+.sort b{color:var(--text-primary);font-weight:700;}
+.sort i{font-size:16px;color:var(--neutral-700);}
+</style><script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+</head><body>
+<div class="search"><iconify-icon icon="ph:magnifying-glass"></iconify-icon><span>Buscar un lugar, restaurante, hotel…</span></div>
+<div class="tag"><iconify-icon icon="ph:plus"></iconify-icon>Crear nueva tag</div>
+<div class="bar">
+  <div class="fbtn">Mostrar filtros<iconify-icon icon="ph:sliders-horizontal"></iconify-icon></div>
+  <div class="sort">Ordenar por: <b>Destacados</b><iconify-icon icon="ph:caret-down"></iconify-icon></div>
+</div>
+</body></html>

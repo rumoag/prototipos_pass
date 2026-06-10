@@ -1,0 +1,18 @@
+<!doctype html>
+<!-- @dsCard group="Type" name="Letter-spacing" subtitle="tighter −3 · tight −2 · snug −1 · normal 0 · wide +1" viewport="760x300" -->
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+<style>
+  body { margin: 0; padding: 24px 28px; background: #fff; }
+  .row { display: grid; grid-template-columns: 180px 1fr; gap: 16px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--border-subtle); }
+  .row:last-child { border-bottom: 0; }
+  .meta { display: flex; flex-direction: column; gap: 2px; }
+  .tok { font: 700 13px/16px ui-monospace, Menlo, monospace; color: var(--text-primary); }
+  .use { font: 400 11px/15px var(--font-sans); color: var(--text-tertiary); }
+  .samp { font-family: var(--font-sans); font-weight: 800; font-size: 26px; color: var(--text-primary); }
+</style></head><body>
+  <div class="row"><div class="meta"><span class="tok">--ls-tighter</span><span class="use">−0.03em · títulos de panel grandes</span></div><div class="samp" style="letter-spacing:var(--ls-tighter)">Tu próximo viaje</div></div>
+  <div class="row"><div class="meta"><span class="tok">--ls-tight</span><span class="use">−0.02em · display + titles</span></div><div class="samp" style="letter-spacing:var(--ls-tight)">Tu próximo viaje</div></div>
+  <div class="row"><div class="meta"><span class="tok">--ls-snug</span><span class="use">−0.01em · títulos de card</span></div><div class="samp" style="letter-spacing:var(--ls-snug)">Tu próximo viaje</div></div>
+  <div class="row"><div class="meta"><span class="tok">--ls-normal</span><span class="use">0 · body</span></div><div class="samp" style="letter-spacing:var(--ls-normal)">Tu próximo viaje</div></div>
+  <div class="row"><div class="meta"><span class="tok">--ls-wide</span><span class="use">+0.01em · labels + links</span></div><div class="samp" style="letter-spacing:var(--ls-wide);font-size:16px;font-weight:600;text-transform:uppercase">Tu próximo viaje</div></div>
+</body></html>
