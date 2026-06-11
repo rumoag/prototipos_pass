@@ -1,0 +1,15 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Kanban Column" subtitle="Tareas · columna kanban (Por hacer / En progreso / Hechas)" viewport="920x240" -->
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+<style>
+body{margin:0;padding:24px;background:#fff;font-family:var(--font-sans);display:flex;gap:16px;}
+.col{width:280px;background:var(--neutral-25);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;}
+.h{font:700 16px/22px var(--font-sans);color:var(--text-primary);}
+.input{height:78px;border:1px dashed var(--neutral-300);border-radius:8px;background:transparent;padding:10px 12px;font:400 13px/18px var(--font-sans);color:var(--neutral-500);}
+.add{height:var(--control-md);background:#fff;border:0;border-radius:8px;font:700 14px/1 var(--font-sans);color:var(--text-primary);cursor:pointer;}
+</style><script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+</head><body>
+<div class="col"><div class="h">Por hacer</div><div class="input">Ej: María está buscando opciones de tours</div><button class="add">Añadir tarea</button></div>
+<div class="col"><div class="h">En progreso</div><div class="input">Ej: María está buscando opciones de tours</div><button class="add">Añadir tarea</button></div>
+<div class="col"><div class="h">Hechas</div><div class="input">Ej: Reservar los Vuelos</div><button class="add">Añadir tarea</button></div>
+</body></html>

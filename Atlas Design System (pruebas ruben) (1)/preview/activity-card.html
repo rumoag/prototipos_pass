@@ -1,0 +1,64 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Activity Card" subtitle="Oferta / Precio / Free · cards de actividades" viewport="1100x540" -->
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+
+<style>
+body{margin:0;padding:24px;background:var(--neutral-25);font-family:var(--font-sans);display:flex;gap:24px;flex-wrap:wrap;}
+.card{width:320px;background:#fff;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--border-subtle);}
+.media{position:relative;aspect-ratio:var(--aspect-card);background:linear-gradient(135deg,#cce7df,#83b69a);}
+.logo-pill{position:absolute;top:12px;left:12px;height:32px;padding:0 12px;background:#fff;border-radius:8px;display:flex;align-items:center;font:700 13px/1 var(--font-sans);color:#e6007a;box-shadow:var(--shadow-xs);}
+.bookmark{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;color:var(--primary-700);cursor:pointer;box-shadow:var(--shadow-xs);}
+.bookmark i{font-size:20px;}
+.body{padding:16px;display:flex;flex-direction:column;gap:8px;}
+.title{font:700 18px/24px var(--font-sans);color:var(--text-primary);letter-spacing:-.01em;}
+.badge{display:inline-flex;align-items:center;padding:1px 8px;border-radius:9999px;background:var(--primary-50);color:var(--primary-800);font:600 11px/16px var(--font-sans);width:fit-content;}
+.meta{display:flex;gap:14px;font:400 13px/18px var(--font-sans);color:var(--neutral-700);align-items:center;flex-wrap:wrap;}
+.meta i{font-size:16px;margin-right:4px;vertical-align:-2px;}
+.cancel{display:flex;align-items:center;gap:6px;font:400 13px/18px var(--font-sans);color:var(--positive-600);}
+.cancel i{font-size:16px;}
+.price{font:700 16px/22px var(--font-sans);color:var(--text-primary);}
+.price s{font-weight:400;color:var(--neutral-500);margin-left:6px;}
+.price.free{color:var(--positive-600);}
+.cta{margin:0 16px 16px;height:var(--control-md);border:0;border-radius:8px;background:var(--primary-500);color:#fff;font:700 14px/1 var(--font-sans);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
+.cta i{font-size:16px;}
+</style><script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+</head><body>
+
+<!-- Oferta -->
+<div class="card">
+  <div class="media"><div class="logo-pill">civitatis</div><div class="bookmark"><iconify-icon icon="ph:bookmark-simple"></iconify-icon></div></div>
+  <div class="body">
+    <div class="title">Coliseo, Foro y Palatino + Arena de gladiadores</div>
+    <span class="badge">Nuevo</span>
+    <div class="meta"><span><iconify-icon icon="ph:clock"></iconify-icon>2h 30m – 3h</span><span><iconify-icon icon="ph:chat-circle"></iconify-icon>Español, +6 más</span></div>
+    <div class="cancel"><iconify-icon icon="ph:seal-check"></iconify-icon>Cancelación gratuita</div>
+    <div class="price">Desde 65,25€ <s>75€</s></div>
+  </div>
+  <button class="cta"><iconify-icon icon="ph:arrow-square-out"></iconify-icon>Ver detalles</button>
+</div>
+
+<!-- Precio normal -->
+<div class="card">
+  <div class="media" style="background:linear-gradient(135deg,#ffdbc2,#ff8c47);"><div class="logo-pill">civitatis</div><div class="bookmark saved" style="color:var(--primary-500);"><iconify-icon icon="ph:bookmark-simple-fill"></iconify-icon></div></div>
+  <div class="body">
+    <div class="title">Visita guiada por el Coliseo, Foro y Palatino</div>
+    <div class="meta"><span><iconify-icon icon="ph:clock"></iconify-icon>2h 30m – 3h</span><span><iconify-icon icon="ph:chat-circle"></iconify-icon>Español, +6 más</span></div>
+    <div class="cancel"><iconify-icon icon="ph:seal-check"></iconify-icon>Cancelación gratuita</div>
+    <div class="price">54€</div>
+  </div>
+  <button class="cta"><iconify-icon icon="ph:arrow-square-out"></iconify-icon>Ver detalles</button>
+</div>
+
+<!-- Free -->
+<div class="card">
+  <div class="media" style="background:linear-gradient(135deg,#dceaf6,#5d9bd0);"><div class="logo-pill">civitatis</div><div class="bookmark"><iconify-icon icon="ph:bookmark-simple"></iconify-icon></div></div>
+  <div class="body">
+    <div class="title">Tour gratis del Vaticano</div>
+    <div class="meta"><span><iconify-icon icon="ph:clock"></iconify-icon>2h</span><span><iconify-icon icon="ph:chat-circle"></iconify-icon>Español</span></div>
+    <div class="cancel"><iconify-icon icon="ph:seal-check"></iconify-icon>Cancelación gratuita</div>
+    <div class="price free">Free</div>
+  </div>
+  <button class="cta"><iconify-icon icon="ph:arrow-square-out"></iconify-icon>Ver detalles</button>
+</div>
+
+</body></html>

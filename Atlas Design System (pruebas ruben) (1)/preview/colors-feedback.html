@@ -1,0 +1,17 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+<style>body{margin:0;padding:24px;background:#fff;}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.tile{border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;border:1px solid var(--border-subtle);}
+.dot{width:14px;height:14px;border-radius:50%;}
+.name{font:700 14px/22px var(--font-sans);color:var(--text-primary);}
+.hex{font:400 12px/16px ui-monospace,Menlo,monospace;color:var(--text-secondary);}
+.row{display:flex;align-items:center;gap:8px;}
+</style></head><body>
+<div class="grid">
+  <div class="tile" style="background:var(--positive-50);"><div class="row"><span class="dot" style="background:var(--positive-500)"></span><span class="name">Positive</span></div><div class="hex">#398a5e</div><div class="hex" style="color:var(--text-tertiary)">success · confirmed</div></div>
+  <div class="tile" style="background:var(--negative-50);"><div class="row"><span class="dot" style="background:var(--negative-500)"></span><span class="name">Negative</span></div><div class="hex">#b92f12</div><div class="hex" style="color:var(--text-tertiary)">errors · destructive</div></div>
+  <div class="tile" style="background:var(--warning-50);"><div class="row"><span class="dot" style="background:var(--warning-500)"></span><span class="name">Warning</span></div><div class="hex">#c48a02</div><div class="hex" style="color:var(--text-tertiary)">caution · attention</div></div>
+  <div class="tile" style="background:var(--informative-50);"><div class="row"><span class="dot" style="background:var(--informative-500)"></span><span class="name">Informative</span></div><div class="hex">#0060b2</div><div class="hex" style="color:var(--text-tertiary)">links · info</div></div>
+</div>
+</body></html>
