@@ -1,0 +1,17 @@
+<!doctype html>
+<!-- @dsCard group="Spacing" name="Border Width" subtitle="thin 1 · medium 1.5 · thick 2" viewport="700x190" -->
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+<style>
+  body { margin: 0; padding: 24px; background: #fff; }
+  .row { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
+  .tile { display: flex; flex-direction: column; gap: 9px; align-items: center; }
+  .shape { width: 120px; height: 64px; border-radius: var(--radius-md); background: #fff; border-style: solid; border-color: var(--neutral-800); }
+  .l { font: 700 11px/14px var(--font-sans); color: var(--text-primary); }
+  .v { font: 400 11px/15px ui-monospace, Menlo, monospace; color: var(--text-secondary); text-align:center; max-width:130px; }
+</style></head><body>
+<div class="row">
+  <div class="tile"><div class="shape" style="border-width:var(--border-thin)"></div><div class="l">thin · 1px</div><div class="v">hairlines, default</div></div>
+  <div class="tile"><div class="shape" style="border-width:var(--border-medium)"></div><div class="l">medium · 1.5px</div><div class="v">checkbox, close de modal</div></div>
+  <div class="tile"><div class="shape" style="border-width:var(--border-thick)"></div><div class="l">thick · 2px</div><div class="v">tab activa, selección</div></div>
+</div>
+</body></html>

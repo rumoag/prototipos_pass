@@ -1,0 +1,76 @@
+<!doctype html>
+<!-- @dsCard group="Colors" name="Accessibility" subtitle="Matriz de contraste WCAG · hit-target 44px · focus ring" viewport="920x680" -->
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<style>
+  body { margin: 0; padding: 28px 32px; background: #fff; }
+  .sec-h { font: 600 11px/14px ui-monospace, Menlo, monospace; letter-spacing: .04em; text-transform: uppercase; color: var(--text-tertiary); margin: 0 0 12px; }
+  .lead { font: 400 12px/18px var(--font-sans); color: var(--text-tertiary); margin: 0 0 16px; max-width: 760px; }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 28px; }
+  .pair { display: grid; grid-template-columns: 132px 1fr auto; gap: 12px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border-subtle); }
+  .samp { height: 38px; border-radius: var(--radius-sm); display: flex; align-items: center; padding: 0 12px; font: 600 13px/1 var(--font-sans); border: 1px solid rgba(0,0,0,.05); }
+  .meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .nm { font: 600 12px/15px var(--font-sans); color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ctx { font: 400 10px/13px var(--font-sans); color: var(--text-tertiary); }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font: 700 11px/1 ui-monospace, Menlo, monospace; padding: 4px 7px; border-radius: var(--radius-xs); white-space: nowrap; }
+  .aaa { background: var(--positive-50); color: var(--positive-700); }
+  .aa  { background: var(--informative-50); color: var(--informative-700); }
+  .lg  { background: var(--warning-50); color: var(--warning-700); }
+  .fail{ background: var(--negative-50); color: var(--negative-700); }
+  .ratio { font: 700 12px/1 ui-monospace, Menlo, monospace; }
+
+  .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 28px; }
+  .ref { border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 18px; }
+  .ref h4 { font: 700 13px/16px var(--font-sans); color: var(--text-primary); margin: 0 0 6px; display:flex; align-items:center; gap:8px; }
+  .ref h4 iconify-icon { color: var(--icon-brand); font-size: 18px; }
+  .ref p { font: 400 12px/18px var(--font-sans); color: var(--text-tertiary); margin: 0; }
+  .ref code { font-size: 11px; background: var(--neutral-50); }
+  .legend { display:flex; gap:18px; flex-wrap:wrap; margin: 14px 0 0; }
+  .legend span { font: 400 11px/14px var(--font-sans); color: var(--text-tertiary); display:flex; align-items:center; gap:6px; }
+  .dot { width:10px; height:10px; border-radius:3px; }
+</style></head><body>
+
+<p class="sec-h">Matriz de contraste — pares aprobados</p>
+<p class="lead">Combinaciones texto/fondo validadas con la fórmula WCAG 2.1. <b>AA</b> = ≥4.5:1 (texto normal) · <b>AAA</b> = ≥7:1 · <b>solo texto grande</b> = 3–4.5:1 (≥24px o ≥18.66px bold, y componentes de UI). No uses los pares "solo grande" para texto pequeño.</p>
+
+<div class="grid">
+  <!-- columna A: texto oscuro sobre claro -->
+  <div class="pair"><div class="samp" style="background:var(--bg-default);color:var(--neutral-950)">Texto</div><div class="meta"><span class="nm">text-primary</span><span class="ctx">sobre bg-default</span></div><span class="badge aaa">AAA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--bg-default);color:var(--neutral-800)">Texto</div><div class="meta"><span class="nm">text-secondary</span><span class="ctx">sobre bg-default</span></div><span class="badge aaa">AAA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--bg-default);color:var(--neutral-700)">Texto</div><div class="meta"><span class="nm">text-tertiary</span><span class="ctx">sobre bg-default · 4.52</span></div><span class="badge aa">AA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--bg-default);color:var(--informative-500)">Enlace</div><div class="meta"><span class="nm">text-link</span><span class="ctx">sobre bg-default · 6.33</span></div><span class="badge aa">AA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--primary-25);color:var(--primary-800)">Texto</div><div class="meta"><span class="nm">text-brand</span><span class="ctx">sobre bg-brand-subtle</span></div><span class="badge aaa">AAA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--positive-50);color:var(--positive-700)">Guardado</div><div class="meta"><span class="nm">text-positive</span><span class="ctx">sobre bg-positive</span></div><span class="badge aaa">AAA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--negative-50);color:var(--negative-700)">Error</div><div class="meta"><span class="nm">text-negative</span><span class="ctx">sobre bg-negative</span></div><span class="badge aaa">AAA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--warning-50);color:var(--warning-700)">Aviso</div><div class="meta"><span class="nm">text-warning</span><span class="ctx">sobre bg-warning · 6.16</span></div><span class="badge aa">AA</span></div>
+
+  <!-- columna B: blanco sobre superficies -->
+  <div class="pair"><div class="samp" style="background:var(--primary-500);color:#fff">Botón</div><div class="meta"><span class="nm">blanco / primary-500</span><span class="ctx">CTA primaria · 5.38</span></div><span class="badge aa">AA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--primary-600);color:#fff">Botón</div><div class="meta"><span class="nm">blanco / primary-600</span><span class="ctx">CTA hover · 6.40</span></div><span class="badge aa">AA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--informative-500);color:#fff">Botón</div><div class="meta"><span class="nm">blanco / informative-500</span><span class="ctx">6.33</span></div><span class="badge aa">AA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--bg-inverse);color:#fff">Texto</div><div class="meta"><span class="nm">blanco / bg-inverse</span><span class="ctx">superficie oscura · 13.2</span></div><span class="badge aaa">AAA</span></div>
+  <div class="pair"><div class="samp" style="background:var(--secondary-500);color:#fff">Texto</div><div class="meta"><span class="nm">blanco / secondary-500</span><span class="ctx">3.55 — no para texto pequeño</span></div><span class="badge lg">solo grande</span></div>
+  <div class="pair"><div class="samp" style="background:var(--secondary-600);color:#fff">Texto</div><div class="meta"><span class="nm">blanco / secondary-600</span><span class="ctx">4.45 — al límite</span></div><span class="badge lg">solo grande</span></div>
+  <div class="pair"><div class="samp" style="background:var(--bg-default);color:var(--neutral-600)">Texto</div><div class="meta"><span class="nm">neutral-600 / bg</span><span class="ctx">3.06 — falla AA en texto pequeño</span></div><span class="badge fail">evitar</span></div>
+</div>
+
+<div class="legend">
+  <span><span class="dot aaa" style="background:var(--positive-500)"></span>AAA ≥7:1</span>
+  <span><span class="dot aa" style="background:var(--informative-500)"></span>AA ≥4.5:1</span>
+  <span><span class="dot lg" style="background:var(--warning-500)"></span>solo texto grande / UI (3–4.5)</span>
+  <span><span class="dot fail" style="background:var(--negative-500)"></span>no usar para texto</span>
+</div>
+
+<div class="cols2">
+  <div class="ref">
+    <h4><iconify-icon icon="ph:hand-tap"></iconify-icon>Hit-target ≥ 44px</h4>
+    <p>Todo control interactivo necesita ≥44px de área tocable en móvil. Los tamaños <code>--control-xs</code> (28) y <code>--control-sm</code> (32) se amplían con <code>.atlas-control-xs</code> / <code>.atlas-control-sm</code> (pseudo-elemento de 44px en <code>pointer:coarse</code>) — sin agrandar el visual. <b>Ver card Control Sizes.</b></p>
+  </div>
+  <div class="ref">
+    <h4><iconify-icon icon="ph:selection"></iconify-icon>Focus ring</h4>
+    <p>Anillo de teclado con <code>:focus-visible</code> — <code>--focus-ring-width</code> 2px, <code>--focus-ring-color</code> informative-500, offset 2px. Outline (no box-shadow). En superficies oscuras cambia a <code>--focus-ring-inverse</code> (blanco) vía <code>.bg-inverse</code> / <code>.filled-dark</code>. <b>Ver card Focus Ring.</b></p>
+  </div>
+</div>
+
+</body></html>

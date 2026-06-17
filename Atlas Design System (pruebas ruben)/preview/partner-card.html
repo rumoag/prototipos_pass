@@ -1,0 +1,38 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Partner Card" subtitle="Imprescindibles · partner cards horizontales" viewport="1100x260" -->
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+<style>
+body{margin:0;padding:24px;background:var(--neutral-25);font-family:var(--font-sans);display:flex;gap:24px;flex-wrap:wrap;}
+.card{width:520px;display:flex;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--border-subtle);}
+.media{position:relative;width:200px;flex-shrink:0;background:linear-gradient(135deg,#ffdbc2,#ff8c47);}
+.logo-pill{position:absolute;top:12px;left:12px;height:32px;padding:0 12px;background:#fff;border-radius:8px;display:flex;align-items:center;font:700 13px/1 var(--font-sans);color:var(--text-primary);box-shadow:var(--shadow-xs);}
+.body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.cat{display:flex;align-items:center;gap:6px;font:500 13px/18px var(--font-sans);color:var(--neutral-700);}
+.cat i{font-size:16px;}
+.title{font:700 18px/24px var(--font-sans);color:var(--text-primary);letter-spacing:-.01em;}
+.cta{margin-top:auto;align-self:flex-start;height:40px;padding:0 16px;border:0;border-radius:8px;background:var(--primary-500);color:#fff;font:700 14px/1 var(--font-sans);display:flex;align-items:center;gap:8px;cursor:pointer;}
+.cta i{font-size:16px;}
+.terms{font:600 13px/18px var(--font-sans);color:var(--informative-500);}
+</style><script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+</head><body>
+
+<div class="card">
+  <div class="media"><div class="logo-pill">Revolut</div></div>
+  <div class="body">
+    <div class="cat"><iconify-icon icon="ph:credit-card"></iconify-icon>Banca</div>
+    <div class="title">Consigue 10€ de bienvenida con Revolut*</div>
+    <button class="cta"><iconify-icon icon="ph:arrow-square-out"></iconify-icon>Obtener</button>
+    <div class="terms">Términos y condiciones</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="media" style="background:linear-gradient(135deg,#cce7df,#398a5e);"><div class="logo-pill" style="color:#00a86b;">Holafly</div></div>
+  <div class="body">
+    <div class="cat"><iconify-icon icon="ph:sim-card"></iconify-icon>eSim</div>
+    <div class="title">Conéctate en minutos. Ahorra 5% en Holafly</div>
+    <button class="cta"><iconify-icon icon="ph:arrow-square-out"></iconify-icon>Obtener</button>
+  </div>
+</div>
+
+</body></html>

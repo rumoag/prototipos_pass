@@ -1,0 +1,102 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Saved tags" subtitle="Tags de guardados · color de la paleta categórica" viewport="1120x560" -->
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../tokens.css">
+<style>
+  body{margin:0;padding:28px;background:#fff;font-family:var(--font-sans);color:var(--text-primary);}
+  .wrap{display:flex;flex-direction:column;gap:22px;max-width:1064px;}
+  h2{font:800 24px/29px var(--font-sans);letter-spacing:var(--ls-tight);margin:0;}
+  .sub{font:400 14px/22px var(--font-sans);color:var(--text-secondary);margin:6px 0 0;max-width:780px;}
+  code{font-family:var(--font-mono);font-size:12px;background:var(--neutral-100);color:var(--text-primary);padding:1px 6px;border-radius:4px;}
+
+  .cols{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;}
+  .panel{border:1px solid var(--border-subtle);border-radius:var(--radius-lg);background:var(--bg-subtle);padding:18px;}
+  .panel.full{grid-column:1 / -1;}
+  .panel h3{font:700 13px/18px var(--font-sans);margin:0 0 14px;letter-spacing:var(--ls-wide);text-transform:uppercase;color:var(--text-tertiary);}
+
+  /* ===== Saved tag base ===== */
+  .tag{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 14px;border-radius:var(--radius-full);font:600 13px/1 var(--font-sans);cursor:pointer;border:0;
+       background:var(--tag-100);color:var(--tag-700);transition:background var(--dur-fast) var(--ease-standard);}
+  .tag iconify-icon{font-size:15px;color:var(--tag-500);}
+  .tag:hover{background:var(--tag-200);}
+  .tag.active{background:var(--tag-500);color:#fff;}
+  .tag.active iconify-icon{color:#fff;}
+  .tag .x{font-size:14px;color:inherit;opacity:.7;margin-left:1px;}
+
+  .tagwrap{display:flex;gap:10px;flex-wrap:wrap;}
+
+  /* state demo cells */
+  .states{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .scell{display:flex;flex-direction:column;align-items:center;gap:14px;padding:24px 8px 14px;background:#fff;border:1px solid var(--border-subtle);border-radius:var(--radius-md);justify-content:center;}
+  .vlabel{font:600 12px/15px var(--font-sans);color:var(--text-primary);text-align:center;}
+
+  .rule{display:flex;flex-direction:column;gap:10px;}
+  .rule .item{display:flex;gap:10px;align-items:flex-start;font:400 13px/19px var(--font-sans);color:var(--text-secondary);}
+  .rule .item iconify-icon{font-size:17px;color:var(--icon-subtle);flex-shrink:0;margin-top:1px;}
+  .rule .item b{color:var(--text-primary);font-weight:700;}
+
+  .anatomy{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  .anatomy .big{height:44px;padding:0 20px;font-size:15px;gap:9px;}
+  .anatomy .big iconify-icon{font-size:18px;}
+</style>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h2>Tags de guardados</h2>
+    <p class="sub">Las personas usuarias organizan sus lugares guardados en listas con color propio, tomado de la <b>paleta categórica</b>. Estilo en reposo: fondo <code>100</code> + texto <code>700</code> + ícono <code>500</code>. Activo (filtro aplicado): relleno <code>500</code> con contenido blanco.</p>
+  </div>
+
+  <!-- Anatomy / live set -->
+  <div class="panel full">
+    <h3>Mis listas guardadas</h3>
+    <div class="tagwrap" id="set"></div>
+  </div>
+
+  <div class="cols">
+    <!-- States -->
+    <div class="panel">
+      <h3>Estados</h3>
+      <div class="states">
+        <div class="scell"><button class="tag" style="--tag-100:var(--cielo-100);--tag-200:var(--cielo-200);--tag-500:var(--cielo-500);--tag-700:var(--cielo-700)"><iconify-icon icon="ph:bookmark-simple-fill"></iconify-icon>Playas</button><span class="vlabel">Reposo</span></div>
+        <div class="scell"><button class="tag" style="--tag-100:var(--cielo-200);--tag-200:var(--cielo-200);--tag-500:var(--cielo-500);--tag-700:var(--cielo-700)"><iconify-icon icon="ph:bookmark-simple-fill"></iconify-icon>Playas</button><span class="vlabel">Hover</span></div>
+        <div class="scell"><button class="tag active" style="--tag-500:var(--cielo-500)"><iconify-icon icon="ph:bookmark-simple-fill"></iconify-icon>Playas</button><span class="vlabel">Activo / filtro</span></div>
+        <div class="scell"><button class="tag" style="--tag-100:var(--cielo-100);--tag-200:var(--cielo-200);--tag-500:var(--cielo-500);--tag-700:var(--cielo-700)"><iconify-icon icon="ph:bookmark-simple-fill"></iconify-icon>Playas<iconify-icon icon="ph:x" class="x"></iconify-icon></button><span class="vlabel">Editable</span></div>
+      </div>
+    </div>
+
+    <!-- Rule -->
+    <div class="panel">
+      <h3>Reglas</h3>
+      <div class="rule">
+        <div class="item"><iconify-icon icon="ph:palette"></iconify-icon><span>Cada lista elige <b>una familia</b> de la paleta categórica. Misma paleta que los días, distinto uso.</span></div>
+        <div class="item"><iconify-icon icon="ph:contrast"></iconify-icon><span>Reposo siempre <b>100 / 700 / 500</b>; el contraste texto-fondo cumple AA en las 12 familias.</span></div>
+        <div class="item"><iconify-icon icon="ph:funnel"></iconify-icon><span>Solo el estado <b>activo</b> usa el relleno 500 — señala que el filtro está aplicado.</span></div>
+        <div class="item"><iconify-icon icon="ph:prohibit"></iconify-icon><span>No mezclar con colores de marca ni de estado dentro del mismo grupo de tags.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var LISTS=[
+    ['cielo','Playas','ph:umbrella-fill'],
+    ['esmeralda','Naturaleza','ph:tree-fill'],
+    ['naranja','Gastronomía','ph:fork-knife-fill'],
+    ['fucsia','Vida nocturna','ph:martini-fill'],
+    ['ambar','Miradores','ph:mountains-fill'],
+    ['indigo','Museos','ph:bank-fill'],
+    ['rosa','Compras','ph:shopping-bag-fill'],
+    ['lima','Senderismo','ph:boot-fill']
+  ];
+  var set=document.getElementById('set');
+  LISTS.forEach(function(l){
+    var fam=l[0];
+    var b=document.createElement('button'); b.className='tag';
+    b.style.cssText='--tag-100:var(--'+fam+'-100);--tag-200:var(--'+fam+'-200);--tag-500:var(--'+fam+'-500);--tag-700:var(--'+fam+'-700)';
+    b.innerHTML='<iconify-icon icon="'+l[2]+'"></iconify-icon>'+l[1];
+    b.addEventListener('click',function(){b.classList.toggle('active');});
+    set.appendChild(b);
+  });
+</script>
+</body></html>
