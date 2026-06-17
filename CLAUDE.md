@@ -15,6 +15,7 @@ Atlas Design System (pruebas ruben)/
 ├── tokens.css      ← FUENTE DE VERDAD absoluta de tokens
 ├── assets/         ← logos SVG eucalipto/taronja/white
 └── preview/        ← un HTML de referencia por componente
+assets/              ← IMÁGENES del usuario para incrustar en prototipos
 patterns/            ← patrones aprendidos con bugs ya resueltos
 prototipos/          ← OUTPUT — prototipos generados + state.md + audit.md
 japon-2026-dashboard_4.html           ← base: pantallas de viaje
@@ -22,6 +23,23 @@ mis-sitios-real_3.html                ← base: mis sitios / guardados
 tareas-plantilla-flow (9).html        ← base: tareas + kanban
 itinerario-con-actividades-v3 01 (1).html  ← base: itinerario
 ```
+---
+
+## Imágenes en prototipos
+
+Cuando el usuario quiera usar una imagen real (foto de fondo, avatar, logo…):
+
+1. **El usuario la coloca en `assets/`** (raíz del repo), con el nombre que quiera.
+   Si la carpeta no existe, Claude la crea con `mkdir -p assets/`.
+2. **Claude lee el archivo y lo incrusta en base64** dentro del HTML:
+   ```bash
+   base64 -i assets/nombre-imagen.jpg
+   ```
+3. Se inyecta como `src="data:image/jpeg;base64,..."` — sin rutas relativas, sin servidor.
+
+Si el usuario menciona una imagen sin indicar ruta, preguntar:
+> "¿Puedes colocarla en la carpeta `assets/` del repo y decirme el nombre del archivo?"
+
 
 ---
 
