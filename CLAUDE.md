@@ -16,7 +16,7 @@ Atlas Design System (pruebas ruben)/
 ├── assets/         ← logos SVG eucalipto/taronja/white
 └── preview/        ← un HTML de referencia por componente
 patterns/            ← patrones aprendidos con bugs ya resueltos
-prototipos/          ← OUTPUT — aquí van todos los prototipos generados
+prototipos/          ← OUTPUT — prototipos generados + state.md + audit.md
 japon-2026-dashboard_4.html           ← base: pantallas de viaje
 mis-sitios-real_3.html                ← base: mis sitios / guardados
 tareas-plantilla-flow (9).html        ← base: tareas + kanban
@@ -25,18 +25,56 @@ itinerario-con-actividades-v3 01 (1).html  ← base: itinerario
 
 ---
 
-## Paso 1 — Entender el encargo antes de tocar archivos
+## FASE 1 — Detección de sesión (SIEMPRE, primero)
+
+Antes de cualquier otra cosa, comprobar si existe `prototipos/state.md`:
+
+```bash
+cat prototipos/state.md
+```
+
+**Si existe** → leerlo, informar al usuario del estado anterior y preguntar:
+"Tengo contexto de la sesión anterior: [resumen de state.md]. ¿Continuamos con ese prototipo o empezamos uno nuevo?"
+
+**Si no existe** → es sesión nueva, continuar a Fase 2.
+
+Nunca asumir continuidad sin leer el estado. Nunca asumir sesión nueva sin comprobarlo.
+
+---
+
+## FASE 2 — Entender el encargo (checkpoint obligatorio)
 
 Con el material del usuario (captura de pantalla, link Figma, descripción):
 
 1. Identifica si es **pantalla de viaje** o **pantalla general**
-2. Lista los componentes necesarios (sidebar, modal, cards, mapa, drag&drop…)
-3. Detecta los estados a prototipar: empty, con datos, error
-4. Si hay **ambigüedad bloqueante** (no sabes qué hace una acción principal) → pregunta UNA sola vez. Ambigüedades menores: elige la opción más lógica y anótala como asunción al entregar.
+2. Lista los **componentes** necesarios (sidebar, modal, cards, mapa, drag&drop…)
+3. Detecta los **estados** a prototipar: empty, con datos, error
+4. Identifica los **patrones** que aplican (ver tabla al final)
+5. Si hay **ambigüedad bloqueante** → pregunta UNA sola vez, lo más concreto posible.
+   Ambigüedades menores: elige la opción más lógica y anótala como asunción.
+
+Antes de tocar ningún archivo, presenta al usuario este resumen y espera confirmación:
+
+```
+📋 Entiendo el encargo:
+- Pantalla: [nombre]
+- Tipo: [viaje / general]
+- Componentes: [lista]
+- Estados: [lista]
+- Patrones a leer: [lista o "ninguno"]
+- Prototipo base: [archivo o "HTML base desde cero"]
+- Asunciones: [lista o "ninguna"]
+
+¿Procedemos?
+```
+
+**No escribir ningún archivo hasta recibir confirmación explícita.**
+
+Registrar el encargo confirmado en audit.md (ver Fase 5).
 
 ---
 
-## Paso 2 — Leer solo lo necesario
+## FASE 3 — Leer solo lo necesario del repo
 
 ```
 SIEMPRE leer:
@@ -45,7 +83,7 @@ SIEMPRE leer:
 
 CONDICIONAL — solo si necesitas ver la implementación de referencia de un componente:
   ls "Atlas Design System (pruebas ruben)/preview/"   ← listar primero
-  cat "Atlas Design System (pruebas ruben)/preview/sidebar.html"   ← leer solo el que aplica
+  cat "Atlas Design System (pruebas ruben)/preview/sidebar.html"   ← solo el que aplica
 
 CONDICIONAL — solo si es pantalla de viaje con ese app shell:
   cat japon-2026-dashboard_4.html
@@ -60,13 +98,14 @@ CONDICIONAL — leer el patrón solo cuando el tema aplica (ver tabla al final):
 ```
 
 Regla: si ya sabes construir un componente con tokens, no leas su preview.
-Si no es pantalla de viaje, no leas los prototipos base — parte del HTML base de abajo.
+Si no es pantalla de viaje, no leas los prototipos base.
 
 ---
 
-## Paso 3 — HTML base de arranque
+## FASE 4 — Construir y guardar el prototipo
 
-Siempre que construyas un prototipo nuevo desde cero, empieza con esta estructura.
+### HTML base de arranque
+
 Inyecta `tokens.css` completo en el `<style>`. No lo enlaces — incrústalo.
 
 ```html
@@ -102,34 +141,74 @@ Inyecta `tokens.css` completo en el `<style>`. No lo enlaces — incrústalo.
 </html>
 ```
 
----
+### Guardar
 
-## Paso 4 — Guardar el prototipo
-
-Todos los prototipos van en la carpeta `prototipos/`. Crearla si no existe.
+Todos los prototipos van en `prototipos/`. Crear la carpeta si no existe.
 
 ```
 prototipos/[nombre-pantalla].html
 ```
 
-El usuario abre el archivo con doble clic en el navegador (`file://`). Sin servidor, sin build.
+El usuario abre con doble clic (`file://`). Sin servidor, sin build.
+
+### Iterar sobre un prototipo existente
+
+Nunca reescribir el archivo entero para cambios parciales.
+Editar por bloques usando los marcadores obligatorios:
+
+```
+// ── DATA ──   // ── STATE ──   // ── RENDER ──   // ── EVENTS ──
+```
+
+Si el cambio afecta menos del 30% → editar solo ese bloque.
+Si es reestructuración total → reescribir entero, leer `tokens.css` una sola vez.
 
 ---
 
-## Paso 5 — Iterar sobre un prototipo existente
+## FASE 5 — Actualizar estado y auditoría (SIEMPRE al cerrar)
 
-Nunca reescribir el archivo entero para cambios parciales.
-Usar edición por bloques apoyándote en los marcadores obligatorios:
+Después de cada entrega o iteración confirmada, actualizar dos archivos en `prototipos/`:
 
+### prototipos/state.md — estado de sesión
+
+Sobreescribir completo con el estado actual. Formato:
+
+```markdown
+# Estado de sesión — Passporter Prototyper
+
+**Última actualización**: [YYYY-MM-DD HH:MM]
+**Prototipo activo**: prototipos/[nombre-pantalla].html
+**Pantalla**: [nombre descriptivo]
+**Tipo**: [viaje / general]
+
+## Componentes implementados
+- [lista de componentes ya en el HTML]
+
+## Estados implementados
+- [empty / con datos / error / …]
+
+## Asunciones tomadas
+- [lista de decisiones menores tomadas sin preguntar]
+
+## Pendiente / próximos pasos
+- [lo que quedó fuera o el usuario mencionó para después]
 ```
-// ── DATA ──
-// ── STATE ──
-// ── RENDER ──
-// ── EVENTS ──
-```
 
-Regla: si el cambio afecta menos del 30% del archivo → editar solo ese bloque.
-Si es reestructuración total → reescribir entero, pero leer `tokens.css` una sola vez.
+### prototipos/audit.md — registro de sesión
+
+**Siempre AÑADIR al final, nunca sobreescribir.** Formato por entrada:
+
+```markdown
+## [Nombre pantalla o tipo de acción]
+**Timestamp**: [YYYY-MM-DD HH:MM]
+**Encargo**: "[input completo del usuario, sin resumir]"
+**Acción**: [nuevo prototipo / iteración / corrección]
+**Archivos tocados**: [lista]
+**Asunciones**: [lista o "ninguna"]
+**Entregado**: [sí / pendiente confirmación]
+
+---
+```
 
 ---
 
@@ -138,7 +217,7 @@ Si es reestructuración total → reescribir entero, pero leer `tokens.css` una 
 - `tokens.css` incrustado íntegro en `<style>` — nunca ruta relativa, nunca remoto
 - Un solo `.html` por prototipo — CSS y JS inline, sin build
 - CDNs permitidos: **Iconify** (iconos) y **Leaflet** (mapas). Nada más
-- Navegación entre pantallas: mostrar/ocultar `<section>` con JS vanilla, sin router
+- Navegación: mostrar/ocultar `<section>` con JS vanilla, sin router
 - Datos: constantes JS hardcoded, nunca fetch ni API real
 - Interactividad: JS vanilla — click handlers, classList, transitions CSS
 
@@ -213,5 +292,5 @@ Si el usuario comparte un link con `node-id`:
 | `tareas-plantilla-flow (9).html` | kanban + drawer + drag & drop |
 | `itinerario-con-actividades-v3 01 (1).html` | acordeón días + drag & drop actividades |
 
-Si la pantalla no es de viaje → partir del HTML base del Paso 3, no de estos archivos.
+Si la pantalla no es de viaje → HTML base del Paso 4 desde cero.
 Verificar siempre con `ls *.html` — el inventario puede crecer.
