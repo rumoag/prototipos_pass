@@ -25,6 +25,18 @@ itinerario-con-actividades-v3 01 (1).html  ← base: itinerario
 
 ---
 
+## FASE 0 — Leer memoria persistente (SIEMPRE, antes de todo)
+
+Leer los archivos de memoria del proyecto:
+
+```bash
+cat /Users/ruben/.claude/projects/-Users-ruben-Downloads-prototipos-pass-main-2/memory/MEMORY.md
+```
+
+Luego leer cada archivo referenciado en el índice. Aplicar todo lo que contengan antes de continuar.
+
+---
+
 ## FASE 1 — Detección de sesión (SIEMPRE, primero)
 
 Antes de cualquier otra cosa, comprobar si existe `prototipos/state.md`:
